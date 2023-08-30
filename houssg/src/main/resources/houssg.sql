@@ -27,6 +27,7 @@ CREATE TABLE Accommodation (
     auth TINYINT NOT NULL,
     approval_request TINYINT NOT NULL,
     deletion_request TINYINT NOT NULL,
+    zip_code VARCHAR(45) NOT NULL,
     FOREIGN KEY(id,auth) REFERENCES User(id,auth)
 );
 

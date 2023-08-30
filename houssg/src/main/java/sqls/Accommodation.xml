@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ssg.com.houssg.dao.AccommodationDao">
+    <select id="getAllAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
+       	SELECT *
+		FROM accommodation
+		ORDER BY accom_number desc
+    </select>
+     <select id="getRoomAva" resultType="ssg.com.houssg.dto.AccommodationDto">
+       	SELECT *
+        FROM accommodation a
+        JOIN rooms r ON a.accom_number = r.accom_number
+        WHERE r.room_availability = 0
+    </select>
+</mapper>
+
