@@ -8,7 +8,6 @@ public class AccommodationDto {
 	private String tele_number;
 	private String accom_category;
 	private String accom_details;
-	private String outdoor_view;
 	private String check_in;
 	private String check_out;
 	private int business_number;
@@ -16,6 +15,8 @@ public class AccommodationDto {
 	private int auth;
 	private int approval_request;
 	private int deletion_request;
+	private String zip_code;
+	
 	public int getAccom_number() {
 		return accom_number;
 	}
@@ -51,12 +52,6 @@ public class AccommodationDto {
 	}
 	public void setAccom_details(String accom_details) {
 		this.accom_details = accom_details;
-	}
-	public String getOutdoor_view() {
-		return outdoor_view;
-	}
-	public void setOutdoor_view(String outdoor_view) {
-		this.outdoor_view = outdoor_view;
 	}
 	public String getCheck_in() {
 		return check_in;
@@ -100,9 +95,21 @@ public class AccommodationDto {
 	public void setDeletion_request(int deletion_request) {
 		this.deletion_request = deletion_request;
 	}
+	
+	public String getZip_code() {
+        return zip_code;
+    }
+
+    public void setZip_code(String zip_code) {
+        this.zip_code = zip_code;
+    }
+    
+	public AccommodationDto() {
+		super();
+	}
 	public AccommodationDto(int accom_number, String accom_name, String accom_address, String tele_number,
-			String accom_category, String accom_details, String outdoor_view, String check_in, String check_out,
-			int business_number, String id, int auth, int approval_request, int deletion_request) {
+			String accom_category, String accom_details, String check_in, String check_out, int business_number,
+			String id, int auth, int approval_request, int deletion_request) {
 		super();
 		this.accom_number = accom_number;
 		this.accom_name = accom_name;
@@ -110,7 +117,6 @@ public class AccommodationDto {
 		this.tele_number = tele_number;
 		this.accom_category = accom_category;
 		this.accom_details = accom_details;
-		this.outdoor_view = outdoor_view;
 		this.check_in = check_in;
 		this.check_out = check_out;
 		this.business_number = business_number;
@@ -123,10 +129,11 @@ public class AccommodationDto {
 	public String toString() {
 		return "AccommodationDto [accom_number=" + accom_number + ", accom_name=" + accom_name + ", accom_address="
 				+ accom_address + ", tele_number=" + tele_number + ", accom_category=" + accom_category
-				+ ", accom_details=" + accom_details + ", outdoor_view=" + outdoor_view + ", check_in=" + check_in
-				+ ", check_out=" + check_out + ", business_number=" + business_number + ", id=" + id + ", auth=" + auth
-				+ ", approval_request=" + approval_request + ", deletion_request=" + deletion_request + "]";
-	}	
+				+ ", accom_details=" + accom_details + ", check_in=" + check_in + ", check_out=" + check_out
+				+ ", business_number=" + business_number + ", id=" + id + ", auth=" + auth + ", approval_request="
+				+ approval_request + ", deletion_request=" + deletion_request + ", zip_code=" + zip_code + "]";
+	}
+	
 	
 	
 }

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ssg.com.houssg.dao.AccommodationDao;
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.AccommodationParam;
 
 @Service
 @Transactional
@@ -20,7 +21,20 @@ public class AccommodationService {
         return dao.getAllAccom();
     }
 	
-	public List<AccommodationDto> getRoomAva() {
-        return dao.getRoomAva();
+	public List<AccommodationDto> getAccomType(String type){
+		return dao.getAccomType(type);
+	}
+	
+	public List<AccommodationDto> getAddressSearch(String search){
+		return dao.getAddressSearch(search);
+	}
+	
+    public List<AccommodationDto> getAddressSearch(AccommodationParam param) {
+        String search = param.getSearch();
+        return dao.getAddressSearch(param);
+    }
+    
+    public int addAccom(AccommodationDto dto) {
+        return dao.addAccom(dto);
     }
 }

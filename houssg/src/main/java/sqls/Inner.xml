@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ssg.com.houssg.dao.InnerDao">
+	<insert id="insertInnerView" parameterType="ssg.com.houssg.dto.InnerDto">
+        INSERT INTO innerview (room_number, img1, img2, img3, img4, img5, img6, img7, img8, img9, img10)
+        VALUES (#{room_number}, #{img1}, #{img2}, #{img3}, #{img4}, #{img5}, #{img6}, #{img7}, #{img8}, #{img9}, #{img10})
+    </insert>
+
+</mapper>
