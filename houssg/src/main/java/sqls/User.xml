@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="ssg.com.houssg.dao.UserDao">
+	<select id="idcheck" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(*)
+		from User
+		where id=#{id}
+	</select>
+	
+	<select id="nicknamecheck" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(*)
+		from User
+		where nickname=#{nickname}
+	</select>
+
+	<insert id="adduser" parameterType="ssg.com.houssg.dto.UserDto">
+		insert into User(auth, nickname, phone_number, password, id)
+		values(0, #{nickname}, #{phone_number},   #{password},  #{id})
+	</insert>
+
+	<select id="login" parameterType="ssg.com.houssg.dto.UserDto"
+		resultType="ssg.com.houssg.dto.UserDto">
+		select  auth, nickname, phone_number, password, id
+		from User
+		where id=#{id} and password=#{password}
+	</select>
+
+	
+	
+<!-- 아이디 찾기  -->	
+	<select id="findUserByNicknameAndPhoneNumber" parameterType="string" resultType="ssg.com.houssg.dto.UserDto">
+        SELECT * FROM User WHERE nickname = #{nickname} and user_phone_number = #{user_phone_number}
+    </select>
+    
+    
+    <!-- 비밀번호 업데이트 -->
+	<update id="updatePassword" parameterType="ssg.com.houssg.dto.UserDto">
+		UPDATE User
+		SET password = #{password}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 아이디 이메일로 사용자 찾기 / 비번 찾기용 -->
+	<select id="findUserByNicknameUserId" parameterType="java.util.Map" resultType="ssg.com.houssg.dto.UserDto">
+		    SELECT *
+		    FROM User
+		    WHERE id = #{id} AND nickname = #{nickname}
+	</select>
+    
+    
+    
+    
+ 
+    <delete id="userDelete" parameterType="String">
+    	delete
+		from User
+		where id=#{id}
+    </delete>
+
+	<select id="userGet" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.UserDto">
+    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
+    	from User
+    	where id=#{id}
+    </select>
+    
+     <select id="userGetAll" parameterType="Integer" resultType="ssg.com.houssg.dto.UserDto">
+    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
+    	from User
+    	where auth!=0
+    	order by id
+		limit ${(pageNumber * 10)}, 10	
+    </select>
+	
+
+
+</mapper>
