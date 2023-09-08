@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssg.com.houssg.dao.RoomDao">
+	<insert id="addRoom" parameterType="ssg.com.houssg.dto.RoomDto">
+    	INSERT INTO rooms (room_category, room_details, room_price, room_availability, accom_number, room_use)
+    	VALUES (#{room_category}, #{room_details}, #{room_price}, #{room_availability}, #{accom_number}, #{room_use})
+    	<selectKey keyProperty="room_number" resultType="int" order="AFTER">
+    		SELECT LAST_INSERT_ID()
+    	</selectKey>
+	</insert>
+	
+	<select id="choiceAccom" parameterType="java.lang.Integer" resultType="ssg.com.houssg.dto.RoomDto">
+		SELECT *
+		FROM rooms
+		WHERE room_number=#{roomNumber}
+	</select>
+
+</mapper>

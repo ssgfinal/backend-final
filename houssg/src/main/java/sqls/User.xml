@@ -61,8 +61,26 @@
 		    FROM User
 		    WHERE id = #{id} AND nickname = #{nickname}
 	</select>
+ 
+    <delete id="userDelete" parameterType="String">
+    	delete
+		from User
+		where id=#{id}
+    </delete>
+
+	<select id="userGet" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.UserDto">
+    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
+    	from User
+    	where id=#{id}
+    </select>
     
-   
-	
+     <select id="userGetAll" parameterType="Integer" resultType="ssg.com.houssg.dto.UserDto">
+    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
+    	from User
+    	where auth!=0
+    	order by id
+		limit ${(pageNumber * 10)}, 10	
+    </select>
+
 
 </mapper>
