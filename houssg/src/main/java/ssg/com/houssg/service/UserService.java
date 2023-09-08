@@ -16,24 +16,22 @@ public class UserService {
 	UserDao dao;
 	
 	// 아이디 중복체크
-	public int idcheck(String id) {
-		return dao.idcheck(id);
+	public int idCheck(String id) {
+		return dao.idCheck(id);
 	}
 	
 	// 회원가입
-	public int adduser(UserDto dto) {
-	
-		return dao.adduser(dto);
+	public int signUp(UserDto dto) {
+		return dao.signUp(dto);
 	}	
 	
 	// 닉네임 중복체크
-	public int nicknamecheck(String nickname) {
-		return dao.nicknamecheck(nickname);
+	public int nicknameCheck(String nickname) {
+		return dao.nicknameCheck(nickname);
 	}
 	
 	// 로그인
 	public UserDto login(UserDto dto) {
-		
 		return dao.login(dto);
 	}
 	
@@ -41,26 +39,26 @@ public class UserService {
         return dao.findUserById(id);
     }
 	
+	// 아이디 찾기
+	public UserDto findIdByPhoneNumber(String phone_number) {
+		return dao.findIdByPhoneNumber(phone_number);
+	}
 	
-//	 // 사용자 정보 가져오기
-//    public UserDetails loadUserByUser(String userId) {
-//        UserDto user = findUserById(userId);
-//        if (user == null) {
-//            throw new UsernameNotFoundException("User not found with id: " + userId);
-//        }
-//
-//        return UserPrincipal.create(user);
-//    }
-}
+	// 닉네임 중복체크
+	public int phoneNumberCheck(String phone_number) {
+		return dao.phoneNumberCheck(phone_number);
+	}
 	
-//	// 아이디 찾기
-//	UserDto findUserByNicknameAndPhoneNumber(String nickname, String user_phone_number);
-//	 
 //	// 비밀번호 찾기
 //	UserDto findUserByNicknameAndUserId(String nickname, String id);
 //
 //	// 비밀번호 업데이트
 //	void updatePassword(UserDto dto);
+	
+}
+	
+
+
 
 
 

@@ -1,20 +1,26 @@
 package ssg.com.houssg.controller;
 
-import java.security.MessageDigest;
+
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpSession;
+import ssg.com.houssg.dto.RequestDto;
+import ssg.com.houssg.dto.SmsResponseDto;
 import ssg.com.houssg.dto.UserDto;
 import ssg.com.houssg.security.JwtTokenProvider;
+import ssg.com.houssg.service.SmsService;
 import ssg.com.houssg.service.TokenService;
 import ssg.com.houssg.service.UserService;
-import ssg.com.houssg.util.InputValidator;
+import ssg.com.houssg.util.SmsUtil;
+import ssg.com.houssg.util.UserUtil;
 
 @RestController
 public class UserController {
@@ -27,13 +33,21 @@ public class UserController {
 
 	@Autowired
 	private TokenService tokenService;
+	
+	@Autowired
+	private UserUtil userUtil;
+	
+	@Autowired
+    private SmsUtil smsUtil;
 
+
+	// 로그인
 	@PostMapping("login")
-	public ResponseEntity<?> login(@RequestBody UserDto user) {
+	public ResponseEntity<?> login(UserDto user) {
 		System.out.println("UserController login(UserDto user) " + new Date());
-		System.out.println("Received data from client: " + user.toString());
+		System.out.println("클라이언트로 부터 받은 데이터 : " + user.toString());
 
-		user.setPassword(hashPassword(user.getPassword())); // 사용자가 입력한 비밀번호를 DB에 있는 hashedPW로 변경한 후에 로그인 진행
+		user.setPassword(userUtil.hashPassword(user.getPassword())); // 사용자가 입력한 비밀번호를 DB에 있는 hashedPW로 변경한 후에 로그인 진행
 		UserDto dto = service.login(user);
 
 		System.out.println(dto);
@@ -51,6 +65,7 @@ public class UserController {
 		return ResponseEntity.notFound().build();
 	}
 
+	// 로그아웃
 	@PostMapping("logout")
 	public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
 		String token = authorizationHeader.replace("Bearer ", "");
@@ -66,100 +81,81 @@ public class UserController {
 		return ResponseEntity.ok("로그아웃되었습니다.");
 	}
 
+	// 아이디 중복확인
 	@PostMapping("idcheck")
-	public String idcheck(String id) {
-		System.out.println("UserController idcheck(String id) " + new Date());
+	public String idCheck(String id) {
+		System.out.println("UserController idCheck(String id) " + new Date());
 
-		int count = service.idcheck(id);
+		int count = service.idCheck(id);
 		if (count == 0) {
 			return "YES";
 		}
 
 		return "NO";
 	}
-
+	
+	// 닉네임 중복확인
 	@PostMapping("nicknamecheck")
-	public String nicknamecheck(String nickname) {
-		System.out.println("UserController nicknamecheck(String nickname) " + new Date());
+	public String nicknameCheck(String nickname) {
+		System.out.println("UserController nicknameCheck(String nickname) " + new Date());
 
-		int count = service.nicknamecheck(nickname);
+		int count = service.nicknameCheck(nickname);
 		if (count == 0) {
 			return "YES";
 		}
 
 		return "NO";
 	}
+	
+	// 회원가입
+	@PostMapping("signup")
+	public String signUp(UserDto user) {
+	    System.out.println("UserController signUp(UserDto dto) " + new Date());
 
-	@PostMapping("adduser")
-	public String addmember(UserDto user) {
-		System.out.println("UserController adduser(UserDto dto) " + new Date());
+	    System.out.println("클라이언트로 부터 받은 데이터 : " + user.toString());
 
-		System.out.println("Received data from client: " + user.toString());
-		// Not_Null 처리 된 컬럼 필수 입력 여부 확인
-		if (user.getId() == null || user.getId().trim().isEmpty() || user.getPassword() == null
-				|| user.getPassword().trim().isEmpty() || user.getNickname() == null
-				|| user.getNickname().trim().isEmpty()) {
-			System.out.println("회원가입 실패1");
-			return "NO";
-		}
+	    // UserDto 객체를 UserUtil을 사용하여 검사
+	    UserUtil userUtil = new UserUtil();
+	    if (!userUtil.isValidUser(user)) {
+	        System.out.println("회원가입 실패");
+	        return "NO";
+	    }
+	    int count = service.signUp(user);
+	    if (count > 0) {
+	        return "YES";
+	    }
+	    System.out.println("회원가입 실패2");
 
-		// 아이디 유효성 검사
-		if (!InputValidator.isValidUserId(user.getId())) {
-			System.out.println("회원가입 실패: 아이디가 유효하지 않습니다.");
-			return "NO";
-		}
-
-		// 비밀번호 유효성 검사
-		if (!InputValidator.isValidPassword(user.getPassword())) {
-			System.out.println("회원가입 실패: 비밀번호가 유효하지 않습니다.");
-			return "NO";
-		}
-
-		// 닉네임 유효성 검사
-		if (!InputValidator.isValidNickname(user.getNickname())) {
-			System.out.println("회원가입 실패: 닉네임이 유효하지 않습니다.");
-			return "NO";
-		}
-
-		// 전화번호 유효성 검사
-		if (!InputValidator.isValidPhoneNumber(user.getPhone_number())) {
-			System.out.println("회원가입 실패: 전화번호가 유효하지 않습니다.");
-			return "NO";
-		}
-
-		// 비밀번호 해시화
-		String hashedPassword = hashPassword(user.getPassword());
-		System.out.println("원본 비밀번호: " + user.getPassword());
-		System.out.println("암호화된 비밀번호: " + hashedPassword);
-		user.setPassword(hashedPassword);
-
-		int count = service.adduser(user);
-		if (count > 0) {
-			return "YES";
-		}
-		System.out.println("회원가입 실패2");
-
-		return "NO";
+	    return "NO";
 	}
 
-	// 비밀번호 해쉬화 메서드
-	private String hashPassword(String password) {
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] hash = md.digest(password.getBytes("UTF-8"));
-			StringBuffer hexString = new StringBuffer();
+	// 아이디 찾기
+	@PostMapping("findid")
+	public ResponseEntity<UserDto> findId(@RequestParam("phone_number") String phone_number, HttpSession session) {
+	    
+	    // 휴대폰 번호 중복 검사
+	    int count = service.phoneNumberCheck(phone_number);
+	    
+	    if (count == 0) {
+	        // 해당 전화번호로 가입한 사용자가 없음(코드 400)
+	        return ResponseEntity.badRequest().build();
+	    }
+	    
+	    // SMS 전송
+	    // RequestDto에 phone_number 설정
+	    RequestDto requestDto = new RequestDto();
+	    requestDto.setRecipientPhoneNumber(phone_number);
+	    ResponseEntity<SmsResponseDto> smsResponse = smsUtil.sendSms(requestDto, session);
 
-			for (int i = 0; i < hash.length; i++) {
-				String hex = Integer.toHexString(0xff & hash[i]);
-				if (hex.length() == 1) {
-					hexString.append('0');
-				}
-				hexString.append(hex);
-			}
-			return hexString.toString();
-		} catch (Exception e) {
-			return "";
-		}
+	    if (smsResponse.getStatusCode() != HttpStatus.OK) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	    
+	    return ResponseEntity.ok().build();
 	}
 
 }
+
+	
+
+

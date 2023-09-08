@@ -4,40 +4,71 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import ssg.com.houssg.dto.RequestDto;
 import ssg.com.houssg.dto.SmsResponseDto;
-import ssg.com.houssg.service.SmsService;
+import ssg.com.houssg.dto.UserDto;
+import ssg.com.houssg.service.UserService;
+import ssg.com.houssg.util.SmsUtil;
+import ssg.com.houssg.util.VerificationCodeValidator;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 
 
 @RestController
 @RequiredArgsConstructor
 public class SmsController {
 
-	@Autowired
-    private SmsService smsService;
-    
- 
 
-	@PostMapping("/user/sms")
-	public ResponseEntity<SmsResponseDto> sendSms(@RequestBody RequestDto request) {
-	    try {
-	        SmsResponseDto data = smsService.sendSms(request.getRecipientPhoneNumber(), request.getContent());
-	        return ResponseEntity.ok().body(data);
-	    } catch (JsonProcessingException | UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException | URISyntaxException e) {
-	        // 예외 처리 코드를 추가하세요.
-	        e.printStackTrace(); // 예외를 적절하게 처리하거나 로그에 기록하세요.
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 예외 발생 시 500 에러 반환
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+    private SmsUtil smsUtil;
+
+    @PostMapping("/sms")
+    public ResponseEntity<SmsResponseDto> sendSms(@RequestBody RequestDto request, HttpSession session) {
+        return smsUtil.sendSms(request, session);
+    }
+	
+	@PostMapping("/sms-check") // 인증번호 비교 확인
+	public ResponseEntity<String> checkVerificationCode(HttpSession session, @RequestParam("verificationCode") String Code) {
+	    boolean isValid = VerificationCodeValidator.isValidVerificationCode(session, Code);
+
+	    if (isValid) {
+	        return ResponseEntity.ok("인증되었습니다.");
+	    } else {
+	        return ResponseEntity.badRequest().body("유효하지 않는 인증번호입니다.");
+	    }
+	}
+	
+	@PostMapping("/sms-check-findid") // 인증번호 비교 확인
+	public ResponseEntity<Object> checkVerificationCode(HttpSession session, @RequestParam("verificationCode") String code, @RequestParam("phone_number") String phoneNumber) {
+	    boolean isValid = VerificationCodeValidator.isValidVerificationCode(session, code);
+
+	    if (!isValid) {
+	        return ResponseEntity.badRequest().body("유효하지 않는 인증번호입니다.");
+	    }
+
+	    // 인증번호가 유효한 경우 아이디를 찾기
+	    int count = userService.phoneNumberCheck(phoneNumber);
+
+	    if (count == 0) {
+	        // 해당 전화번호로 가입한 사용자가 없음
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 휴대폰번호로 가입한 아이디가 없습니다.");
+	    }
+
+	    UserDto foundId = userService.findIdByPhoneNumber(phoneNumber);
+
+	    if (foundId != null) {
+	        return ResponseEntity.ok(foundId);
+	    } else {
+	        // 해당 휴대폰번호로 가입한 아이디가 없습니다
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 휴대폰번호로 가입한 아이디가 없습니다.");
 	    }
 	}
 
