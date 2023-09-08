@@ -9,6 +9,7 @@ public class SmsRequestDto {
     private String countryCode;
     private String from;
     private String content;
+    // messges >> 여러명에게 전달 할 경우
     private List<MessageDto> messages;
     
     
