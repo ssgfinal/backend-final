@@ -2,75 +2,76 @@ package ssg.com.houssg.dto;
 
 public class RoomDto {
 	
-	private int room_number;
-	private String room_category;
-	private String room_details;
-	private int room_price;
-	private int room_availability;
-	private int accom_number;
-	private int room_use;
-	public int getRoom_number() {
-		return room_number;
+	private int roomNumber;
+	private String roomCategory;
+	private String roomDetails;
+	private int roomPrice;
+	private int roomAvailability;
+	private int accomNumber;
+	private int roomUse;
+	public int getRoomNumber() {
+		return roomNumber;
 	}
-	public void setRoom_number(int room_number) {
-		this.room_number = room_number;
+	public void setRoomNumber(int roomNumber) {
+		this.roomNumber = roomNumber;
 	}
-	public String getRoom_category() {
-		return room_category;
+	public String getRoomCategory() {
+		return roomCategory;
 	}
-	public void setRoom_category(String room_category) {
-		this.room_category = room_category;
+	public void setRoomCategory(String roomCategory) {
+		this.roomCategory = roomCategory;
 	}
-	public String getRoom_details() {
-		return room_details;
+	public String getRoomDetails() {
+		return roomDetails;
 	}
-	public void setRoom_details(String room_details) {
-		this.room_details = room_details;
+	public void setRoomDetails(String roomDetails) {
+		this.roomDetails = roomDetails;
 	}
-	public int getRoom_price() {
-		return room_price;
+	public int getRoomPrice() {
+		return roomPrice;
 	}
-	public void setRoom_price(int room_price) {
-		this.room_price = room_price;
+	public void setRoomPrice(int roomPrice) {
+		this.roomPrice = roomPrice;
 	}
-	public int getRoom_availability() {
-		return room_availability;
+	public int getRoomAvailability() {
+		return roomAvailability;
 	}
-	public void setRoom_availability(int room_availability) {
-		this.room_availability = room_availability;
+	public void setRoomAvailability(int roomAvailability) {
+		this.roomAvailability = roomAvailability;
 	}
-	public int getAccom_number() {
-		return accom_number;
+	public int getAccomNumber() {
+		return accomNumber;
 	}
-	public void setAccom_number(int accom_number) {
-		this.accom_number = accom_number;
+	public void setAccomNumber(int accomNumber) {
+		this.accomNumber = accomNumber;
 	}
-	public int getRoom_use() {
-		return room_use;
+	public int getRoomUse() {
+		return roomUse;
 	}
-	public void setRoom_use(int room_use) {
-		this.room_use = room_use;
+	public void setRoomUse(int roomUse) {
+		this.roomUse = roomUse;
 	}
 	public RoomDto() {
 		super();
 	}
-	public RoomDto(int room_number, String room_category, String room_details, int room_price, int room_availability,
-			int accom_number, int room_use) {
+	public RoomDto(int roomNumber, String roomCategory, String roomDetails, int roomPrice, int roomAvailability,
+			int accomNumber, int roomUse) {
 		super();
-		this.room_number = room_number;
-		this.room_category = room_category;
-		this.room_details = room_details;
-		this.room_price = room_price;
-		this.room_availability = room_availability;
-		this.accom_number = accom_number;
-		this.room_use = room_use;
+		this.roomNumber = roomNumber;
+		this.roomCategory = roomCategory;
+		this.roomDetails = roomDetails;
+		this.roomPrice = roomPrice;
+		this.roomAvailability = roomAvailability;
+		this.accomNumber = accomNumber;
+		this.roomUse = roomUse;
 	}
 	@Override
 	public String toString() {
-		return "RoomDto [room_number=" + room_number + ", room_category=" + room_category + ", room_details="
-				+ room_details + ", room_price=" + room_price + ", room_availability=" + room_availability
-				+ ", accom_number=" + accom_number + ", room_use=" + room_use + "]";
+		return "RoomDto [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomDetails=" + roomDetails
+				+ ", roomPrice=" + roomPrice + ", roomAvailability=" + roomAvailability + ", accomNumber=" + accomNumber
+				+ ", roomUse=" + roomUse + "]";
 	}
+	
 	
 	
 	

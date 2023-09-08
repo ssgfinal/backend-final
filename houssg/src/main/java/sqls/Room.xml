@@ -8,5 +8,11 @@
     		SELECT LAST_INSERT_ID()
     	</selectKey>
 	</insert>
+	
+	<select id="choiceAccom" parameterType="java.lang.Integer" resultType="ssg.com.houssg.dto.RoomDto">
+		SELECT *
+		FROM rooms
+		WHERE room_number=#{roomNumber}
+	</select>
 
 </mapper>

@@ -26,14 +26,33 @@
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
 	<insert id="addAccom" parameterType="ssg.com.houssg.dto.AccommodationDto">
     	INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, approval_request, deletion_request, zip_code)
-    	VALUES (#{accom_name}, #{accom_address}, #{tele_number}, #{accom_category}, #{accom_details}, #{check_in}, #{check_out}, #{business_number}, #{id}, 1, 0, 0, #{zip_code})
+    	VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 1, 0, 0, #{zipCode})
     	<selectKey keyProperty="accom_number" resultType="int" order="AFTER">
     		SELECT LAST_INSERT_ID()
     	</selectKey>
 	</insert>
-    
-    
-    
+	
+	<select id="getMyAccom" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.AccommodationDto">
+		SELECT *
+		FROM accommodation
+		WHERE id=#{id}
+	</select>
+	
+	<update id="updateAccom" parameterType="ssg.com.houssg.dto.AccommodationDto">
+	    UPDATE accommodation
+	    SET accom_name = #{accomName}, 
+	        accom_address = #{accomAddress}, 
+	        tele_number = #{teleNumber}, 
+	        accom_details = #{accomDetails}, 
+	        check_in = #{checkIn}, 
+	        check_out = #{checkOut}, 
+	        id = #{id}, 
+	        auth = #{auth}, 
+	        zip_code = #{zipCode}
+	    WHERE accom_number = #{accomNumber}
+	</update>
 
+
+    
 </mapper>
 

@@ -15,7 +15,7 @@ import ch.qos.logback.core.subst.Token.Type;
 import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.AccommodationParam;
 import ssg.com.houssg.service.AccommodationService;
-import ssg.com.houssg.service.OutdoorService;
+
 
 @RestController
 public class AccommodationController {
@@ -23,8 +23,6 @@ public class AccommodationController {
     @Autowired
     private AccommodationService service;
     
-    @Autowired
-    private OutdoorService outdoor;
 
     @GetMapping("getAllAccom")
     public List<AccommodationDto> getAllAccom() {
@@ -61,7 +59,24 @@ public class AccommodationController {
         if(count == 0) { // (5-1) 정상 등록 실패 시, "NO"를 반환
         	return "NO";
         }
-        return Integer.toString(dto.getAccom_number()); // (5-2) 정상 등록 시, auto_increment된 accom_number를 반환 
+        return Integer.toString(dto.getAccomNumber()); // (5-2) 정상 등록 시, auto_increment된 accom_number를 반환 
+    }
+    
+    @GetMapping("getMyAccom")
+    public List<AccommodationDto> getMyAccom(String id){
+    	System.out.println("내숙소 조회");
+    	return service.getMyAccom(id);
+    }
+    
+    @PostMapping("updateAccom")// 수정해야함(오류남)
+    public String updateAccom(AccommodationDto dto) {
+    	System.out.println("숙소 수정");
+    	System.out.println(dto.toString());
+    	int count = service.updateAccom(dto);
+    	if(count == 0) {
+    		return "NO";
+    	}
+    	return "YES";
     }
 
 }

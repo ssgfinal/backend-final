@@ -21,5 +21,9 @@ public interface AccommodationDao {
 	List<AccommodationDto> getAddressSearch(AccommodationParam param);
 	
 	int addAccom (AccommodationDto dto);
+	
+	List<AccommodationDto> getMyAccom(String id);
+	
+	int updateAccom(AccommodationDto dto);
 
 }

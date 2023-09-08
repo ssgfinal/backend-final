@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
@@ -51,10 +50,6 @@
 		    FROM User
 		    WHERE id = #{id} AND nickname = #{nickname}
 	</select>
-    
-    
-    
-    
  
     <delete id="userDelete" parameterType="String">
     	delete
@@ -75,12 +70,5 @@
     	order by id
 		limit ${(pageNumber * 10)}, 10	
     </select>
-	
-
-=======
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-<mapper namespace="ssg.com.houssg.dao.UserDao">
->>>>>>> 20ed557c2f54f420b62686d1cfe8936222d74b44
 
 </mapper>

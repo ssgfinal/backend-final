@@ -37,4 +37,11 @@ public class AccommodationService {
     public int addAccom(AccommodationDto dto) {
         return dao.addAccom(dto);
     }
+    
+    public List<AccommodationDto> getMyAccom(String id){
+    	return dao.getMyAccom(id);
+    }
+    public int updateAccom(AccommodationDto dto) {
+    	return dao.updateAccom(dto);
+    }
 }

@@ -2,74 +2,73 @@ package ssg.com.houssg.dto;
 
 public class AccommodationDto {
 
-	private int accom_number;
-	private String accom_name;
-	private String accom_address;
-	private String tele_number;
-	private String accom_category;
-	private String accom_details;
-	private String check_in;
-	private String check_out;
-	private int business_number;
+	private int accomNumber;
+	private String accomName;
+	private String accomAddress;
+	private String teleNumber;
+	private String accomCategory;
+	private String accomDetails;
+	private String checkIn;
+	private String checkOut;
+	private int businessNumber;
 	private String id;
 	private int auth;
-	private int approval_request;
-	private int deletion_request;
-	private String zip_code;
-	
-	public int getAccom_number() {
-		return accom_number;
+	private int approvalRequest;
+	private int deletionRequest;
+	private String zipCode;
+	public int getAccomNumber() {
+		return accomNumber;
 	}
-	public void setAccom_number(int accom_number) {
-		this.accom_number = accom_number;
+	public void setAccomNumber(int accomNumber) {
+		this.accomNumber = accomNumber;
 	}
-	public String getAccom_name() {
-		return accom_name;
+	public String getAccomName() {
+		return accomName;
 	}
-	public void setAccom_name(String accom_name) {
-		this.accom_name = accom_name;
+	public void setAccomName(String accomName) {
+		this.accomName = accomName;
 	}
-	public String getAccom_address() {
-		return accom_address;
+	public String getAccomAddress() {
+		return accomAddress;
 	}
-	public void setAccom_address(String accom_address) {
-		this.accom_address = accom_address;
+	public void setAccomAddress(String accomAddress) {
+		this.accomAddress = accomAddress;
 	}
-	public String getTele_number() {
-		return tele_number;
+	public String getTeleNumber() {
+		return teleNumber;
 	}
-	public void setTele_number(String tele_number) {
-		this.tele_number = tele_number;
+	public void setTeleNumber(String teleNumber) {
+		this.teleNumber = teleNumber;
 	}
-	public String getAccom_category() {
-		return accom_category;
+	public String getAccomCategory() {
+		return accomCategory;
 	}
-	public void setAccom_category(String accom_category) {
-		this.accom_category = accom_category;
+	public void setAccomCategory(String accomCategory) {
+		this.accomCategory = accomCategory;
 	}
-	public String getAccom_details() {
-		return accom_details;
+	public String getAccomDetails() {
+		return accomDetails;
 	}
-	public void setAccom_details(String accom_details) {
-		this.accom_details = accom_details;
+	public void setAccomDetails(String accomDetails) {
+		this.accomDetails = accomDetails;
 	}
-	public String getCheck_in() {
-		return check_in;
+	public String getCheckIn() {
+		return checkIn;
 	}
-	public void setCheck_in(String check_in) {
-		this.check_in = check_in;
+	public void setCheckIn(String checkIn) {
+		this.checkIn = checkIn;
 	}
-	public String getCheck_out() {
-		return check_out;
+	public String getCheckOut() {
+		return checkOut;
 	}
-	public void setCheck_out(String check_out) {
-		this.check_out = check_out;
+	public void setCheckOut(String checkOut) {
+		this.checkOut = checkOut;
 	}
-	public int getBusiness_number() {
-		return business_number;
+	public int getBusinessNumber() {
+		return businessNumber;
 	}
-	public void setBusiness_number(int business_number) {
-		this.business_number = business_number;
+	public void setBusinessNumber(int businessNumber) {
+		this.businessNumber = businessNumber;
 	}
 	public String getId() {
 		return id;
@@ -83,57 +82,46 @@ public class AccommodationDto {
 	public void setAuth(int auth) {
 		this.auth = auth;
 	}
-	public int getApproval_request() {
-		return approval_request;
+	public int getApprovalRequest() {
+		return approvalRequest;
 	}
-	public void setApproval_request(int approval_request) {
-		this.approval_request = approval_request;
+	public void setApprovalRequest(int approvalRequest) {
+		this.approvalRequest = approvalRequest;
 	}
-	public int getDeletion_request() {
-		return deletion_request;
+	public int getDeletionRequest() {
+		return deletionRequest;
 	}
-	public void setDeletion_request(int deletion_request) {
-		this.deletion_request = deletion_request;
+	public void setDeletionRequest(int deletionRequest) {
+		this.deletionRequest = deletionRequest;
 	}
-	
 	public String getZip_code() {
-        return zip_code;
-    }
-
-    public void setZip_code(String zip_code) {
-        this.zip_code = zip_code;
-    }
-    
+		return zipCode;
+	}
+	public void setZip_code(String zip_code) {
+		this.zipCode = zip_code;
+	}
 	public AccommodationDto() {
 		super();
 	}
-	public AccommodationDto(int accom_number, String accom_name, String accom_address, String tele_number,
-			String accom_category, String accom_details, String check_in, String check_out, int business_number,
-			String id, int auth, int approval_request, int deletion_request) {
+	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
+			String accomCategory, String accomDetails, String checkIn, String checkOut, int businessNumber, String id,
+			int auth, int approvalRequest, int deletionRequest, String zip_code) {
 		super();
-		this.accom_number = accom_number;
-		this.accom_name = accom_name;
-		this.accom_address = accom_address;
-		this.tele_number = tele_number;
-		this.accom_category = accom_category;
-		this.accom_details = accom_details;
-		this.check_in = check_in;
-		this.check_out = check_out;
-		this.business_number = business_number;
+		this.accomNumber = accomNumber;
+		this.accomName = accomName;
+		this.accomAddress = accomAddress;
+		this.teleNumber = teleNumber;
+		this.accomCategory = accomCategory;
+		this.accomDetails = accomDetails;
+		this.checkIn = checkIn;
+		this.checkOut = checkOut;
+		this.businessNumber = businessNumber;
 		this.id = id;
 		this.auth = auth;
-		this.approval_request = approval_request;
-		this.deletion_request = deletion_request;
+		this.approvalRequest = approvalRequest;
+		this.deletionRequest = deletionRequest;
+		this.zipCode = zip_code;
 	}
-	@Override
-	public String toString() {
-		return "AccommodationDto [accom_number=" + accom_number + ", accom_name=" + accom_name + ", accom_address="
-				+ accom_address + ", tele_number=" + tele_number + ", accom_category=" + accom_category
-				+ ", accom_details=" + accom_details + ", check_in=" + check_in + ", check_out=" + check_out
-				+ ", business_number=" + business_number + ", id=" + id + ", auth=" + auth + ", approval_request="
-				+ approval_request + ", deletion_request=" + deletion_request + ", zip_code=" + zip_code + "]";
-	}
-	
 	
 	
 }
