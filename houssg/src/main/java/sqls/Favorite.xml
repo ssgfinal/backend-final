@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ssg.com.houssg.dao.FavoriteDao">
+	<insert id="addFavorite">
+		INSERT INTO favorite (id,accom_number)
+		VALUES (#{id},#{accomNumber})
+	</insert>
+	
+	<delete id="deleteFavorite">
+		DELETE FROM favorite
+		WHERE id = #{id} and accom_number=#{accomNumber}
+	</delete>
+	
+	<select id="getMyFavorite" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.FavoriteDto">
+   	 	SELECT f.* , a.accom_name, a.accom_address
+		FROM favorite f
+		JOIN accommodation a ON a.accom_number = f.accom_number
+		WHERE f.id = {id};
+	</select>
+
+</mapper>
