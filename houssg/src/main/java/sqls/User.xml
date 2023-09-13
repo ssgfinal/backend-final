@@ -2,7 +2,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-	
+
 <mapper namespace="ssg.com.houssg.dao.UserDao">
 
 	<!-- 아이디 중복확인 -->
@@ -12,7 +12,7 @@
 		from User
 		where id=#{id}
 	</select>
-	
+
 	<!-- 닉네임 중복확인 -->
 	<select id="nicknameCheck" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
@@ -20,67 +20,70 @@
 		from User
 		where nickname=#{nickname}
 	</select>
-	
+
 	<!-- 휴대폰번호 중복확인 -->
 	<select id="phoneNumberCheck" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
 		select count(*)
 		from User
-		where phone_number=#{phone_number}
+		where phonenumber=#{phonenumber}
 	</select>
 
 	<insert id="signUp" parameterType="ssg.com.houssg.dto.UserDto">
-		insert into User(auth, nickname, phone_number, password, id)
-		values(0, #{nickname}, #{phone_number},   #{password},  #{id})
+		insert into User(auth,
+		nickname, phonenumber, password, id)
+		values(0, #{nickname},
+		#{phonenumber}, #{password}, #{id})
 	</insert>
 
 	<select id="login" parameterType="ssg.com.houssg.dto.UserDto"
 		resultType="ssg.com.houssg.dto.UserDto">
-		select  auth, nickname, phone_number, password, id
+		select auth, nickname, phonenumber, password, id
 		from User
 		where id=#{id} and password=#{password}
 	</select>
 
-	
-<!-- 아이디 찾기  -->	
-	<select id="findIdByPhoneNumber" parameterType="string" resultType="ssg.com.houssg.dto.UserDto">
-        SELECT * FROM User WHERE phone_number = #{phone_number}
-    </select>
-    
-    
-    <!-- 비밀번호 업데이트 -->
-	<update id="updatePassword" parameterType="ssg.com.houssg.dto.UserDto">
+
+	<!-- 아이디 찾기 -->
+	<select id="findIdByPhoneNumber" parameterType="string"
+		resultType="ssg.com.houssg.dto.UserDto">
+		SELECT * FROM User WHERE phonenumber = #{phonenumber}
+	</select>
+
+
+	<!-- 비밀번호 업데이트 -->
+	<update id="updatePassword"
+		parameterType="ssg.com.houssg.dto.UserDto">
 		UPDATE User
-		SET password = #{password}
+		SET password = #{password} <!-- 필드 이름을 newPassword로 변경 -->
 		WHERE id = #{id}
 	</update>
-	
-	<!-- 아이디 이메일로 사용자 찾기 / 비번 찾기용 -->
-	<select id="findUserByNicknameUserId" parameterType="java.util.Map" resultType="ssg.com.houssg.dto.UserDto">
-		    SELECT *
-		    FROM User
-		    WHERE id = #{id} AND nickname = #{nickname}
-	</select>
- 
-    <delete id="userDelete" parameterType="String">
-    	delete
-		from User
-		where id=#{id}
-    </delete>
 
-	<select id="userGet" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.UserDto">
-    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
-    	from User
-    	where id=#{id}
-    </select>
-    
-     <select id="userGetAll" parameterType="Integer" resultType="ssg.com.houssg.dto.UserDto">
-    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
-    	from User
-    	where auth!=0
-    	order by id
-		limit ${(pageNumber * 10)}, 10	
-    </select>
+
+	<!-- 아이디 휴대폰번호로 사용자 찾기 / 비번 찾기용 -->
+	<select id="findUserByIdPhonNumber"
+		parameterType="java.util.Map" resultType="ssg.com.houssg.dto.UserDto">
+		SELECT *
+		FROM User
+		WHERE id =
+		#{id} AND phonenumber = #{phonenumber}
+	</select>
+
+	<!-- ID + 휴대폰번호 중복확인 -->
+	<select id="idPhoneNumberCheck" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(*)
+		from User
+		where phonenumber=#{phonenumber}
+		AND id = #{id}
+	</select>
+
+	<select id="findUserById"
+		parameterType="java.util.Map" resultType="ssg.com.houssg.dto.UserDto">
+		SELECT *
+		FROM User
+		WHERE id = #{id} 
+	</select>
 
 
 </mapper>

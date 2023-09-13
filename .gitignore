@@ -54,3 +54,4 @@ out/
 
 ### VS Code ###
 .vscode/
+houssg/src/main/resources/application.properties

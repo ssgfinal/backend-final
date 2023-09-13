@@ -8,7 +8,7 @@ public class UserDto {
 	private String id;
 	private String password;
 	private String nickname;
-	private String phone_number;
+	private String phonenumber;
 	private int auth;
 	private String newPassword;
 	
@@ -18,12 +18,12 @@ public class UserDto {
 	}
 
 
-	public UserDto(String id, String password, String nickname, String phone_number, int auth, String newPassword) {
+	public UserDto(String id, String password, String nickname, String phonenumber, int auth, String newPassword) {
 		super();
 		this.id = id;
 		this.password = password;
 		this.nickname = nickname;
-		this.phone_number = phone_number;
+		this.phonenumber = phonenumber;
 		this.auth = auth;
 		this.newPassword = newPassword;
 	}
@@ -52,12 +52,12 @@ public class UserDto {
 		this.nickname = nickname;
 	}
 
-	public String getPhone_number() {
-		return phone_number;
+	public String getPhonenumber() {
+		return phonenumber;
 	}
 
-	public void setPhone_number(String phone_number) {
-		this.phone_number = phone_number;
+	public void setPhonenumber(String phonenumber) {
+		this.phonenumber = phonenumber;
 	}
 
 	public int getAuth() {
@@ -78,8 +78,8 @@ public class UserDto {
 
 	@Override
 	public String toString() {
-		return "UserDto [id=" + id + ", password=" + password + ", nickname=" + nickname + ", phone_number="
-				+ phone_number + ", auth=" + auth +  ", newPassword=" + newPassword + "]";
+		return "UserDto [id=" + id + ", password=" + password + ", nickname=" + nickname + ", phonenumber="
+				+ phonenumber + ", auth=" + auth +  ", newPassword=" + newPassword + "]";
 	}
 
 	

@@ -12,7 +12,7 @@ public class UserUtil {
 
     public boolean isValidUser(UserDto user) {
         // 필수 입력 여부 확인
-        if (isNullOrEmpty(user.getId()) || isNullOrEmpty(user.getPassword()) || isNullOrEmpty(user.getNickname()) || isNullOrEmpty(user.getPhone_number()) ) {
+        if (isNullOrEmpty(user.getId()) || isNullOrEmpty(user.getPassword()) || isNullOrEmpty(user.getNickname()) || isNullOrEmpty(user.getPhonenumber()) ) {
             System.out.println("회원가입 실패: 필수 입력 항목이 비어 있습니다.");
             return false;
         }
@@ -33,7 +33,7 @@ public class UserUtil {
         }
 
         // 전화번호 유효성 검사 (선택사항)
-        if (!isValidPhoneNumber(user.getPhone_number())) {
+        if (!isValidPhoneNumber(user.getPhonenumber())) {
             System.out.println("회원가입 실패: 전화번호가 유효하지 않습니다.");
             return false;
         }
@@ -87,7 +87,7 @@ public class UserUtil {
         }
     }
 
-    private boolean isNullOrEmpty(String str) {
+    public boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
 }
