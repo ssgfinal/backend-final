@@ -26,14 +26,14 @@
 		resultType="java.lang.Integer">
 		select count(*)
 		from User
-		where phonenumber=#{phone_number}
+		where phonenumber=#{phonenumber}
 	</select>
 
 	<insert id="signUp" parameterType="ssg.com.houssg.dto.UserDto">
 		insert into User(auth,
 		nickname, phonenumber, password, id)
 		values(0, #{nickname},
-		#{phone_number}, #{password}, #{id})
+		#{phonenumber}, #{password}, #{id})
 	</insert>
 
 	<select id="login" parameterType="ssg.com.houssg.dto.UserDto"
@@ -47,7 +47,7 @@
 	<!-- 아이디 찾기 -->
 	<select id="findIdByPhoneNumber" parameterType="string"
 		resultType="ssg.com.houssg.dto.UserDto">
-		SELECT * FROM User WHERE phonenumber = #{phone_number}
+		SELECT * FROM User WHERE phonenumber = #{phonenumber}
 	</select>
 
 
@@ -66,7 +66,7 @@
 		SELECT *
 		FROM User
 		WHERE id =
-		#{id} AND phonenumber = #{phone_number}
+		#{id} AND phonenumber = #{phonenumber}
 	</select>
 
 	<!-- ID + 휴대폰번호 중복확인 -->
@@ -74,7 +74,7 @@
 		resultType="java.lang.Integer">
 		select count(*)
 		from User
-		where phonenumber=#{phone_number}
+		where phonenumber=#{phonenumber}
 		AND id = #{id}
 	</select>
 
@@ -84,27 +84,6 @@
 		FROM User
 		WHERE id = #{id} 
 	</select>
-
-
-    <delete id="userDelete" parameterType="String">
-    	delete
-		from User
-		where id=#{id}
-    </delete>
-
-	<select id="userGet" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.UserDto">
-    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
-    	from User
-    	where id=#{id}
-    </select>
-    
-     <select id="userGetAll" parameterType="Integer" resultType="ssg.com.houssg.dto.UserDto">
-    	select auth, nickname, user_phone_number, password, id, bank_name, account_number
-    	from User
-    	where auth!=0
-    	order by id
-		limit ${(pageNumber * 10)}, 10	
-    </select>
 
 
 </mapper>
