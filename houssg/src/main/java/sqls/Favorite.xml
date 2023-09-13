@@ -16,7 +16,7 @@
    	 	SELECT f.* , a.accom_name, a.accom_address
 		FROM favorite f
 		JOIN accommodation a ON a.accom_number = f.accom_number
-		WHERE f.id = {id};
+		WHERE f.id = #{id};
 	</select>
 
 </mapper>

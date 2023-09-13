@@ -20,4 +20,6 @@ public interface ReviewDao {
 	int updateReview(ReviewDto dto);
 	
 	int deleteReview(int reviewNumber);
+	
+	List<ReviewDto> getAuthReview();
 }

@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -135,23 +137,50 @@ public class ReviewController {
 	    }
 	}
 	
-	@PostMapping("review/report")
-	public String updateReview(ReviewDto dto) {
-		System.out.println("리뷰 신고하기");
-		int count = service.updateReview(dto);
-		if(count==0) {
-			return "NO";
-		}
-		return "YES";
+	@PatchMapping("review/report")
+	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber, @RequestParam int roomNumber, @RequestParam int accomNumber) {
+	    System.out.println("리뷰 신고하기");
+	    
+	    // ReviewDto 객체 생성 및 필드 설정
+	    ReviewDto dto = new ReviewDto();
+	    dto.setReviewNumber(reviewNumber);
+	    dto.setRoomNumber(roomNumber);
+	    dto.setAccomNumber(accomNumber);
+	    
+	    int count = service.updateReview(dto);
+	    
+	    if (count == 0) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO");
+	    }
+	    
+	    return ResponseEntity.ok("YES");
 	}
 	
-	@PostMapping("deleteReview")
-	public String deleteReview(int reviewNumber) {
-		System.out.println("리뷰 삭제하기");
-		int count = service.deleteReview(reviewNumber);
-		if(count==0) {
-			return "NO";
-		}
-		return "YES";
+	@DeleteMapping("review/delete")
+	public ResponseEntity<String> deleteReview(@RequestParam int reviewNumber) {
+	    System.out.println("리뷰 삭제하기");
+	    
+	    int count = service.deleteReview(reviewNumber);
+	    
+	    if (count == 0) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO");
+	    }
+	    
+	    return ResponseEntity.ok("YES");
+	}
+	
+	@PostMapping("auth/review")
+	public ResponseEntity<List<ReviewDto>> getAuthReview() {
+	    System.out.println("신고받은 리뷰 보기");
+	    
+	    List<ReviewDto> reviews = service.getAuthReview();
+	    
+	    if (reviews != null && !reviews.isEmpty()) {
+	        // 리뷰 목록이 비어 있지 않으면 200 OK 응답과 함께 목록을 반환
+	        return ResponseEntity.ok(reviews);
+	    } else {
+	        // 리뷰 목록이 비어 있으면 404 Not Found 응답 반환
+	        return ResponseEntity.notFound().build();
+	    }
 	}
 }

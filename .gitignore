@@ -19,7 +19,7 @@ Servers/
 HELP.md
 .gradle
 build/
-!**/houssg/src/main/resources/application.properties
+src/main/resources/application.properties
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
