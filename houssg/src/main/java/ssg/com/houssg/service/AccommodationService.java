@@ -17,24 +17,12 @@ public class AccommodationService {
 	@Autowired
 	AccommodationDao dao;
 	
-	public List<AccommodationDto> getAllAccom() {
-        return dao.getAllAccom();
-    }
-	
-	public List<AccommodationDto> getAccomType(String type){
-		return dao.getAccomType(type);
-	}
-	
-	public List<AccommodationDto> getAddressSearch(String search){
-		return dao.getAddressSearch(search);
-	}
-	
     public List<AccommodationDto> getAddressSearch(AccommodationParam param) {
         String search = param.getSearch();
         return dao.getAddressSearch(param);
     }
     
-    public int addAccom(AccommodationDto dto) {
+    public boolean addAccom(AccommodationDto dto) {
         return dao.addAccom(dto);
     }
     

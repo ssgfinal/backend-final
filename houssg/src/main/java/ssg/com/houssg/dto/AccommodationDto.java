@@ -1,5 +1,7 @@
 package ssg.com.houssg.dto;
 
+import java.util.List;
+
 public class AccommodationDto {
 
 	private int accomNumber;
@@ -16,6 +18,9 @@ public class AccommodationDto {
 	private int approvalRequest;
 	private int deletionRequest;
 	private String zipCode;
+	private String img;
+	private List<FacilityDto> facilityDtos;
+	
 	public int getAccomNumber() {
 		return accomNumber;
 	}
@@ -97,15 +102,28 @@ public class AccommodationDto {
 	public String getZip_code() {
 		return zipCode;
 	}
-	public void setZip_code(String zip_code) {
-		this.zipCode = zip_code;
+	public void setZip_code(String zipCode) {
+		this.zipCode = zipCode;
 	}
+	public String getImg() {
+		return img;
+	}
+	public void setImg(String img) {
+		this.img = img;
+	}
+	public List<FacilityDto> getFacilityDtos() {
+        return facilityDtos;
+    }
+
+    public void setFacilityDtos(List<FacilityDto> facilityDtos) {
+        this.facilityDtos = facilityDtos;
+    }
 	public AccommodationDto() {
 		super();
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, int businessNumber, String id,
-			int auth, int approvalRequest, int deletionRequest, String zip_code) {
+			int auth, int approvalRequest, int deletionRequest, String zipCode, String img) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -120,7 +138,8 @@ public class AccommodationDto {
 		this.auth = auth;
 		this.approvalRequest = approvalRequest;
 		this.deletionRequest = deletionRequest;
-		this.zipCode = zip_code;
+		this.zipCode = zipCode;
+		this.img = img;
 	}
 	
 	

@@ -3,7 +3,7 @@ CREATE TABLE User (
     id VARCHAR(45),
     password VARCHAR(100) NOT NULL,
     nickname VARCHAR(45) NOT NULL,
-    phone_number INT,
+    phonenumber INT,
     auth TINYINT,
     point INT,
     PRIMARY KEY(id, auth)
@@ -142,4 +142,18 @@ CREATE TABLE facility (
     luggage_storage BOOLEAN,
     free_movie_ott BOOLEAN,
     FOREIGN KEY (accom_number) REFERENCES accommodation(accom_number)
+);
+
+CREATE TABLE room_service (
+    room_number INT NOT NULL,
+    city_view BOOLEAN,
+    ocean_view BOOLEAN,
+    spa BOOLEAN,
+    pc BOOLEAN,
+    non_smoking BOOLEAN,
+    double_bed BOOLEAN,
+    queen_bed BOOLEAN,
+    king_bed BOOLEAN,
+    netflix BOOLEAN,
+    FOREIGN KEY (room_number) REFERENCES rooms(room_number)
 );

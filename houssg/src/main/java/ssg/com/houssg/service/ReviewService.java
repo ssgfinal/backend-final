@@ -33,4 +33,8 @@ public class ReviewService {
 	public int deleteReview(int reviewNumber) {
 		return dao.deleteReview(reviewNumber);
 	}
+	
+	public List<ReviewDto> getAuthReview(){
+		return dao.getAuthReview();
+	}
 }

@@ -13,7 +13,7 @@
 		JOIN user u ON r.id = u.id
 		JOIN rooms ro ON r.room_number = ro.room_number
 		JOIN accommodation a ON r.accom_number = a.accom_number
-		WHERE u.nickname = #{nickname}
+		WHERE u.nickname = #{nickname} AND r.report_status=0
 	</select>
 	
 	<select id="getAllReview" parameterType="java.lang.Integer" resultType="ssg.com.houssg.dto.ReviewDto">
@@ -24,15 +24,21 @@
 	    ORDER BY r.review_creation_time DESC
 	</select>
 	
-	<update id="updateReview" parameterType="ssg.com.houssg.dto.ReviewDto">
+	<update id="updateReview" parameterType="java.lang.Integer">
 		UPDATE review 
 		SET	report_status=1
 		WHERE review_number=#{reviewNumber} and room_number=#{roomNumber} and accom_number = #{accomNumber}
 	</update>
 	
 	<delete id="deleteReview" parameterType="java.lang.Integer">
-		DELETE FROM review
-		WHERE review_number=#{reviewNumber}
+	    DELETE FROM review
+	    WHERE review_number = #{reviewNumber} and report_status = 1
 	</delete>
+	
+	<select id="getAuthReview" resultType="ssg.com.houssg.dto.ReviewDto">
+		SELECT *
+		FROM review 
+		WHERE report_status = 1
+	</select>
 
 </mapper>
