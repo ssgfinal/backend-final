@@ -1,6 +1,7 @@
 package ssg.com.houssg.config;
 
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,4 +23,5 @@ public class SecurityConfig {
                 .permitAll(); // 로그인 페이지 관련 설정, 필요에 따라 구성
         return http.build();
     }
+
 }

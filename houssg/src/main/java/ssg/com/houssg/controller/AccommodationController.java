@@ -1,14 +1,22 @@
 package ssg.com.houssg.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.security.Provider.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +28,10 @@ import ch.qos.logback.core.subst.Token.Type;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.AccommodationParam;
+import ssg.com.houssg.dto.FacilityDto;
+
 import ssg.com.houssg.service.AccommodationService;
+import ssg.com.houssg.service.FacilityService;
 
 
 @RestController
@@ -29,7 +40,10 @@ public class AccommodationController {
     @Autowired
     private AccommodationService service;
     
-    @GetMapping("/getAddressSearch")
+    @Autowired
+    private FacilityService facservice;
+    
+    @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(@RequestParam String search) {
         System.out.println("주소별 검색");
         AccommodationParam param = new AccommodationParam();
@@ -47,56 +61,144 @@ public class AccommodationController {
     }
     
     // (3) 숙소 등록이 진행됨
-    @PostMapping("accom/add")
-    public ResponseEntity<String> addAccommodation(@RequestParam(value = "file", required = false) MultipartFile file,
-            AccommodationDto dto,
-            HttpServletRequest request) {
+    @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> addAccommodation(@RequestParam("file") MultipartFile file,
+                                                   @RequestParam("id") String id,
+                                                   @RequestParam("accomName") String accomName,
+                                                   @RequestParam("accomAddress") String accomAddress,
+                                                   @RequestParam("teleNumber") String teleNumber,
+                                                   @RequestParam("accomCategory") String accomCategory,
+                                                   @RequestParam("accomDetails") String accomDetails,
+                                                   @RequestParam("checkIn") String checkIn,
+                                                   @RequestParam("checkOut") String checkOut,
+                                                   @RequestParam("businessNumber") String businessNumber,
+                                                   @RequestParam("zipCode") String zipCode,
+                                                   @RequestParam("nearbySea") boolean nearbySea,
+                                                   @RequestParam("oceanView") boolean oceanView,
+                                                   @RequestParam("parkingAvailable") boolean parkingAvailable,
+                                                   @RequestParam("pool") boolean pool,
+                                                   @RequestParam("spa") boolean spa,
+                                                   @RequestParam("couplePc") boolean couplePc,
+                                                   @RequestParam("wifi") boolean wifi,
+                                                   @RequestParam("family") boolean family,
+                                                   @RequestParam("twinBed") boolean twinBed,
+                                                   @RequestParam("barbecue") boolean barbecue,
+                                                   @RequestParam("noSmoking") boolean noSmoking,
+                                                   @RequestParam("luggageStorage") boolean luggageStorage,
+                                                   @RequestParam("freeMovieOtt") boolean freeMovieOtt,
+                                                   HttpServletRequest request) {
+        System.out.println("숙소 추가");
+        
+
+        String path = request.getSession().getServletContext().getRealPath("/upload");
+        String root = path + "\\" + "uploadFiles";
+        String saveFileName = "";
+
+        File fileCheck = new File(root);
+
+        if (!fileCheck.exists()) fileCheck.mkdirs();
+
         try {
             if (file != null && !file.isEmpty()) {
-                // 파일 업로드가 올바로 수행되는 경우에만 img 필드 설정
-                String path = request.getSession().getServletContext().getRealPath("/upload");
-                String root = path + "\\" + "uploadFiles";
-
-                File fileCheck = new File(root);
-
-                if (!fileCheck.exists()) {
-                    fileCheck.mkdirs();
-                }
-
-                // 업로드된 파일을 저장할 파일명 생성
                 String originalFileName = file.getOriginalFilename();
                 String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                String saveFileName = UUID.randomUUID().toString() + extension;
+                saveFileName = UUID.randomUUID().toString() + extension;
 
-                // 파일 저장 경로 설정
                 String filePath = root + "\\" + saveFileName;
 
-                // 파일 저장
                 file.transferTo(new File(filePath));
 
-                // img 필드에 파일 경로 설정
+                // AccommodationDto 객체를 생성하여 숙소 정보 저장
+                AccommodationDto dto = new AccommodationDto();
                 dto.setImg(filePath);
-            }
+                dto.setId(id);
+                dto.setAccomName(accomName);
+                dto.setAccomAddress(accomAddress);
+                dto.setTeleNumber(teleNumber);
+                dto.setAccomCategory(accomCategory);
+                dto.setAccomDetails(accomDetails);
+                dto.setCheckIn(checkIn);
+                dto.setCheckOut(checkOut);
+                dto.setBusinessNumber(businessNumber);
+                dto.setZipCode(zipCode);
 
-            // 숙소 정보를 데이터베이스에 저장하는 서비스 호출
-            boolean isSaved = service.addAccom(dto);
+                // FacilityDto 객체를 생성하여 시설 정보 저장
+                FacilityDto facilityDto = new FacilityDto();
+                facilityDto.setNearbySea(nearbySea);
+                facilityDto.setOceanView(oceanView);
+                facilityDto.setParkingAvailable(parkingAvailable);
+                facilityDto.setPool(pool);
+                facilityDto.setSpa(spa);
+                facilityDto.setCouplePc(couplePc);
+                facilityDto.setWifi(wifi);
+                facilityDto.setFamily(family);
+                facilityDto.setTwinBed(twinBed);
+                facilityDto.setBarbecue(barbecue);
+                facilityDto.setNoSmoking(noSmoking);
+                facilityDto.setLuggageStorage(luggageStorage);
+                facilityDto.setFreeMovieOtt(freeMovieOtt);
 
-            if (isSaved) {
-                // 숙소 정보가 성공적으로 저장되면 201 Created 상태 코드와 숙소 번호를 반환
-                return ResponseEntity.status(HttpStatus.CREATED).body("Accommodation added with ID: " + dto.getId());
+                // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
+                int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
+
+                System.out.println(dto.toString());
+                System.out.println(facilityDto.toString());
             } else {
-                // 숙소 정보 저장에 실패하면 500 Internal Server Error 상태 코드 반환
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add accommodation.");
+                // 파일이 업로드되지 않은 경우 처리
+                // AccommodationDto 객체를 생성하여 숙소 정보 저장
+                AccommodationDto dto = new AccommodationDto();
+                dto.setId(id);
+                dto.setAccomName(accomName);
+                dto.setAccomAddress(accomAddress);
+                dto.setTeleNumber(teleNumber);
+                dto.setAccomCategory(accomCategory);
+                dto.setAccomDetails(accomDetails);
+                dto.setCheckIn(checkIn);
+                dto.setCheckOut(checkOut);
+                dto.setBusinessNumber(businessNumber);
+                dto.setZipCode(zipCode);
+
+                // FacilityDto 객체를 생성하여 시설 정보 저장
+                FacilityDto facilityDto = new FacilityDto();
+                facilityDto.setNearbySea(nearbySea);
+                facilityDto.setOceanView(oceanView);
+                facilityDto.setParkingAvailable(parkingAvailable);
+                facilityDto.setPool(pool);
+                facilityDto.setSpa(spa);
+                facilityDto.setCouplePc(couplePc);
+                facilityDto.setWifi(wifi);
+                facilityDto.setFamily(family);
+                facilityDto.setTwinBed(twinBed);
+                facilityDto.setBarbecue(barbecue);
+                facilityDto.setNoSmoking(noSmoking);
+                facilityDto.setLuggageStorage(luggageStorage);
+                facilityDto.setFreeMovieOtt(freeMovieOtt);
+
+                // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
+                int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
+
+                System.out.println(dto.toString());
+                System.out.println(facilityDto.toString());
             }
+
+            // 숙소 등록 성공 시
+            return ResponseEntity.ok("숙소 등록 성공");
         } catch (Exception e) {
             e.printStackTrace();
-            // 파일 업로드 또는 저장 중에 예외가 발생한 경우 500 Internal Server Error 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add accommodation.");
+            System.out.println("파일 업로드 실패");
+
+            // 업로드 실패 시 파일 삭제
+            if (!saveFileName.isEmpty()) {
+                new File(root + "\\" + saveFileName).delete();
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("숙소 등록 실패");
         }
     }
 
-    
-    @GetMapping("/getMyAccom")
+
+
+    @GetMapping("mypage/accom")
     public ResponseEntity<List<AccommodationDto>> getMyAccom(@RequestParam String id) {
         System.out.println("내숙소 조회");
         List<AccommodationDto> myAccommodations = service.getMyAccom(id);
@@ -110,51 +212,112 @@ public class AccommodationController {
         return ResponseEntity.ok(myAccommodations);
     }
     
-    @PostMapping("updateAccom")
-    public ResponseEntity<String> updateAccom(@RequestParam(value = "file", required = false) MultipartFile file,
-            AccommodationDto dto,
-            HttpServletRequest request) {
+    @PatchMapping(value = "accom/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateAccommodation(@RequestParam(value = "file", required = false) MultipartFile file,
+                                                     @RequestParam("accomNumber") int accomNumber,
+                                                     @RequestParam("id") String id,
+                                                     @RequestParam("accomName") String accomName,
+                                                     @RequestParam("accomAddress") String accomAddress,
+                                                     @RequestParam("teleNumber") String teleNumber,
+                                                     @RequestParam("accomDetails") String accomDetails,
+                                                     @RequestParam("checkIn") String checkIn,
+                                                     @RequestParam("checkOut") String checkOut,
+                                                     @RequestParam("nearbySea") boolean nearbySea,
+                                                     @RequestParam("oceanView") boolean oceanView,
+                                                     @RequestParam("parkingAvailable") boolean parkingAvailable,
+                                                     @RequestParam("pool") boolean pool,
+                                                     @RequestParam("spa") boolean spa,
+                                                     @RequestParam("couplePc") boolean couplePc,
+                                                     @RequestParam("wifi") boolean wifi,
+                                                     @RequestParam("family") boolean family,
+                                                     @RequestParam("twinBed") boolean twinBed,
+                                                     @RequestParam("barbecue") boolean barbecue,
+                                                     @RequestParam("noSmoking") boolean noSmoking,
+                                                     @RequestParam("luggageStorage") boolean luggageStorage,
+                                                     @RequestParam("freeMovieOtt") boolean freeMovieOtt,
+                                                     HttpServletRequest request) {
+        System.out.println("숙소 업데이트");
+
+        String path = request.getSession().getServletContext().getRealPath("/upload");
+        String root = path + "\\" + "uploadFiles";
+        String saveFileName = "";
+
+        File fileCheck = new File(root);
+
+        if (!fileCheck.exists()) fileCheck.mkdirs();
+
+        String filePath = "";
         try {
+            // 이전 파일의 경로를 가져옵니다.
+            AccommodationDto previousAccommodation = service.getAllAccom(accomNumber);
+            String previousFilePath = previousAccommodation.getImg();
+
             if (file != null && !file.isEmpty()) {
-                // 새 파일을 업로드하면 이전 파일을 대체합니다.
-                String path = request.getSession().getServletContext().getRealPath("/upload");
-                String root = path + "\\" + "uploadFiles";
-
-                File fileCheck = new File(root);
-
-                if (!fileCheck.exists()) {
-                    fileCheck.mkdirs();
-                }
-
-                // 업로드된 파일을 저장할 파일명 생성
                 String originalFileName = file.getOriginalFilename();
                 String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                String saveFileName = UUID.randomUUID().toString() + extension;
+                saveFileName = UUID.randomUUID().toString() + extension;
 
-                // 파일 저장 경로 설정
-                String filePath = root + "\\" + saveFileName;
-
-                // 파일 저장
+                filePath = root + "\\" + saveFileName;
                 file.transferTo(new File(filePath));
-
-                // 숙소 정보의 img 필드를 새 파일 경로로 업데이트
-                dto.setImg(filePath);
-            }
-
-            // 숙소 정보를 데이터베이스에서 업데이트하는 서비스 호출
-            int count = service.updateAccom(dto);
-
-            if (count > 0) {
-                // 숙소 정보가 성공적으로 업데이트되면 200 OK 상태 코드와 메시지 반환
-                return ResponseEntity.ok("Accommodation updated successfully!");
             } else {
-                // 숙소 정보 업데이트에 실패하면 500 Internal Server Error 상태 코드와 메시지 반환
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update accommodation.");
+                // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
+                filePath = previousFilePath;
             }
+
+            // AccommodationDto 객체를 생성하여 숙소 정보 업데이트
+            AccommodationDto dto = new AccommodationDto();
+            dto.setAccomNumber(accomNumber);
+            dto.setId(id);
+            dto.setAccomName(accomName);
+            dto.setAccomAddress(accomAddress);
+            dto.setTeleNumber(teleNumber);
+            dto.setAccomDetails(accomDetails);
+            dto.setCheckIn(checkIn);
+            dto.setCheckOut(checkOut);
+
+            // 파일을 업로드한 경우에만 이미지 경로 설정
+            if (file != null && !file.isEmpty()) {
+                dto.setImg(filePath);
+            } else {
+                // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
+                dto.setImg(previousFilePath);
+            }
+
+            // FacilityDto 객체를 생성하여 시설 정보 업데이트
+            FacilityDto facilityDto = new FacilityDto();
+            facilityDto.setAccomNumber(accomNumber);
+            facilityDto.setNearbySea(nearbySea);
+            facilityDto.setOceanView(oceanView);
+            facilityDto.setParkingAvailable(parkingAvailable);
+            facilityDto.setPool(pool);
+            facilityDto.setSpa(spa);
+            facilityDto.setCouplePc(couplePc);
+            facilityDto.setWifi(wifi);
+            facilityDto.setFamily(family);
+            facilityDto.setTwinBed(twinBed);
+            facilityDto.setBarbecue(barbecue);
+            facilityDto.setNoSmoking(noSmoking);
+            facilityDto.setLuggageStorage(luggageStorage);
+            facilityDto.setFreeMovieOtt(freeMovieOtt);
+
+            // AccommodationService를 호출하여 숙소 정보 및 시설 정보 업데이트
+            service.updateAccommodationAndFacility(dto, facilityDto);
+
+            System.out.println(dto.toString());
+            System.out.println(facilityDto.toString());
+
+            // 숙소 업데이트 성공 시
+            return ResponseEntity.ok("숙소 업데이트 성공");
         } catch (Exception e) {
             e.printStackTrace();
-            // 파일 업로드 또는 업데이트 중에 예외가 발생한 경우 500 Internal Server Error 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update accommodation.");
+            System.out.println("파일 업로드 실패");
+
+            // 업로드 실패 시 파일 삭제
+            if (!saveFileName.isEmpty()) {
+                new File(root + "\\" + saveFileName).delete();
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("숙소 업데이트 실패");
         }
     }
 }
