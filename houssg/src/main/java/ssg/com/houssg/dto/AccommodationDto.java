@@ -3,7 +3,6 @@ package ssg.com.houssg.dto;
 import java.util.List;
 
 public class AccommodationDto {
-
 	private int accomNumber;
 	private String accomName;
 	private String accomAddress;
@@ -12,14 +11,14 @@ public class AccommodationDto {
 	private String accomDetails;
 	private String checkIn;
 	private String checkOut;
-	private int businessNumber;
+	private String businessNumber;
 	private String id;
 	private int auth;
 	private int approvalRequest;
 	private int deletionRequest;
 	private String zipCode;
 	private String img;
-	private List<FacilityDto> facilityDtos;
+	private List<FacilityDto> facilities;
 	
 	public int getAccomNumber() {
 		return accomNumber;
@@ -69,10 +68,10 @@ public class AccommodationDto {
 	public void setCheckOut(String checkOut) {
 		this.checkOut = checkOut;
 	}
-	public int getBusinessNumber() {
+	public String getBusinessNumber() {
 		return businessNumber;
 	}
-	public void setBusinessNumber(int businessNumber) {
+	public void setBusinessNumber(String businessNumber) {
 		this.businessNumber = businessNumber;
 	}
 	public String getId() {
@@ -99,10 +98,10 @@ public class AccommodationDto {
 	public void setDeletionRequest(int deletionRequest) {
 		this.deletionRequest = deletionRequest;
 	}
-	public String getZip_code() {
+	public String getZipCode() {
 		return zipCode;
 	}
-	public void setZip_code(String zipCode) {
+	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
 	public String getImg() {
@@ -111,18 +110,12 @@ public class AccommodationDto {
 	public void setImg(String img) {
 		this.img = img;
 	}
-	public List<FacilityDto> getFacilityDtos() {
-        return facilityDtos;
-    }
 
-    public void setFacilityDtos(List<FacilityDto> facilityDtos) {
-        this.facilityDtos = facilityDtos;
-    }
 	public AccommodationDto() {
 		super();
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
-			String accomCategory, String accomDetails, String checkIn, String checkOut, int businessNumber, String id,
+			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber, String id,
 			int auth, int approvalRequest, int deletionRequest, String zipCode, String img) {
 		super();
 		this.accomNumber = accomNumber;
@@ -140,6 +133,15 @@ public class AccommodationDto {
 		this.deletionRequest = deletionRequest;
 		this.zipCode = zipCode;
 		this.img = img;
+	}
+	@Override
+	public String toString() {
+		return "AccommodationDto [accomNumber=" + accomNumber + ", accomName=" + accomName + ", accomAddress="
+				+ accomAddress + ", teleNumber=" + teleNumber + ", accomCategory=" + accomCategory + ", accomDetails="
+				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
+				+ businessNumber + ", id=" + id + ", auth=" + auth + ", approvalRequest=" + approvalRequest
+				+ ", deletionRequest=" + deletionRequest + ", zipCode=" + zipCode + ", img=" + img + ", facilities="
+				+ facilities + "]";
 	}
 	
 	

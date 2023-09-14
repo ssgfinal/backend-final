@@ -2,7 +2,7 @@ package ssg.com.houssg.dto;
 
 public class FacilityDto {
 
-	private int accomNumer;
+	private int accomNumber;
 	private boolean nearbySea;
 	private boolean oceanView;
 	private boolean parkingAvailable;
@@ -17,11 +17,11 @@ public class FacilityDto {
 	private boolean luggageStorage;
 	private boolean freeMovieOtt;
     
-	public int getAccomNumer() {
-		return accomNumer;
+	public int getAccomNumber() {
+		return accomNumber;
 	}
-	public void setAccomNumer(int accomNumer) {
-		this.accomNumer = accomNumer;
+	public void setAccomNumber(int accomNumber) {
+		this.accomNumber = accomNumber;
 	}
 	public boolean isNearbySea() {
 		return nearbySea;
@@ -104,11 +104,11 @@ public class FacilityDto {
 	public FacilityDto() {
 		super();
 	}
-	public FacilityDto(int accomNumer, boolean nearbySea, boolean oceanView, boolean parkingAvailable, boolean pool,
+	public FacilityDto(int accomNumber, boolean nearbySea, boolean oceanView, boolean parkingAvailable, boolean pool,
 			boolean spa, boolean couplePc, boolean wifi, boolean family, boolean twinBed, boolean barbecue,
 			boolean noSmoking, boolean luggageStorage, boolean freeMovieOtt) {
 		super();
-		this.accomNumer = accomNumer;
+		this.accomNumber = accomNumber;
 		this.nearbySea = nearbySea;
 		this.oceanView = oceanView;
 		this.parkingAvailable = parkingAvailable;
@@ -122,6 +122,14 @@ public class FacilityDto {
 		this.noSmoking = noSmoking;
 		this.luggageStorage = luggageStorage;
 		this.freeMovieOtt = freeMovieOtt;
+	}
+	@Override
+	public String toString() {
+		return "FacilityDto [accomNumber=" + accomNumber + ", nearbySea=" + nearbySea + ", oceanView=" + oceanView
+				+ ", parkingAvailable=" + parkingAvailable + ", pool=" + pool + ", spa=" + spa + ", couplePc="
+				+ couplePc + ", wifi=" + wifi + ", family=" + family + ", twinBed=" + twinBed + ", barbecue=" + barbecue
+				+ ", noSmoking=" + noSmoking + ", luggageStorage=" + luggageStorage + ", freeMovieOtt=" + freeMovieOtt
+				+ "]";
 	}
 	
 }
