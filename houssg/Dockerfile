@@ -12,7 +12,6 @@ COPY . .
 RUN mvn clean package  -Dmaven.test.skip
 
 FROM openjdk:21-ea-17-jdk
-
 WORKDIR /app
 
 COPY --from=builder /app/target/houssg-0.0.1-SNAPSHOT.jar /app/app.jar
