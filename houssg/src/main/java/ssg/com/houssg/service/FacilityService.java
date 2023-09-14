@@ -14,9 +14,13 @@ import ssg.com.houssg.dto.FacilityDto;
 public class FacilityService {
 
 	@Autowired
-	FacilityDao dao;
-	
-	public List<FacilityDto> addFicility(FacilityDto dto2) {
-		return dao.addFicility(dto2);
-	}
+    private FacilityDao dao;
+
+    public void insertFacility(FacilityDto facilityDto) {
+        dao.insertFacility(facilityDto);
+    }
+    
+    public void updateFacility(FacilityDto facilityDto) {
+    	dao.updateFacility(facilityDto);
+    }
 }

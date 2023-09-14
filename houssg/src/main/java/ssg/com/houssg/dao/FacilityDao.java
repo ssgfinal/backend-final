@@ -10,6 +10,8 @@ import ssg.com.houssg.dto.FacilityDto;
 @Mapper
 @Repository
 public interface FacilityDao  {
-
-	 List<FacilityDto> addFicility(FacilityDto dto2);
+	
+	 void insertFacility(FacilityDto dto);
+	 
+	 void updateFacility(FacilityDto facilityDto);
 }

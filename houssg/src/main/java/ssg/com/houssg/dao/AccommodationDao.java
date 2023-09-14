@@ -14,10 +14,15 @@ public interface AccommodationDao {
 
 	List<AccommodationDto> getAddressSearch(AccommodationParam param);
 	
-	boolean addAccom (AccommodationDto dto);
-	
 	List<AccommodationDto> getMyAccom(String id);
 	
 	int updateAccom(AccommodationDto dto);
+	
+	int deleteAccommodationById(int accommodationId);
 
+	void insertAccommodation(AccommodationDto dto);
+	
+	void updateAccommodation(AccommodationDto accommodationDto);
+	
+	AccommodationDto getAllAccom(int accomNumber);
 }
