@@ -320,4 +320,34 @@ public class AccommodationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("숙소 업데이트 실패");
         }
     }
+    @PatchMapping("auth/accom")
+    public ResponseEntity<String> updateRequest(@RequestParam int accomNumber) {
+        System.out.println("삭제요청합니다");
+        int count = service.updateRequest(accomNumber);
+
+        if (count > 0) {
+            // 업데이트가 성공했을 경우 200 OK와 응답 메시지 반환
+            String responseMessage = "숙소 삭제 요청이 수락되었습니다.";
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        } else {
+            // 업데이트가 실패했을 경우 400 Bad Request와 응답 메시지 반환
+            String responseMessage = "숙소 삭제 요청을 처리하는 동안 문제가 발생했습니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMessage);
+        }
+    }
+    @PatchMapping("auth/accom/del")
+    public ResponseEntity<String> deleteRequest(@RequestParam int accomNumber) {
+        System.out.println("삭제 요청 처리 완료");
+        int count = service.deleteRequest();
+
+        if (count > 0) {
+            // 삭제가 성공한 경우 200 OK와 응답 메시지 반환
+            String responseMessage = "요청된 항목이 삭제되었습니다.";
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        } else {
+            // 삭제가 실패한 경우 400 Bad Request와 응답 메시지 반환
+            String responseMessage = "요청된 항목 삭제 중에 문제가 발생했습니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMessage);
+        }
+    }
 }

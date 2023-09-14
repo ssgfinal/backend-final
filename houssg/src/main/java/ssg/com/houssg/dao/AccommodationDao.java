@@ -25,4 +25,8 @@ public interface AccommodationDao {
 	void updateAccommodation(AccommodationDto accommodationDto);
 	
 	AccommodationDto getAllAccom(int accomNumber);
+	
+	int updateRequest(int accomNumber);
+	
+	int deleteRequest();
 }
