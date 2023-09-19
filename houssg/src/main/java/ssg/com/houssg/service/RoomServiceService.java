@@ -1,0 +1,22 @@
+package ssg.com.houssg.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ssg.com.houssg.dao.RoomServiceDao;
+import ssg.com.houssg.dto.RoomDto;
+import ssg.com.houssg.dto.RoomServiceDto;
+@Service
+@Transactional
+public class RoomServiceService {
+
+	@Autowired
+	RoomServiceDao dao;
+
+	public int insertRoomService(RoomServiceDto dto) {
+		// TODO Auto-generated method stub
+		return dao.insertRoomService(dto);
+	}
+
+}
