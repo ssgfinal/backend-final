@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ssg.com.houssg.dao.RoomDao">
 	<insert id="addRoom" parameterType="ssg.com.houssg.dto.RoomDto">
-    	INSERT INTO rooms (room_category, room_details, room_price, room_availability, accom_number, room_use)
-    	VALUES (#{room_category}, #{room_details}, #{room_price}, #{room_availability}, #{accom_number}, #{room_use})
-    	<selectKey keyProperty="room_number" resultType="int" order="AFTER">
+    	INSERT INTO rooms (room_category, room_details, room_price, room_availability, accom_number)
+    	VALUES (#{roomCategory}, #{roomDetails}, #{roomPrice}, #{roomAvailability}, #{accomNumber})
+    	<selectKey keyProperty="roomNumber" resultType="int" order="AFTER">
     		SELECT LAST_INSERT_ID()
     	</selectKey>
 	</insert>

@@ -37,4 +37,7 @@ public class ReviewService {
 	public List<ReviewDto> getAuthReview(){
 		return dao.getAuthReview();
 	}
+	public int updateComment(ReviewDto dto) {
+		return dao.updateComment(dto);
+	}
 }
