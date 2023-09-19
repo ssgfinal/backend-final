@@ -53,6 +53,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
 houssg/src/main/resources/application.properties
 houssg/db/.my-healthcheck.cnf
 houssg/db/aria_log.00000001
@@ -258,7 +259,5 @@ houssg/db/sys/x@0024wait_classes_global_by_latency.frm
 houssg/db/sys/x@0024waits_by_host_by_latency.frm
 houssg/db/sys/x@0024waits_by_user_by_latency.frm
 houssg/db/sys/x@0024waits_global_by_latency.frm
-houssg/src/main/java/ssg/com/houssg/dao/RoomServiceDao.java
-houssg/src/main/java/ssg/com/houssg/dto/RoomServiceDto.java
-houssg/src/main/java/ssg/com/houssg/service/RoomServiceService.java
-houssg/src/main/resources/sqls/RoomService.xml
+
+
