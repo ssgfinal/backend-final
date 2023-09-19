@@ -92,20 +92,32 @@ public class JwtTokenProvider {
 		return claims.get("auth", Integer.class); // "auth" 클레임 추출
 	}
 
-	// 토큰 유효성 검증
+	// 엑세스 토큰의 유효성을 검증하고 만료 여부를 판단
 	public boolean isAccessTokenValid(String token) {
 		try {
-			Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build().parseClaimsJws(token);
-			return true;
+			// 엑세스 토큰 파싱
+			Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
+					.parseClaimsJws(token).getBody();
+
+			// 토큰의 만료 일시 가져오기
+			Date expiration = claims.getExpiration();
+
+			// 현재 시간과 비교하여 만료 여부 판단
+			Date now = new Date();
+			return expiration != null && !expiration.before(now);
 		} catch (JwtException | IllegalArgumentException e) {
-			return false;
+			return false; // 토큰 파싱 오류 또는 유효하지 않은 토큰인 경우
 		}
 	}
 
+	// 리프레시 토큰 유효성 검증 및 만료 확인ㄴ
 	public boolean isRefreshTokenValid(String token) {
 		try {
-			Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build().parseClaimsJws(token);
-			return true;
+			Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
+					.parseClaimsJws(token);
+			Date expiration = claims.getBody().getExpiration();
+
+			return expiration.after(new Date()); // 리프레시 토큰이 만료되었는지 확인
 		} catch (JwtException | IllegalArgumentException e) {
 			return false;
 		}

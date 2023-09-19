@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,7 @@ import ssg.com.houssg.util.SmsUtil;
 import ssg.com.houssg.util.UserUtil;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("user")
 public class UserController {
 
 	@Autowired
@@ -42,7 +43,7 @@ public class UserController {
 	private SmsUtil smsUtil;
 
 	// 로그인
-	@PostMapping("login")
+	@GetMapping("login")
 	public ResponseEntity<?> login(UserDto user) {
 		System.out.println("UserController login(UserDto user) " + new Date());
 		System.out.println("클라이언트로 부터 받은 데이터 : " + user.toString());
