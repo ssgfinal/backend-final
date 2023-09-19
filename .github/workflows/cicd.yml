@@ -22,7 +22,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./houssg
-          file: ./houssg/Dockerfile.prod
+          file: ./houssg/Dockerfile
           platforms: linux/amd64
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/houssg-backend:latest
@@ -40,6 +40,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/houssg-backend:latest  
             docker rm -f houssg-backend
             docker run -d \
+                --name houssg-backend \
                 -p 3200:3200 \
                 -e DB_USER=${{ secrets.DB_USER }} \
                 -e DB_HOST=db \
