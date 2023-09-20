@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,12 +18,13 @@ import ssg.com.houssg.dto.RequestDto;
 import ssg.com.houssg.dto.SmsResponseDto;
 import ssg.com.houssg.dto.UserDto;
 import ssg.com.houssg.security.JwtTokenProvider;
-import ssg.com.houssg.service.TokenService;
+import ssg.com.houssg.service.TokenSaveService;
 import ssg.com.houssg.service.UserService;
 import ssg.com.houssg.util.SmsUtil;
 import ssg.com.houssg.util.UserUtil;
 
 @RestController
+@RequestMapping("user")
 public class UserController {
 
 	@Autowired
@@ -31,7 +34,7 @@ public class UserController {
 	private JwtTokenProvider jwtTokenProvider;
 
 	@Autowired
-	private TokenService tokenService;
+	private TokenSaveService tokenService;
 
 	@Autowired
 	private UserUtil userUtil;
@@ -40,7 +43,7 @@ public class UserController {
 	private SmsUtil smsUtil;
 
 	// 로그인
-	@PostMapping("login")
+	@GetMapping("login")
 	public ResponseEntity<?> login(UserDto user) {
 		System.out.println("UserController login(UserDto user) " + new Date());
 		System.out.println("클라이언트로 부터 받은 데이터 : " + user.toString());
@@ -58,8 +61,7 @@ public class UserController {
 			System.out.println("생성된 리프레시 토큰: " + refreshToken);
 			HttpHeaders headers = new HttpHeaders();
 	        headers.add("Authorization", "Bearer " + token);
-	        headers.add("Refresh-Token", refreshToken);
-			
+	        tokenService.storeRefreshToken(refreshToken, user);
 			return ResponseEntity.ok().headers(headers)
 		            .body("로그인 성공"); // 토큰 반환
 		}
@@ -72,14 +74,8 @@ public class UserController {
 	public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
 		String token = authorizationHeader.replace("Bearer ", "");
 
-		if (tokenService.isTokenBlacklisted(token)) {
-			// 이미 블랙리스트에 있는 토큰인 경우 처리
-			return ResponseEntity.badRequest().body("이미 로그아웃된 토큰입니다.");
-		}
-
-		// 토큰을 블랙리스트에 추가
-		tokenService.blacklistToken(token);
-
+		// 리프레시 토큰을 Redis에서 삭제
+	    tokenService.removeRefreshToken(token);
 		return ResponseEntity.ok("로그아웃되었습니다.");
 	}
 
