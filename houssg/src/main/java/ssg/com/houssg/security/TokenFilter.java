@@ -1,6 +1,8 @@
 package ssg.com.houssg.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +19,6 @@ import ssg.com.houssg.service.TokenSaveService;
 import java.io.IOException;
 import java.util.List;
 
-@Component
 public class TokenFilter extends OncePerRequestFilter {
 
 	@Autowired
@@ -25,10 +26,14 @@ public class TokenFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private TokenSaveService tokenService;
+	
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+		
+	    System.out.println("필터 써진다.");
+
 		// HTTP 요청 헤더에서 엑세스 토큰 추출
 		String accessToken = extractAccessTokenFromRequest(request);
 
@@ -36,11 +41,11 @@ public class TokenFilter extends OncePerRequestFilter {
 
 			// 권한 부여 --- 추가한거 !!
 
-//			String userId = tokenProvider.getUserIdFromToken(accessToken);
-//
-//			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
-//					null, List.of(new SimpleGrantedAuthority("직접 정하기")));
-//			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+			String userId = tokenProvider.getUserIdFromToken(accessToken);
+
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
+					null, List.of(new SimpleGrantedAuthority("직접 정하기")));
+			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
 			filterChain.doFilter(request, response); // 유효한 액세스 토큰이면 요청을 그대로 전달
 		} else {

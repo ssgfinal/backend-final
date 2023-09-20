@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import ssg.com.houssg.dto.UserDto;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
