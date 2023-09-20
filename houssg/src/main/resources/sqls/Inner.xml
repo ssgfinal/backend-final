@@ -4,7 +4,14 @@
 <mapper namespace="ssg.com.houssg.dao.InnerDao">
 	<insert id="insertInnerView" parameterType="ssg.com.houssg.dto.InnerDto">
         INSERT INTO innerview (room_number, img1, img2, img3, img4, img5, img6, img7, img8, img9, img10)
-        VALUES (#{room_number}, #{img1}, #{img2}, #{img3}, #{img4}, #{img5}, #{img6}, #{img7}, #{img8}, #{img9}, #{img10})
+        VALUES (#{roomNumber}, #{img1}, #{img2}, #{img3}, #{img4}, #{img5}, #{img6}, #{img7}, #{img8}, #{img9}, #{img10})
     </insert>
+    
+	<update id="updateInnerView" parameterType="ssg.com.houssg.dto.InnerDto">
+	    UPDATE innerview
+	    SET img1 = #{img1}, img2 = #{img2}, img3 = #{img3}, img4 = #{img4}, img5 = #{img5}, img6 = #{img6}, img7 = #{img7}, img8 = #{img8}, img9 = #{img9}, img10 = #{img10}
+	    WHERE room_number = #{roomNumber}
+	</update>
+
 
 </mapper>

@@ -21,4 +21,9 @@ public class InnerService {
 		System.out.println("객실이미지등록");
         dao.insertInnerView(dto);            
     }
+	
+	public void updateInnerView(InnerDto innerDto) {
+        System.out.println("객실이미지업데이트");
+		dao.updateInnerView(innerDto);
+    }
 }

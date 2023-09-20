@@ -10,4 +10,6 @@ import ssg.com.houssg.dto.RoomServiceDto;
 public interface RoomServiceDao {
 
 	int insertRoomService(RoomServiceDto dto);
+	
+	int updateRoomService(RoomServiceDto roomServiceDto);
 }

@@ -20,4 +20,6 @@ public interface RoomDao {
 	List<RoomDto> choiceAccom(int roomNumber);
 	
 	int getRoomNumberFromDatabase();
+	
+	int updateRoom(RoomDto roomDto);
 }

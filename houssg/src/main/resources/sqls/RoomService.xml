@@ -5,4 +5,10 @@
         INSERT INTO room_service (room_number, city_view, ocean_view, spa, pc, non_smoking, double_bed, queen_bed, king_bed, netflix)
         VALUES (#{roomNumber}, #{cityView}, #{oceanView}, #{spa}, #{pc}, #{nonSmoking}, #{doubleBed}, #{queenBed}, #{kingBed}, #{netflix})
     </insert>
+    
+    <update id="updateRoomService" parameterType="ssg.com.houssg.dto.RoomServiceDto">
+	    UPDATE room_service
+	    SET city_view = #{cityView}, ocean_view = #{oceanView}, spa = #{spa}, pc = #{pc}, non_smoking = #{nonSmoking}, double_bed = #{doubleBed}, queen_bed = #{queenBed}, king_bed = #{kingBed}, netflix = #{netflix}
+	    WHERE room_number = #{roomNumber}
+	</update>
 </mapper>
