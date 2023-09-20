@@ -131,13 +131,10 @@ CREATE TABLE innerview (
 CREATE TABLE facility (
     accom_number INT NOT NULL,
     nearby_sea BOOLEAN,
-    ocean_view BOOLEAN,
     parking_available BOOLEAN,
     pool BOOLEAN,
     spa BOOLEAN,
-    couple_pc BOOLEAN,
     wifi BOOLEAN,
-    family BOOLEAN,
     twin_bed BOOLEAN,
     barbecue BOOLEAN,
     no_smoking BOOLEAN,
@@ -150,12 +147,10 @@ CREATE TABLE room_service (
     room_number INT NOT NULL,
     city_view BOOLEAN,
     ocean_view BOOLEAN,
-    spa BOOLEAN,
     pc BOOLEAN,
-    non_smoking BOOLEAN,
+    no_smoking BOOLEAN,
     double_bed BOOLEAN,
     queen_bed BOOLEAN,
     king_bed BOOLEAN,
-    netflix BOOLEAN,
     FOREIGN KEY (room_number) REFERENCES rooms(room_number)
 );

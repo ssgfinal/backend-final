@@ -16,4 +16,6 @@ public interface InnerDao {
 
 	void storeFile(MultipartFile file);
 	
+	void updateInnerView(InnerDto innerDto);
+	
 }

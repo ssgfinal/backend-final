@@ -2,7 +2,7 @@ package ssg.com.houssg.dto;
 
 public class InnerDto {
 
-	private int room_number;
+	private int roomNumber;
 	private String img1;
 	private String img2;
 	private String img3;
@@ -13,11 +13,13 @@ public class InnerDto {
 	private String img8;
 	private String img9;
 	private String img10;
-	public int getRoom_number() {
-		return room_number;
+	
+
+	public int getRoomNumber() {
+		return roomNumber;
 	}
-	public void setRoom_number(int room_number) {
-		this.room_number = room_number;
+	public void setRoomNumber(int roomNumber) {
+		this.roomNumber = roomNumber;
 	}
 	public String getImg1() {
 		return img1;
@@ -82,10 +84,10 @@ public class InnerDto {
 	public InnerDto() {
 		super();
 	}
-	public InnerDto(int room_number, String img1, String img2, String img3, String img4, String img5, String img6,
+	public InnerDto(int roomNumber, String img1, String img2, String img3, String img4, String img5, String img6,
 			String img7, String img8, String img9, String img10) {
 		super();
-		this.room_number = room_number;
+		this.roomNumber = roomNumber;
 		this.img1 = img1;
 		this.img2 = img2;
 		this.img3 = img3;
@@ -99,11 +101,9 @@ public class InnerDto {
 	}
 	@Override
 	public String toString() {
-		return "InnerDto [room_number=" + room_number + ", img1=" + img1 + ", img2=" + img2 + ", img3=" + img3
-				+ ", img4=" + img4 + ", img5=" + img5 + ", img6=" + img6 + ", img7=" + img7 + ", img8=" + img8
-				+ ", img9=" + img9 + ", img10=" + img10 + "]";
+		return "InnerDto [roomNumber=" + roomNumber + ", img1=" + img1 + ", img2=" + img2 + ", img3=" + img3 + ", img4="
+				+ img4 + ", img5=" + img5 + ", img6=" + img6 + ", img7=" + img7 + ", img8=" + img8 + ", img9=" + img9
+				+ ", img10=" + img10 + "]";
 	}
-
 	
-
 }

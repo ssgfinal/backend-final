@@ -15,8 +15,10 @@ public class RoomServiceService {
 	RoomServiceDao dao;
 
 	public int insertRoomService(RoomServiceDto dto) {
-		// TODO Auto-generated method stub
 		return dao.insertRoomService(dto);
 	}
 
+	public int updateRoomService(RoomServiceDto roomServiceDto) {
+		return dao.updateRoomService(roomServiceDto);
+	}
 }
