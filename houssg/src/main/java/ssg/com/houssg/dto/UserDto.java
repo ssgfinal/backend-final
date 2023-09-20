@@ -1,7 +1,5 @@
 package ssg.com.houssg.dto;
 
-import java.util.List;
-
 
 public class UserDto {
 
