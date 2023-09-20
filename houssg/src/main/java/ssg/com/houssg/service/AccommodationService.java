@@ -62,4 +62,11 @@ public class AccommodationService {
     public AccommodationDto getAllAccom(int accomNumber){
     	return dao.getAllAccom(accomNumber);
     }
+    
+    public int updateRequest(int accomNumber) {
+    	return dao.updateRequest(accomNumber);
+    }
+    public int deleteRequest() {
+    	return dao.deleteRequest();
+    }
 }

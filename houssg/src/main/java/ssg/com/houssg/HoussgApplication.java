@@ -34,6 +34,7 @@ public class HoussgApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(HoussgApplication.class, args);
+		
 	}
 
 }

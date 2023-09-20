@@ -22,7 +22,7 @@
 	<select id="getMyAccom" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.AccommodationDto">
 		SELECT *
 		FROM accommodation
-		WHERE id=#{id}
+		WHERE id=#{id} and deletion_request = 0
 	</select>
 	
 	<update id="updateAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
@@ -42,9 +42,20 @@
 	<select id="getAllAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
 		SELECT *
 		FROM accommodation
-		WHERE accom_number = #{accomNumber}
+		WHERE accom_number = #{accomNumber} and deletion_request = 0
 	</select>
 	
+	<update id="updateRequest" parameterType="int">
+		UPDATE accommodation
+		SET approval_request = 1
+		WHERE accom_number = #{accomNumber} and approval_request = 0
+	</update>
+	
+	<update id="deleteRequest">
+		UPDATE accommodation
+		SET deletion_request = 1
+		WHERE approval_request = 1
+	</update>
     
 </mapper>
 

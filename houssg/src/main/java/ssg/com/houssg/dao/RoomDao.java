@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import ssg.com.houssg.dto.RoomDto;
+import ssg.com.houssg.dto.RoomServiceDto;
 
 
 
@@ -17,4 +18,6 @@ public interface RoomDao {
 	int addRoom (RoomDto dto);
 	
 	List<RoomDto> choiceAccom(int roomNumber);
+	
+	int getRoomNumberFromDatabase();
 }
