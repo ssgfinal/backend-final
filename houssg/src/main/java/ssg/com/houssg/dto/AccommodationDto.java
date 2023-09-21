@@ -18,6 +18,7 @@ public class AccommodationDto {
 	private int deletionRequest;
 	private String zipCode;
 	private String img;
+	private int addRequest;
 	private List<FacilityDto> facilities;
 	
 	public int getAccomNumber() {
@@ -111,12 +112,18 @@ public class AccommodationDto {
 		this.img = img;
 	}
 
+	public int getAddRequest() {
+		return addRequest;
+	}
+	public void setAddRequest(int addRequest) {
+		this.addRequest = addRequest;
+	}
 	public AccommodationDto() {
 		super();
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber, String id,
-			int auth, int approvalRequest, int deletionRequest, String zipCode, String img) {
+			int auth, int approvalRequest, int deletionRequest, String zipCode, String img,int addRequest) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -133,6 +140,7 @@ public class AccommodationDto {
 		this.deletionRequest = deletionRequest;
 		this.zipCode = zipCode;
 		this.img = img;
+		this.addRequest = addRequest;
 	}
 	@Override
 	public String toString() {
@@ -140,9 +148,10 @@ public class AccommodationDto {
 				+ accomAddress + ", teleNumber=" + teleNumber + ", accomCategory=" + accomCategory + ", accomDetails="
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
 				+ businessNumber + ", id=" + id + ", auth=" + auth + ", approvalRequest=" + approvalRequest
-				+ ", deletionRequest=" + deletionRequest + ", zipCode=" + zipCode + ", img=" + img + ", facilities="
-				+ facilities + "]";
+				+ ", deletionRequest=" + deletionRequest + ", zipCode=" + zipCode + ", img=" + img + ", addRequest="
+				+ addRequest + ", facilities=" + facilities + "]";
 	}
+	
 	
 	
 }

@@ -3,21 +3,18 @@
 
 <mapper namespace="ssg.com.houssg.dao.FacilityDao">
 	<insert id="insertFacility" parameterType="ssg.com.houssg.dto.FacilityDto">
-        INSERT INTO facility (accom_number, nearby_sea, ocean_view, parking_available, pool, spa, couple_pc, wifi, family, twin_bed, barbecue, no_smoking, luggage_storage, free_movie_ott)
-        VALUES (#{accomNumber}, #{nearbySea}, #{oceanView}, #{parkingAvailable}, #{pool}, #{spa}, #{couplePc}, #{wifi}, #{family}, #{twinBed}, #{barbecue}, #{noSmoking}, #{luggageStorage}, #{freeMovieOtt})
+        INSERT INTO facility (accom_number, nearby_sea, parking_available, pool, spa, wifi, twin_bed, barbecue, no_smoking, luggage_storage, free_movie_ott)
+        VALUES (#{accomNumber}, #{nearbySea}, #{parkingAvailable}, #{pool}, #{spa}, #{wifi}, #{twinBed}, #{barbecue}, #{noSmoking}, #{luggageStorage}, #{freeMovieOtt})
     </insert>
 
 	<update id="updateFacility" parameterType="ssg.com.houssg.dto.FacilityDto">
         UPDATE facility
         SET
             nearby_sea = #{nearbySea},
-            ocean_view = #{oceanView},
             parking_available = #{parkingAvailable},
             pool = #{pool},
             spa = #{spa},
-            couple_pc = #{couplePc},
             wifi = #{wifi},
-            family = #{family},
             twin_bed = #{twinBed},
             barbecue = #{barbecue},
             no_smoking = #{noSmoking},

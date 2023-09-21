@@ -8,6 +8,7 @@ public class ReviewDto {
 	private String reviewCreationTime;
 	private String reviewComment;
 	private String reviewCommentTime;
+	private String managerId;
 	private int reportStatus;
 	private String id;
 	private int reservationNumber;
@@ -53,6 +54,12 @@ public class ReviewDto {
 	}
 	public void setReviewCommentTime(String reviewCommentTime) {
 		this.reviewCommentTime = reviewCommentTime;
+	}
+	public String getManagerId() {
+		return managerId;
+	}
+	public void setManagerId(String managerId) {
+		this.managerId = managerId;
 	}
 	public int getReportStatus() {
 		return reportStatus;
@@ -113,8 +120,9 @@ public class ReviewDto {
 		super();
 	}
 	public ReviewDto(int reviewNumber, String reviewContent, double reviewRating, String reviewCreationTime,
-			String reviewComment, String reviewCommentTime, int reportStatus, String id, int reservationNumber, int roomNumber, int accomNumber,
-			String img) {
+			String reviewComment, String reviewCommentTime, String managerId, int reportStatus, String id,
+			int reservationNumber, int roomNumber, int accomNumber, String img, String roomCategory, String accomName,
+			String nickname) {
 		super();
 		this.reviewNumber = reviewNumber;
 		this.reviewContent = reviewContent;
@@ -122,15 +130,27 @@ public class ReviewDto {
 		this.reviewCreationTime = reviewCreationTime;
 		this.reviewComment = reviewComment;
 		this.reviewCommentTime = reviewCommentTime;
+		this.managerId = managerId;
 		this.reportStatus = reportStatus;
 		this.id = id;
 		this.reservationNumber = reservationNumber;
 		this.roomNumber = roomNumber;
 		this.accomNumber = accomNumber;
 		this.img = img;
+		this.roomCategory = roomCategory;
+		this.accomName = accomName;
+		this.nickname = nickname;
 	}
 	
-	
-	
+
+	@Override
+	public String toString() {
+		return "ReviewDto [reviewNumber=" + reviewNumber + ", reviewContent=" + reviewContent + ", reviewRating="
+				+ reviewRating + ", reviewCreationTime=" + reviewCreationTime + ", reviewComment=" + reviewComment
+				+ ", reviewCommentTime=" + reviewCommentTime + ", managerId=" + managerId + ", reportStatus="
+				+ reportStatus + ", id=" + id + ", reservationNumber=" + reservationNumber + ", roomNumber="
+				+ roomNumber + ", accomNumber=" + accomNumber + ", img=" + img + ", roomCategory=" + roomCategory
+				+ ", accomName=" + accomName + ", nickname=" + nickname + "]";
+	}
 	
 }

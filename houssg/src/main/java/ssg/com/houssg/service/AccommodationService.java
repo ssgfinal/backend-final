@@ -72,4 +72,13 @@ public class AccommodationService {
     public List<AccommodationDto> getAllAccom(){
     	return dao.getAllAccom();
     }
+    public int accomApproval(int accomNumber) {
+    	return dao.accomApproval(accomNumber);
+    }
+    public int accomApprovalX(int accomNumber) {
+    	return dao.accomApprovalX(accomNumber);
+    }
+    public List<AccommodationDto> getApprovalAccom(){
+    	return dao.getApprovalAccom();
+    }
 }
