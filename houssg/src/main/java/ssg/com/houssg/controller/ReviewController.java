@@ -122,7 +122,66 @@ public class ReviewController {
 	    }
 	}
 	// 숙소에 관한 리뷰
-	@PostMapping("/comment/add")
+	@PostMapping("review/get/all")
+		public ResponseEntity<List<ReviewDto>> getAllReview(@RequestParam int roomNumber, @RequestParam int accomNumber) {
+		    System.out.println("숙소에 관한 리뷰 보기");
+		     
+		    List<ReviewDto> reviews = service.getAllReview(roomNumber, accomNumber);
+		     
+		    if (reviews.isEmpty()) {
+		        // 리뷰가 없는 경우
+		        return ResponseEntity.noContent().build(); // HTTP 상태 코드 204 No Content 반환
+		    } else {
+		        // 리뷰를 찾은 경우
+		        return ResponseEntity.ok(reviews); // 리뷰 목록 반환
+		    }
+		}
+	@PatchMapping("review/report")
+	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber, @RequestParam int roomNumber, @RequestParam int accomNumber) {
+		    System.out.println("리뷰 신고하기");
+		    
+		    // ReviewDto 객체 생성 및 필드 설정
+		    ReviewDto dto = new ReviewDto();
+		    dto.setReviewNumber(reviewNumber);
+		    dto.setRoomNumber(roomNumber);
+		    dto.setAccomNumber(accomNumber);
+		    
+		    int count = service.updateReview(dto);
+		    
+		    if (count == 0) {
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO");
+		    }
+		    
+		    return ResponseEntity.ok("YES");
+		}
+	@DeleteMapping("review/delete")
+	public ResponseEntity<String> deleteReview(@RequestParam int reviewNumber) {
+		    System.out.println("리뷰 삭제하기");
+		    
+		    int count = service.deleteReview(reviewNumber);
+		    
+		    if (count == 0) {
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO");
+		    }
+		    
+		    return ResponseEntity.ok("YES");
+		}
+	@PostMapping("auth/review")
+	public ResponseEntity<List<ReviewDto>> getAuthReview() {
+		    System.out.println("신고받은 리뷰 보기");
+		    
+		    List<ReviewDto> reviews = service.getAuthReview();
+		    
+		    if (reviews != null && !reviews.isEmpty()) {
+		        // 리뷰 목록이 비어 있지 않으면 200 OK 응답과 함께 목록을 반환
+		        return ResponseEntity.ok(reviews);
+		    } else {
+		        // 리뷰 목록이 비어 있으면 404 Not Found 응답 반환
+		        return ResponseEntity.notFound().build();
+		    }
+		}
+	// 답글 추가
+	@PostMapping("comment/add")
 	public ResponseEntity<List<ReviewDto>> addComment(@RequestBody ReviewDto dto) {
 	    // 요청에서 'dto' 매개변수를 ReviewDto 객체로 매핑합니다.
 	    
@@ -135,10 +194,4 @@ public class ReviewController {
 	        return ResponseEntity.badRequest().build(); // 실패한 경우 Bad Request를 반환합니다.
 	    }
 	}
-
-
-
-
-
-
 }

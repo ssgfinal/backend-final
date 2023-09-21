@@ -59,8 +59,8 @@ public class AccommodationService {
         facdao.updateFacility(facilityDto);
     }
     
-    public AccommodationDto getAllAccom(int accomNumber){
-    	return dao.getAllAccom(accomNumber);
+    public AccommodationDto getAccom(int accomNumber){
+    	return dao.getAccom(accomNumber);
     }
     
     public int updateRequest(int accomNumber) {
@@ -68,5 +68,8 @@ public class AccommodationService {
     }
     public int deleteRequest() {
     	return dao.deleteRequest();
+    }
+    public List<AccommodationDto> getAllAccom(){
+    	return dao.getAllAccom();
     }
 }

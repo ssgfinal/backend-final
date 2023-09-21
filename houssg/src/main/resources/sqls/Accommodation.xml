@@ -39,7 +39,7 @@
             accom_number = #{accomNumber}
     </update>
 
-	<select id="getAllAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
+	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
 		SELECT *
 		FROM accommodation
 		WHERE accom_number = #{accomNumber} and deletion_request = 0
@@ -56,6 +56,13 @@
 		SET deletion_request = 1
 		WHERE approval_request = 1
 	</update>
+	
+	<select id="getAllAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
+	    SELECT *
+	    FROM accommodation
+	    WHERE deletion_request = 0
+	    ORDER BY accom_number DESC
+	</select>	
     
 </mapper>
 

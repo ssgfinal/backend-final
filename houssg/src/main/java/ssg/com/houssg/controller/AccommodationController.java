@@ -249,7 +249,7 @@ public class AccommodationController {
         String filePath = "";
         try {
             // 이전 파일의 경로를 가져옵니다.
-            AccommodationDto previousAccommodation = service.getAllAccom(accomNumber);
+            AccommodationDto previousAccommodation = service.getAccom(accomNumber);
             String previousFilePath = previousAccommodation.getImg();
 
             if (file != null && !file.isEmpty()) {
@@ -349,5 +349,29 @@ public class AccommodationController {
             String responseMessage = "요청된 항목 삭제 중에 문제가 발생했습니다.";
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMessage);
         }
+    }
+    @GetMapping("get/accom")
+    public ResponseEntity<AccommodationDto> getAccom(@RequestParam int accomNumber) {
+        System.out.println("리스트에 접근합니다");
+        AccommodationDto accommodation = service.getAccom(accomNumber);
+        
+        // accommodation이 null인 경우 NOT_FOUND 반환
+        if (accommodation == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(accommodation, HttpStatus.OK);
+    }
+    @GetMapping("get/all/accom")
+    public ResponseEntity<List<AccommodationDto>> getAllAccom() {
+        System.out.println("전체 숙소 리스트 보기");
+        List<AccommodationDto> accommodationList = service.getAllAccom();
+        
+        // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
+        if (accommodationList == null || accommodationList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(accommodationList, HttpStatus.OK);
     }
 }
