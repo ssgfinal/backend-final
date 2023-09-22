@@ -23,5 +23,7 @@ public interface ReviewDao {
 	
 	List<ReviewDto> getAuthReview();
 	
-	int updateComment(ReviewDto dto);
+	int addComment(int reviewNumber, int reservationNumber, String reviewComment);
+	
+	int updateComment(int reviewNumber, int reservationNumber, String reviewComment);
 }

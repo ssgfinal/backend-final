@@ -31,4 +31,10 @@ public interface AccommodationDao {
 	int deleteRequest();
 	
 	List<AccommodationDto> getAllAccom();
+	
+	int accomApproval(int accomNumber);
+	
+	int accomApprovalX(int accomNumber);
+	
+	List<AccommodationDto> getApprovalAccom();
 }

@@ -41,10 +41,27 @@
 		WHERE report_status = 1
 	</select>
 	
-	<update id="updateComment" parameterType="ssg.com.houssg.dto.ReviewDto">
-	    UPDATE review
-	    SET review_comment = #{reviewComment}, review_comment_time = now()
-	    WHERE review_number = #{reviewNumber} AND id = #{id}
+	<update id="addComment" parameterType="ssg.com.houssg.dto.ReviewDto">
+	    UPDATE review AS r
+	    INNER JOIN accommodation AS a ON r.accom_number = a.accom_number
+	    SET r.review_comment = #{reviewComment}, r.review_comment_time = now(), r.manager_id = a.id
+	    WHERE r.review_number = #{reviewNumber}
+	      AND r.reservation_number = #{reservationNumber}
+	      AND r.accom_number = a.accom_number
+	      AND r.manager_id = a.id
 	</update>
+	
+	<update id="updateComment" parameterType="ssg.com.houssg.dto.ReviewDto">
+	    UPDATE review AS r
+	    INNER JOIN accommodation AS a ON r.accom_number = a.accom_number
+	    SET
+	    r.review_comment = #{reviewComment},
+	    r.review_comment_time = now()
+	    WHERE r.review_number = #{reviewNumber}
+	      AND r.reservation_number = #{reservationNumber}
+	      AND r.accom_number = a.accom_number
+	      AND r.manager_id = a.id
+</update>
+
 
 </mapper>

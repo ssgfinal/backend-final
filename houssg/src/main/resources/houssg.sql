@@ -26,6 +26,7 @@ CREATE TABLE Accommodation (
     deletion_request TINYINT NOT NULL,
     review_number INT NOT NULL,
     img VARCHAR(255) NOT NULL,
+    add_request TINYINT NOT NULL,
     UNIQUE KEY (tele_number),
     FOREIGN KEY(id,auth) REFERENCES User(id,auth),
     FOREIGN KET(review_number) REFERENCES Review(review_number)
@@ -51,6 +52,7 @@ CREATE TABLE Review (
     review_creation_time DATETIME NOT NULL,
     review_comment LONGTEXT,
     review_comment_time DATETIME NOT NULL,
+    manager_id VARCHAR(45),
 	report_status TINYINT NOT NULL,
     id VARCHAR(45) NOT NULL,	
 	reservation_number INT NOT NULL,
@@ -59,6 +61,7 @@ CREATE TABLE Review (
 	img VARCHAR(255) NOT NULL,
 	UNIQUE KEY (reservation_number),
     FOREIGN KEY (id) REFERENCES User(id),
+    FOREIGN KEY (manager_id) REFERENCES User(id),
     FOREIGN KEY (reservation_number) REFERENCES Reservation(reservation_number),
     FOREIGN KEY (room_number) REFERENCES Rooms(room_number),
     FOREIGN KEY (accom_number) REFERENCES Accommodation(accom_number)

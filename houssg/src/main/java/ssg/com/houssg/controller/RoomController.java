@@ -45,13 +45,11 @@ public class RoomController {
 	        @RequestParam("accomNumber") int accomNumber,
 	        @RequestParam("cityView") boolean cityView,
 	        @RequestParam("oceanView") boolean oceanView,
-	        @RequestParam("spa") boolean spa,
 	        @RequestParam("pc") boolean pc,
-	        @RequestParam("nonSmoking") boolean nonSmoking,
+	        @RequestParam("noSmoking") boolean noSmoking,
 	        @RequestParam("doubleBed") boolean doubleBed,
 	        @RequestParam("queenBed") boolean queenBed,
 	        @RequestParam("kingBed") boolean kingBed,
-	        @RequestParam("netflix") boolean netflix,
 	        HttpServletRequest request
 	) {
 	    System.out.println("객실 추가");
@@ -113,13 +111,11 @@ public class RoomController {
 	    roomServiceDto.setRoomNumber(roomDto.getRoomNumber());
 	    roomServiceDto.setCityView(cityView);
 	    roomServiceDto.setOceanView(oceanView);
-	    roomServiceDto.setSpa(spa);
 	    roomServiceDto.setPc(pc);
-	    roomServiceDto.setNonSmoking(nonSmoking);
+	    roomServiceDto.setNoSmoking(noSmoking);
 	    roomServiceDto.setDoubleBed(doubleBed);
 	    roomServiceDto.setQueenBed(queenBed);
 	    roomServiceDto.setKingBed(kingBed);
-	    roomServiceDto.setNetflix(netflix);
 	    System.out.println(roomServiceDto.toString());
 	    // 'rooms' 테이블에 방 정보 추가
 	    int roomCount = service.addRoom(roomDto, roomServiceDto);
@@ -202,13 +198,11 @@ public class RoomController {
 	            @RequestParam("accomNumber") int accomNumber,
 	            @RequestParam("cityView") boolean cityView,
 	            @RequestParam("oceanView") boolean oceanView,
-	            @RequestParam("spa") boolean spa,
 	            @RequestParam("pc") boolean pc,
-	            @RequestParam("nonSmoking") boolean nonSmoking,
+	            @RequestParam("noSmoking") boolean noSmoking,
 	            @RequestParam("doubleBed") boolean doubleBed,
 	            @RequestParam("queenBed") boolean queenBed,
 	            @RequestParam("kingBed") boolean kingBed,
-	            @RequestParam("netflix") boolean netflix,
 	            HttpServletRequest request
 	    ) {
 	        try {
@@ -260,13 +254,11 @@ public class RoomController {
 	    	    roomServiceDto.setRoomNumber(roomDto.getRoomNumber());
 	    	    roomServiceDto.setCityView(cityView);
 	    	    roomServiceDto.setOceanView(oceanView);
-	    	    roomServiceDto.setSpa(spa);
 	    	    roomServiceDto.setPc(pc);
-	    	    roomServiceDto.setNonSmoking(nonSmoking);
+	    	    roomServiceDto.setNoSmoking(noSmoking);
 	    	    roomServiceDto.setDoubleBed(doubleBed);
 	    	    roomServiceDto.setQueenBed(queenBed);
 	    	    roomServiceDto.setKingBed(kingBed);
-	    	    roomServiceDto.setNetflix(netflix);
 	    	    System.out.println(roomServiceDto.toString());
 	    	    
 	    	    service.updateRoom(roomDto, roomServiceDto);

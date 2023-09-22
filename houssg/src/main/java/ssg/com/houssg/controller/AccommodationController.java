@@ -74,20 +74,17 @@ public class AccommodationController {
                                                    @RequestParam("businessNumber") String businessNumber,
                                                    @RequestParam("zipCode") String zipCode,
                                                    @RequestParam("nearbySea") boolean nearbySea,
-                                                   @RequestParam("oceanView") boolean oceanView,
                                                    @RequestParam("parkingAvailable") boolean parkingAvailable,
                                                    @RequestParam("pool") boolean pool,
                                                    @RequestParam("spa") boolean spa,
-                                                   @RequestParam("couplePc") boolean couplePc,
                                                    @RequestParam("wifi") boolean wifi,
-                                                   @RequestParam("family") boolean family,
                                                    @RequestParam("twinBed") boolean twinBed,
                                                    @RequestParam("barbecue") boolean barbecue,
                                                    @RequestParam("noSmoking") boolean noSmoking,
                                                    @RequestParam("luggageStorage") boolean luggageStorage,
                                                    @RequestParam("freeMovieOtt") boolean freeMovieOtt,
                                                    HttpServletRequest request) {
-        System.out.println("숙소 추가");
+        System.out.println("숙소 추가 신청");
         
 
         String path = request.getSession().getServletContext().getRealPath("/upload");
@@ -125,49 +122,10 @@ public class AccommodationController {
                 // FacilityDto 객체를 생성하여 시설 정보 저장
                 FacilityDto facilityDto = new FacilityDto();
                 facilityDto.setNearbySea(nearbySea);
-                facilityDto.setOceanView(oceanView);
                 facilityDto.setParkingAvailable(parkingAvailable);
                 facilityDto.setPool(pool);
                 facilityDto.setSpa(spa);
-                facilityDto.setCouplePc(couplePc);
                 facilityDto.setWifi(wifi);
-                facilityDto.setFamily(family);
-                facilityDto.setTwinBed(twinBed);
-                facilityDto.setBarbecue(barbecue);
-                facilityDto.setNoSmoking(noSmoking);
-                facilityDto.setLuggageStorage(luggageStorage);
-                facilityDto.setFreeMovieOtt(freeMovieOtt);
-
-                // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
-                int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
-
-                System.out.println(dto.toString());
-                System.out.println(facilityDto.toString());
-            } else {
-                // 파일이 업로드되지 않은 경우 처리
-                // AccommodationDto 객체를 생성하여 숙소 정보 저장
-                AccommodationDto dto = new AccommodationDto();
-                dto.setId(id);
-                dto.setAccomName(accomName);
-                dto.setAccomAddress(accomAddress);
-                dto.setTeleNumber(teleNumber);
-                dto.setAccomCategory(accomCategory);
-                dto.setAccomDetails(accomDetails);
-                dto.setCheckIn(checkIn);
-                dto.setCheckOut(checkOut);
-                dto.setBusinessNumber(businessNumber);
-                dto.setZipCode(zipCode);
-
-                // FacilityDto 객체를 생성하여 시설 정보 저장
-                FacilityDto facilityDto = new FacilityDto();
-                facilityDto.setNearbySea(nearbySea);
-                facilityDto.setOceanView(oceanView);
-                facilityDto.setParkingAvailable(parkingAvailable);
-                facilityDto.setPool(pool);
-                facilityDto.setSpa(spa);
-                facilityDto.setCouplePc(couplePc);
-                facilityDto.setWifi(wifi);
-                facilityDto.setFamily(family);
                 facilityDto.setTwinBed(twinBed);
                 facilityDto.setBarbecue(barbecue);
                 facilityDto.setNoSmoking(noSmoking);
@@ -223,13 +181,10 @@ public class AccommodationController {
                                                      @RequestParam("checkIn") String checkIn,
                                                      @RequestParam("checkOut") String checkOut,
                                                      @RequestParam("nearbySea") boolean nearbySea,
-                                                     @RequestParam("oceanView") boolean oceanView,
                                                      @RequestParam("parkingAvailable") boolean parkingAvailable,
                                                      @RequestParam("pool") boolean pool,
                                                      @RequestParam("spa") boolean spa,
-                                                     @RequestParam("couplePc") boolean couplePc,
                                                      @RequestParam("wifi") boolean wifi,
-                                                     @RequestParam("family") boolean family,
                                                      @RequestParam("twinBed") boolean twinBed,
                                                      @RequestParam("barbecue") boolean barbecue,
                                                      @RequestParam("noSmoking") boolean noSmoking,
@@ -259,6 +214,7 @@ public class AccommodationController {
 
                 filePath = root + "\\" + saveFileName;
                 file.transferTo(new File(filePath));
+                
             } else {
                 // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
                 filePath = previousFilePath;
@@ -287,13 +243,10 @@ public class AccommodationController {
             FacilityDto facilityDto = new FacilityDto();
             facilityDto.setAccomNumber(accomNumber);
             facilityDto.setNearbySea(nearbySea);
-            facilityDto.setOceanView(oceanView);
             facilityDto.setParkingAvailable(parkingAvailable);
             facilityDto.setPool(pool);
             facilityDto.setSpa(spa);
-            facilityDto.setCouplePc(couplePc);
             facilityDto.setWifi(wifi);
-            facilityDto.setFamily(family);
             facilityDto.setTwinBed(twinBed);
             facilityDto.setBarbecue(barbecue);
             facilityDto.setNoSmoking(noSmoking);
@@ -373,5 +326,43 @@ public class AccommodationController {
         }
 
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
+    }
+    
+    @PatchMapping("accom/approval")
+    public ResponseEntity<String> accomApproval(@RequestParam int accomNumber) {
+        System.out.println("숙소등록신청허가/재신청");
+        
+        int result = service.accomApproval(accomNumber);
+        
+        if (result == 1) {
+            return new ResponseEntity<>("Approval successful", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Approval failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PatchMapping("accom/approvalX")	
+    public ResponseEntity<String> accomApprovalX(@RequestParam int accomNumber){
+    	System.out.println("숙소등록거절");
+    	
+    	int result = service.accomApprovalX(accomNumber);
+    	
+    	if (result == 1) {
+    		return new ResponseEntity<>("승인 거절", HttpStatus.OK);
+    	}else {
+    		return new ResponseEntity<>("승인 실패",HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+    }
+    
+    @PostMapping("auth/accom/get")
+    public ResponseEntity<List<AccommodationDto>> getApprovalAccom() {
+        System.out.println("숙소등록신청목록보기");
+        
+        List<AccommodationDto> approvalAccomList = service.getApprovalAccom();
+        
+        if (approvalAccomList != null && !approvalAccomList.isEmpty()) {
+            return ResponseEntity.ok(approvalAccomList); // 성공한 경우 숙소 목록 반환
+        } else {
+            return ResponseEntity.noContent().build(); // 숙소 목록이 없는 경우 No Content(204) 반환
+        }
     }
 }

@@ -181,17 +181,48 @@ public class ReviewController {
 		    }
 		}
 	// 답글 추가
-	@PostMapping("comment/add")
-	public ResponseEntity<List<ReviewDto>> addComment(@RequestBody ReviewDto dto) {
-	    // 요청에서 'dto' 매개변수를 ReviewDto 객체로 매핑합니다.
+	@PatchMapping("comment/add")
+	public ResponseEntity<List<ReviewDto>> addComment(
+	        @RequestParam int review_number,
+	        @RequestParam int reservation_number,
+	        @RequestParam String review_comment
+	) {
+	    try {
+	        System.out.println("답글 추가");
+	        
+	        // 요청 매개변수를 사용하여 ReviewDto 객체 생성
+	        ReviewDto dto = new ReviewDto();
+	        dto.setReviewNumber(review_number);
+	        dto.setReservationNumber(reservation_number);
+	        dto.setReviewComment(review_comment);
+	        
+	        int count = service.addComment(review_number, reservation_number, review_comment); // updateComment 메서드를 호출하여 댓글을 추가합니다.
+	        if (count > 0) {
+	            List<ReviewDto> updatedReviews = service.getAllReview(dto.getRoomNumber(), dto.getAccomNumber()); // 업데이트된 리뷰 목록을 가져옵니다.
+	            return ResponseEntity.ok(updatedReviews); // 성공한 경우 업데이트된 리뷰 목록을 반환합니다.
+	        } else {
+	            return ResponseEntity.badRequest().build(); // 실패한 경우 Bad Request를 반환합니다.
+	        }
+	    } catch (Exception e) {
+	        // 예외 처리: 예외 발생 시 클라이언트에 오류 응답을 반환합니다.
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+
+	@PatchMapping("comment/update")
+	public ResponseEntity<String> updateComment(
+			@RequestParam int review_number,
+	        @RequestParam int reservation_number,
+	        @RequestParam String review_comment
+	) {
+	    System.out.println("답글 수정");
 	    
-	    int count = service.updateComment(dto); // updateComment 메서드를 호출하여 댓글을 추가합니다.
+	    int result = service.updateComment(review_number, reservation_number, review_comment);
 	    
-	    if (count > 0) {
-	        List<ReviewDto> updatedReviews = service.getAllReview(dto.getRoomNumber(), dto.getAccomNumber()); // 업데이트된 리뷰 목록을 가져옵니다.
-	        return ResponseEntity.ok(updatedReviews); // 성공한 경우 업데이트된 리뷰 목록을 반환합니다.
+	    if (result == 1) {
+	        return new ResponseEntity<>("Comment updated successfully", HttpStatus.OK);
 	    } else {
-	        return ResponseEntity.badRequest().build(); // 실패한 경우 Bad Request를 반환합니다.
+	        return new ResponseEntity<>("Comment update failed", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 }

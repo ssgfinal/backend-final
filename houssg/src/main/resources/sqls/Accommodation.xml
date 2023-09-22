@@ -12,8 +12,8 @@
 	
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
 	<insert id="insertAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
-	    INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, approval_request, deletion_request, img, zip_code)
-	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 1, 0, 0, #{img}, #{zipCode})
+	    INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, approval_request, deletion_request, img, zip_code,add_request)
+	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 1, 0, 0, #{img}, #{zipCode},1)
 	    <selectKey keyProperty="accomNumber" resultType="int" order="AFTER">
 	        SELECT LAST_INSERT_ID()
 	    </selectKey>
@@ -36,13 +36,13 @@
             check_out = #{checkOut},
             img = #{img}
         WHERE
-            accom_number = #{accomNumber}
+            accom_number = #{accomNumber} and add_request = 0
     </update>
 
 	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
 		SELECT *
 		FROM accommodation
-		WHERE accom_number = #{accomNumber} and deletion_request = 0
+		WHERE accom_number = #{accomNumber} and deletion_request = 0 
 	</select>
 	
 	<update id="updateRequest" parameterType="int">
@@ -60,9 +60,27 @@
 	<select id="getAllAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
 	    SELECT *
 	    FROM accommodation
-	    WHERE deletion_request = 0
+	    WHERE deletion_request = 0 and add_request = 0
 	    ORDER BY accom_number DESC
 	</select>	
+	
+	<update id="accomApproval" parameterType="int">
+		UPDATE accommodation
+		SET add_request = 0
+		WHERE accom_number = #{accomNumber} and add_request>0
+	</update>
+	
+	<update id="accomApprovalX" parameterType="int">
+		UPDATE accommodation
+		SET add_request = 2
+		WHERE accom_number = #{accomNumber} and add_request>0
+	</update>
+	
+	<select id="getApprovalAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
+	    SELECT *
+	    FROM accommodation
+	    WHERE add_request = 1
+	</select>
     
 </mapper>
 
