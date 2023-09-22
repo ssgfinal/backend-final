@@ -1,5 +1,6 @@
 package ssg.com.houssg.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,13 +18,16 @@ import ssg.com.houssg.security.TokenFilter;
 @Configuration
 public class SecurityConfig {
 	
-	 
+	@Autowired
+	 private  TokenFilter tokenFilter;
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.httpBasic().disable().csrf().disable()
-				.addFilterBefore(new TokenFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests()
-				.requestMatchers("/swagger-ui.html", "/v3/api-docs", "/swagger-resources/**", "/webjars/**").permitAll()
+				.requestMatchers( "/","/swagger-ui/**", "/v3/api-docs/**").permitAll()
+//				.requestMatchers("/swagger-ui.html", "/v3/api-docs", "/swagger-resources/**", "/webjars/**").permitAll()
 				.requestMatchers(new AntPathRequestMatcher ("/user/**")).permitAll()
 				.requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
 				.anyRequest().authenticated(); // 이외 모든 요청은 인증필요
