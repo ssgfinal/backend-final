@@ -1,12 +1,3 @@
----
-name: 이슈 템플릿
-about: houssg-backend 이슈 템플릿
-title: ''
-labels: ''
-assignees: ''
-
----
-
 ## 선행적으로 해결 해야하는 Issue
 
 - #이슈번호
