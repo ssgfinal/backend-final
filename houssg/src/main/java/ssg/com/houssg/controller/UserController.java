@@ -43,7 +43,7 @@ public class UserController {
 	private SmsUtil smsUtil;
 
 	// 로그인
-	@GetMapping("login")
+	@GetMapping("/login")
 	public ResponseEntity<?> login(UserDto user) {
 		System.out.println("UserController login(UserDto user) " + new Date());
 		System.out.println("클라이언트로 부터 받은 데이터 : " + user.toString());
@@ -61,10 +61,14 @@ public class UserController {
 			System.out.println("생성된 리프레시 토큰: " + refreshToken);
 			HttpHeaders headers = new HttpHeaders();
 	        headers.add("Authorization", "Bearer " + token);
+	        headers.add("Refresh-Token" , refreshToken);
 	        tokenService.storeRefreshToken(refreshToken, user);
+	        
+	        System.out.println("로그인 성공" + new Date());
+	        
 			return ResponseEntity.ok().headers(headers)
 		            .body("로그인 성공"); // 토큰 반환
-		}
+		}		
 
 		return ResponseEntity.notFound().build();
 	}
@@ -106,7 +110,7 @@ public class UserController {
 	}
 
 	// 회원가입
-	@PostMapping("signup")
+	@PostMapping("/signup")
 	public String signUp(UserDto user) {
 		System.out.println("UserController signUp(UserDto dto) " + new Date());
 

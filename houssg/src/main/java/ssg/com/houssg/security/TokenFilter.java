@@ -34,14 +34,14 @@ public class TokenFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		
-	    System.out.println("필터 써진다.");
+	    System.out.println("1. 필터 시작");
 	    
 	    final String authorization = request.getHeader(org.springframework.http.HttpHeaders.AUTHORIZATION);
-		System.out.println("Authorization : {}" + authorization);
+		System.out.println("Authorization : " + authorization);
 		
 		// accessToken 안보내거나 형식 안맞으면 커트
 		if(authorization == null || !authorization.startsWith("Bearer ")) {
-			System.out.println("authorization이 없거나 잘못보냈습니다.");
+			System.out.println("authorization이 없거나 잘못보냄");
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -59,12 +59,17 @@ public class TokenFilter extends OncePerRequestFilter {
 //			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
 //					null, List.of(new SimpleGrantedAuthority("직접 정하기")));
 //			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
+	        System.out.println("어세스로 인증 완료");
+	       
 			filterChain.doFilter(request, response); // 유효한 액세스 토큰이면 요청을 그대로 전달
-		} else {
+		} 
+		else {
+			// Refresh를 응답 >> 클라에서 리프레시 토큰 전송
+	        response.getWriter().write("Refresh");
 			// 액세스 토큰이 만료되었거나 유효하지 않으면 리프레시 토큰을 사용하여 새로운 액세스 토큰 발급
 			String refreshToken = extractRefreshTokenFromRequest(request);
-
+			System.out.println("어세스 안돼서 리프레시 뽑아냄");
+			
 			if (refreshToken != null && tokenProvider.isRefreshTokenValid(refreshToken)) {
 				System.out.println("어세스 만료 or 유효x라 리프레시로 재발급하는중");
 
@@ -78,16 +83,18 @@ public class TokenFilter extends OncePerRequestFilter {
 				// 새로운 액세스 토큰과 리프레시 토큰을 응답 헤더에 설정
 				response.setHeader("Authorization", "Bearer " + newAccessToken);
 				response.setHeader("Refresh-Token", newRefreshToken);
-
+				
 				// 기존 리프레시 토큰 삭제 및 새로운 리프레시 토큰 저장
 				// TokenSaveService tokenService = new TokenSaveService(redisTemplate);
 				tokenService.removeRefreshToken(refreshToken);
 				tokenService.storeRefreshToken(newRefreshToken, user);
-
+				System.out.println("어세스 만료 >> 리프레시로 재발급 완료");
 				filterChain.doFilter(request, response);
-			} else {
+			} 
+			else {
 				// 리프레시 토큰도 만료되었거나 유효하지 않으면 인증 실패 응답을 반환
 				System.out.println("리프레시도 만료 or 유효x");
+			    response.getWriter().write("Relogin");
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			}
 		}
@@ -96,7 +103,7 @@ public class TokenFilter extends OncePerRequestFilter {
 	
 	private void performAuthorization(String userId) {
 	    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
-	            null, List.of(new SimpleGrantedAuthority("직접 정하기")));
+	            null, List.of(new SimpleGrantedAuthority("권한")));
 	    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 	}
 
