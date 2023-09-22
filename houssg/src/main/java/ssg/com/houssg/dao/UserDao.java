@@ -27,7 +27,7 @@ public interface UserDao {
 	int phoneNumberCheck(String phone_number);
 	
 	// 패스워드 업데이트
-	 int updatePassword(UserDto user);
+	int updatePassword(UserDto user);
 	
 	// 비밀번호 찾기
 	UserDto findUserByIdPhonNumber(String id, String phone_number);
