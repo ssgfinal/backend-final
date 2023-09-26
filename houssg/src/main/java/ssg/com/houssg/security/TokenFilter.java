@@ -1,8 +1,7 @@
 package ssg.com.houssg.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +12,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import ssg.com.houssg.dto.UserDto;
 import ssg.com.houssg.service.TokenSaveService;
 
@@ -36,7 +34,7 @@ public class TokenFilter extends OncePerRequestFilter {
 		
 	    System.out.println("1. 필터 시작");
 	    
-	    final String authorization = request.getHeader(org.springframework.http.HttpHeaders.AUTHORIZATION);
+	    final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 		System.out.println("Authorization : " + authorization);
 		
 		// accessToken 안보내거나 형식 안맞으면 커트
@@ -48,7 +46,10 @@ public class TokenFilter extends OncePerRequestFilter {
 
 		// HTTP 요청 헤더에서 엑세스 토큰 추출
 		String accessToken = extractAccessTokenFromRequest(request);
-
+		System.out.println(accessToken + "어세스 토큰 테스트");
+		// 여기까지는 잘 됨
+		
+		// 근데 if문에서 걸러짐
 		if (accessToken != null && tokenProvider.isAccessTokenValid(accessToken)) {
 			
 			System.out.println("어세스 토큰 추출 완료");
@@ -56,6 +57,7 @@ public class TokenFilter extends OncePerRequestFilter {
 			// 권한 부여 --- 추가한거 !!
 			String userId = tokenProvider.getUserIdFromToken(accessToken);
 	        performAuthorization(userId);
+	        System.out.println(userId);
 //			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
 //					null, List.of(new SimpleGrantedAuthority("직접 정하기")));
 //			SecurityContextHolder.getContext().setAuthentication(authenticationToken);

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ssg.com.houssg.dao.UserCouponDao">
+
+	<!-- 쿠폰 번호로 쿠폰 정보 조회 -->
+	<select id="findByCouponNumber" parameterType="java.lang.String"
+		resultType="ssg.com.houssg.dto.CouponDto">
+		SELECT coupon_number, coupon_name, discount,
+		expiration_date
+		FROM coupon WHERE coupon_number = #{couponNumber}
+	</select>
+
+	<!-- 유저 쿠폰번호 중복확인 -->
+	<select id="userCouponNumberCheck"
+		parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*)
+		from
+		user_coupon
+		where
+		coupon_number=#{couponNumber}
+	</select>
+
+
+	<!-- 유저의 내 쿠폰함에 쿠폰 정보 저장 -->
+	<insert id="enrollUserCoupon"
+		parameterType="ssg.com.houssg.dto.UserCouponDto">
+		<!-- 해당 쿠폰번호의 isUsed 값이 0일 때만 쿠폰 등록 -->
+		INSERT INTO user_coupon (Id, couponNumber, couponName, discount,
+		expirationDate, isUsed)
+		SELECT #{Id}, #{couponNumber}, #{couponName},
+		#{discount},
+		#{expirationDate}, 0
+		FROM DUAL
+		WHERE NOT EXISTS (
+		SELECT 1
+		FROM user_coupon
+		WHERE couponNumber = #{couponNumber} AND isUsed = 1
+		)
+	</insert>
+
+</mapper>
