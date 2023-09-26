@@ -2,28 +2,26 @@ package ssg.com.houssg.dto;
 
 import java.time.LocalDate;
 
-public class CouponDto {
+public class UserCouponDto {
 	
+	private String id;
 	private String couponNumber;
 	private String couponName;
 	private int discount;
 	private LocalDate expirationDate;
-	private int expirationStatus;
+	private int isUsed;
 	
-	public int getExpirationStatus() {
-		return expirationStatus;
-	}
-
-	public void setExpirationStatus(int expirationStatus) {
-		this.expirationStatus = expirationStatus;
-	}
-
 	public String getCouponNumber() {
 		return couponNumber;
 	}
-	
 	public void setCouponNumber(String couponNumber) {
 		this.couponNumber = couponNumber;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getCouponName() {
 		return couponName;
@@ -43,12 +41,18 @@ public class CouponDto {
 	public void setExpirationDate(LocalDate expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-
+	public int getIsUsed() {
+		return isUsed;
+	}
+	public void setIsUsed(int isUsed) {
+		this.isUsed = isUsed;
+	}
+	
 	@Override
 	public String toString() {
-		return "CouponDto [couponNumber=" + couponNumber + ", couponName=" + couponName + ", discount=" + discount
-				+ ", expirationDate=" + expirationDate + ", expirationStatus=" + expirationStatus + "]";
+		return "UserCouponDto [id=" + id + ", couponNumber=" + couponNumber + ", couponName=" + couponName
+				+ ", discount=" + discount + ", expirationDate=" + expirationDate + ", isUsed=" + isUsed + "]";
 	}
-	  
 	
+
 }

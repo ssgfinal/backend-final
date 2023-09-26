@@ -3,17 +3,39 @@
 
 <mapper namespace="ssg.com.houssg.dao.CouponDao">
 
-	<!-- 쿠폰 발행  -->
-	<insert id="couponIssued" parameterType="ssg.com.houssg.dto.CouponDto">
-		insert into coupon(coupon_number, coupon_name, discount, expiration_date)
-		values (#{couponNumber}, #{couponName}, #{discount}, #{expirationDate})
+	<!-- 쿠폰 발행 -->
+	<insert id="couponIssued"
+		parameterType="ssg.com.houssg.dto.CouponDto">
+		insert into coupon(coupon_number, coupon_name, discount,
+		expiration_date, expiration_status)
+		values (#{couponNumber},
+		#{couponName}, #{discount}, #{expirationDate}, 0)
 	</insert>
-	
+
 	<!-- 쿠폰번호 중복확인 -->
-	<select id="couponNumberCheck" parameterType="java.lang.String" resultType="java.lang.Integer">
+	<select id="couponNumberCheck" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
 		select count(*)
 		from coupon
-		where coupon_number=#{conponNumber}
+		where
+		coupon_number=#{couponNumber}
 	</select>
+
+	<!-- 유효기간 만료 상태 변경 -->
+	<update id="updateExpirationStatus"
+		parameterType="ssg.com.houssg.dto.CouponDto">
+		update coupon SET expiration_status = 1
+		WHERE
+		expiration_status = 0 AND
+		expiration_date &lt; CURRENT_TIMESTAMP;
+	</update>
 	
+	<!-- 쿠폰 조회 -->
+	<select id="getValidCoupons" parameterType="java.lang.String"
+		resultType="ssg.com.houssg.dto.CouponDto">
+		select coupon_number, coupon_name, discount,
+		expiration_date
+		from coupon
+		where expiration_status=0
+	</select>
 </mapper>
