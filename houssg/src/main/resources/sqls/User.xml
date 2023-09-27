@@ -9,7 +9,7 @@
 	<select id="idCheck" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
 		select count(*)
-		from User
+		from user
 		where id=#{id}
 	</select>
 
@@ -17,7 +17,7 @@
 	<select id="nicknameCheck" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
 		select count(*)
-		from User
+		from user
 		where nickname=#{nickname}
 	</select>
 
@@ -25,12 +25,12 @@
 	<select id="phoneNumberCheck" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
 		select count(*)
-		from User
+		from user
 		where phonenumber=#{phonenumber}
 	</select>
 
 	<insert id="signUp" parameterType="ssg.com.houssg.dto.UserDto">
-		insert into User(auth,
+		insert into user(auth,
 		nickname, phonenumber, password, id)
 		values(0, #{nickname},
 		#{phonenumber}, #{password}, #{id})
@@ -39,7 +39,7 @@
 	<select id="login" parameterType="ssg.com.houssg.dto.UserDto"
 		resultType="ssg.com.houssg.dto.UserDto">
 		select auth, nickname, phonenumber, password, id
-		from User
+		from user
 		where id=#{id} and password=#{password}
 	</select>
 
@@ -47,14 +47,14 @@
 	<!-- 아이디 찾기 -->
 	<select id="findIdByPhoneNumber" parameterType="string"
 		resultType="ssg.com.houssg.dto.UserDto">
-		SELECT * FROM User WHERE phonenumber = #{phonenumber}
+		SELECT * FROM user WHERE phonenumber = #{phonenumber}
 	</select>
 
 
 	<!-- 비밀번호 업데이트 -->
 	<update id="updatePassword"
 		parameterType="ssg.com.houssg.dto.UserDto">
-		UPDATE User
+		UPDATE user
 		SET password = #{password} <!-- 필드 이름을 newPassword로 변경 -->
 		WHERE id = #{id}
 	</update>
@@ -64,7 +64,7 @@
 	<select id="findUserByIdPhonNumber"
 		parameterType="java.util.Map" resultType="ssg.com.houssg.dto.UserDto">
 		SELECT *
-		FROM User
+		FROM user
 		WHERE id =
 		#{id} AND phonenumber = #{phonenumber}
 	</select>
@@ -73,7 +73,7 @@
 	<select id="idPhoneNumberCheck" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
 		select count(*)
-		from User
+		from user
 		where phonenumber=#{phonenumber}
 		AND id = #{id}
 	</select>
@@ -81,7 +81,7 @@
 	<select id="findUserById"
 		parameterType="java.util.Map" resultType="ssg.com.houssg.dto.UserDto">
 		SELECT *
-		FROM User
+		FROM user
 		WHERE id = #{id} 
 	</select>
 
