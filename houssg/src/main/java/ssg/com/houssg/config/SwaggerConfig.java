@@ -36,7 +36,8 @@ public class SwaggerConfig {
         // "bearerAuth"와 "refreshTokenAuth" 보안 요구사항 정의
         SecurityRequirement bearerSecurityRequirement = new SecurityRequirement().addList("bearerAuth");
         SecurityRequirement refreshTokenSecurityRequirement = new SecurityRequirement().addList("refreshTokenAuth");
-
+        
+        
         return new OpenAPI()
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", bearerScheme)

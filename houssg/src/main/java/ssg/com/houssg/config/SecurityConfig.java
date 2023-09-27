@@ -26,10 +26,10 @@ public class SecurityConfig {
 		http.httpBasic().disable().csrf().disable()
 				.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests()
-				.requestMatchers( "/","/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers( "/","/swagger-ui/**", "/v3/api-docs/**","/user/**").permitAll()
 //				.requestMatchers("/swagger-ui.html", "/v3/api-docs", "/swagger-resources/**", "/webjars/**").permitAll()
-				.requestMatchers(new AntPathRequestMatcher ("/user/**")).permitAll()
-				.requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
+//				.requestMatchers(new AntPathRequestMatcher ("/user/**")).permitAll()
+//				.requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
 				.anyRequest().authenticated(); // 이외 모든 요청은 인증필요
 				
 		return http.build();
