@@ -74,7 +74,7 @@
 		resultType="java.lang.Integer">
 		select count(*)
 		from user
-		where phonenumber=#{phonenumber}
+		where phonenumber=#{phone_number}
 		AND id = #{id}
 	</select>
 
