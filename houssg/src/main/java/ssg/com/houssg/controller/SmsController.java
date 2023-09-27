@@ -37,6 +37,7 @@ public class SmsController {
 	@PostMapping("/sms-check") // 인증번호 비교 확인
 	public ResponseEntity<String> checkVerificationCode(HttpSession session,
 			@RequestParam("verificationCode") String Code) {
+		System.out.println(Code);
 		boolean isValid = VerificationCodeValidator.isValidVerificationCode(session, Code);
 
 		if (isValid) {
