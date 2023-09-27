@@ -1,5 +1,5 @@
 -- 회원 테이블
-CREATE TABLE User (
+CREATE TABLE user (
     id VARCHAR(45),
     password VARCHAR(100) NOT NULL,
     nickname VARCHAR(45) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE User (
 );
 
 -- 숙소 테이블
-CREATE TABLE Accommodation (
+CREATE TABLE accommodation (
     accom_number INT PRIMARY KEY AUTO_INCREMENT,
     accom_name VARCHAR(45) NOT NULL,
     accom_address VARCHAR(45) NOT NULL,
@@ -28,12 +28,12 @@ CREATE TABLE Accommodation (
     img VARCHAR(255) NOT NULL,
     add_request TINYINT NOT NULL,
     UNIQUE KEY (tele_number),
-    FOREIGN KEY(id,auth) REFERENCES User(id,auth),
-    FOREIGN KET(review_number) REFERENCES Review(review_number)
+    FOREIGN KEY(id,auth) REFERENCES user(id,auth),
+    FOREIGN KEY(review_number) REFERENCES review(review_number)
 );
 
 -- 객실 테이블
-CREATE TABLE Rooms (
+CREATE TABLE rooms (
     room_number INT PRIMARY KEY AUTO_INCREMENT,
     room_category VARCHAR(45) NOT NULL,
     room_details LONGTEXT NOT NULL,
@@ -41,11 +41,11 @@ CREATE TABLE Rooms (
     room_availability TINYINT NOT NULL,
     accom_number INT NOT NULL,
     room_use TINYINT NOT NULL,
-    FOREIGN KEY (accom_number) REFERENCES Accommodation(accom_number)
+    FOREIGN KEY (accom_number) REFERENCES accommodation(accom_number)
 );
 
 -- 리뷰 테이블
-CREATE TABLE Review (
+CREATE TABLE review (
     review_number INT PRIMARY KEY AUTO_INCREMENT,
     review_content LONGTEXT NOT NULL,
     review_rating decimal(4,2) NOT NULL,
@@ -60,56 +60,55 @@ CREATE TABLE Review (
 	accom_number INT NOT NULL,
 	img VARCHAR(255) NOT NULL,
 	UNIQUE KEY (reservation_number),
-    FOREIGN KEY (id) REFERENCES User(id),
-    FOREIGN KEY (manager_id) REFERENCES User(id),
-    FOREIGN KEY (reservation_number) REFERENCES Reservation(reservation_number),
-    FOREIGN KEY (room_number) REFERENCES Rooms(room_number),
-    FOREIGN KEY (accom_number) REFERENCES Accommodation(accom_number)
+    FOREIGN KEY (id) REFERENCES user(id),
+    FOREIGN KEY (manager_id) REFERENCES user(id),
+    FOREIGN KEY (reservation_number) REFERENCES reservation(reservation_number),
+    FOREIGN KEY (room_number) REFERENCES rooms(room_number),
+    FOREIGN KEY (accom_number) REFERENCES accommodation(accom_number)
 );    
 
 -- 예약 테이블
-CREATE TABLE Reservation (
+CREATE TABLE reservation (
     reservation_number INT PRIMARY KEY AUTO_INCREMENT,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    status TINYINT NOT NULL,// 0,1,2예약상태
-    payment_time TIMESTAMP NOT NULL,// 결제일 
+    status TINYINT NOT NULL,
+    payment_time TIMESTAMP NOT NULL,
     payment_amount INT NOT NULL,
     id VARCHAR(45) NOT NULL,
     room_number INT NOT NULL,
 	guest_name VARCHAR(45) NOT NULL,
     guest_phone VARCHAR(45) NOT NULL,
     accom_number INT NOT NULL,	
-    FOREIGN KEY (room_number) REFERENCES Rooms(room_number),
-    FOREIGN KEY (id) REFERENCES User(id),
-    FOREIGN KEY (accom_number) REFERENCES Accommodation(accom_number)
+    FOREIGN KEY (room_number) REFERENCES rooms(room_number),
+    FOREIGN KEY (id) REFERENCES user(id),
+    FOREIGN KEY (accom_number) REFERENCES accommodation(accom_number)
 );
 
 -- 찜 테이블
-CREATE TABLE Favorite (
+CREATE TABLE favorite (
     id VARCHAR(45) NOT NULL,
     accom_number INT NOT NULL,
-    FOREIGN KEY (accom_number) REFERENCES Accommodation(accom_number),
-    FOREIGN KEY (id) REFERENCES User(id)
+    FOREIGN KEY (accom_number) REFERENCES accommodation(accom_number),
+    FOREIGN KEY (id) REFERENCES user(id)
 );
 
 -- 쿠폰(발행) 테이블
-CREATE TABLE Coupon (
+CREATE TABLE coupon (
     coupon_number INT PRIMARY KEY,
     discount INT NOT NULL,
     expiration_date TIMESTAMP NOT NULL,
-    coupon_name VARCHAR(45) NOT NULL,
-    FOREIGN KEY (coupon_number,coupon_name) REFERENCES UserCoupon(coupon_number,coupon_name)
+    coupon_name VARCHAR(45) NOT NULL)
 );
 
 -- 쿠폰(고객) 테이블
-CREATE TABLE UserCoupon (
+CREATE TABLE userCoupon (
     coupon_number INT NOT NULL,
     is_used TINYINT NOT NULL,
     id VARCHAR(45) NOT NULL,
     coupon_name VARCHAR(45) NOT NULL,
-    FOREIGN KEY (id) REFERENCES User(id),
-    FOREIGN KEY (coupon_number) REFERENCES Coupon(coupon_number)
+    FOREIGN KEY (id) REFERENCES user(id),
+    FOREIGN KEY (coupon_number) REFERENCES coupon(coupon_number)
 );
 
 
@@ -127,7 +126,7 @@ CREATE TABLE innerview (
     img8 VARCHAR(255),
     img9 VARCHAR(255),
     img10 VARCHAR(255),
-    FOREIGN KEY (room_number) REFERENCES Rooms(room_number)
+    FOREIGN KEY (room_number) REFERENCES rooms(room_number)
 );
 
 -- 
