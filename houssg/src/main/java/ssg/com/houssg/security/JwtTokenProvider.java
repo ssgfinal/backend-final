@@ -50,14 +50,18 @@ public class JwtTokenProvider {
 		Instant now = Instant.now();
 		// 발급시간
 		Date issuedAt = Date.from(now);
+		System.out.println(issuedAt);
 		// 만료시간
 		Date expiration = Date.from(now.plus(accessTokenValidityInMilliseconds, ChronoUnit.MILLIS));
-
+		System.out.println(expiration);
 		Map<String, Object> header = createHeader();
 		Map<String, Object> claims = createClaims(user);
 
-		Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-
+//		Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+//		System.out.println(key);
+		
+		Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
+		
 		return Jwts.builder().setHeader(header).setClaims(claims).setSubject(user.getId()).setIssuer(issuer) // issuer
 																												// 정보 설정
 				.setIssuedAt(issuedAt).setExpiration(expiration).signWith(key, SignatureAlgorithm.HS512).compact();
@@ -72,7 +76,7 @@ public class JwtTokenProvider {
 		Map<String, Object> header = createHeader();
 		Map<String, Object> claims = createClaims(user);
 
-		Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+		Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
 		return Jwts.builder().setHeader(header).setClaims(claims).setSubject(user.getId()).setIssuer(issuer) // issuer
 																												// 정보 설정
@@ -105,8 +109,11 @@ public class JwtTokenProvider {
 
 			// 현재 시간과 비교하여 만료 여부 판단
 			Date now = new Date();
+			System.out.println("만료시간 여부 : " + expiration != null);
+			System.out.println("만료 여부 : " + !expiration.before(now));
 			return expiration != null && !expiration.before(now);
 		} catch (JwtException | IllegalArgumentException e) {
+			e.printStackTrace();
 			return false; // 토큰 파싱 오류 또는 유효하지 않은 토큰인 경우
 		}
 	}

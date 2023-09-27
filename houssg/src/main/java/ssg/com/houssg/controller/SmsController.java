@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import ssg.com.houssg.util.VerificationCodeValidator;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("message")
 public class SmsController {
 
 	@Autowired
@@ -35,11 +37,14 @@ public class SmsController {
 	@PostMapping("/sms-check") // 인증번호 비교 확인
 	public ResponseEntity<String> checkVerificationCode(HttpSession session,
 			@RequestParam("verificationCode") String Code) {
+		System.out.println(Code);
 		boolean isValid = VerificationCodeValidator.isValidVerificationCode(session, Code);
-
+		System.out.println("입력받은 값 : "  + Code);
 		if (isValid) {
+			System.out.println(isValid);
 			return ResponseEntity.ok("인증되었습니다.");
 		} else {
+			System.out.println(isValid);
 			return ResponseEntity.badRequest().body("유효하지 않는 인증번호입니다.");
 		}
 	}
