@@ -112,7 +112,7 @@ public class UserController {
 
 	// 회원가입
 	@PostMapping("/signup")
-	public String signUp(UserDto user) {
+	public String signUp(@RequestBody UserDto user) {
 		System.out.println("UserController signUp(UserDto dto) " + new Date());
 
 		System.out.println("클라이언트로 부터 받은 데이터 : " + user.toString());
