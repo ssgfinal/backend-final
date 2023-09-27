@@ -39,10 +39,12 @@ public class SmsController {
 			@RequestParam("verificationCode") String Code) {
 		System.out.println(Code);
 		boolean isValid = VerificationCodeValidator.isValidVerificationCode(session, Code);
-
+		System.out.println("입력받은 값 : "  + Code);
 		if (isValid) {
+			System.out.println(isValid);
 			return ResponseEntity.ok("인증되었습니다.");
 		} else {
+			System.out.println(isValid);
 			return ResponseEntity.badRequest().body("유효하지 않는 인증번호입니다.");
 		}
 	}
