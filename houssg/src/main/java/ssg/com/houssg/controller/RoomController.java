@@ -173,10 +173,10 @@ public class RoomController {
 
 	
 	 @GetMapping("room/get")
-	    public ResponseEntity<List<RoomDto>> choiceAccom(@RequestParam int roomNumber) {
-	        System.out.println(roomNumber);
+	    public ResponseEntity<List<RoomDto>> choiceAccom(@RequestParam int accomNumber) {
+	        System.out.println(accomNumber);
 	        System.out.println("숙소상세로 들어갑니다");
-	        List<RoomDto> list = service.choiceAccom(roomNumber);
+	        List<RoomDto> list = service.choiceAccom(accomNumber);
 
 	        if (list != null && !list.isEmpty()) {
 	            // 숙소 정보가 존재할 경우 200 OK 응답과 데이터 반환
