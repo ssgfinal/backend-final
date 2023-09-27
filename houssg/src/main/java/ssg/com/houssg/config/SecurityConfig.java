@@ -26,7 +26,7 @@ public class SecurityConfig {
 		http.httpBasic().disable().csrf().disable()
 				.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests()
-				.requestMatchers( "/","/swagger-ui/**", "/v3/api-docs/**","/user/**").permitAll()
+				.requestMatchers( "/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/sms/**").permitAll()
 //				.requestMatchers("/swagger-ui.html", "/v3/api-docs", "/swagger-resources/**", "/webjars/**").permitAll()
 //				.requestMatchers(new AntPathRequestMatcher ("/user/**")).permitAll()
 //				.requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
