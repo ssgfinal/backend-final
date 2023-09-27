@@ -26,6 +26,7 @@ public class CouponController {
 	@Autowired
 	private CouponService service;
 
+	// 관리자 쿠폰 발행
 	@PostMapping("issued")
 	public String couponIssued(@RequestParam String couponName, @RequestParam int discount,
 			@RequestParam String expirationDate) {
