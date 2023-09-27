@@ -47,7 +47,7 @@
 	<!-- 아이디 찾기 -->
 	<select id="findIdByPhoneNumber" parameterType="string"
 		resultType="ssg.com.houssg.dto.UserDto">
-		SELECT * FROM user WHERE phonenumber = #{phonenumber}
+		SELECT id FROM user WHERE phonenumber = #{phonenumber}
 	</select>
 
 
