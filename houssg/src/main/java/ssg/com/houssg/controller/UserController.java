@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +45,7 @@ public class UserController {
 	private SmsUtil smsUtil;
 
 	// 로그인
+	@CrossOrigin
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody UserDto user) {
 		System.out.println("UserController login(UserDto user) " + new Date());
