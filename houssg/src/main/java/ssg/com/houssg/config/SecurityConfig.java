@@ -25,7 +25,8 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.httpBasic().disable().csrf().disable()
-				.cors(Customizer.withDefaults())
+				//.cors(Customizer.withDefaults())
+				.cors().disable()
 				.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests()
 				.requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/message/**").permitAll()
