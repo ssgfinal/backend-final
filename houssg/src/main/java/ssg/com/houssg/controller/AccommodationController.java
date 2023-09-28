@@ -44,23 +44,45 @@ public class AccommodationController {
     private FacilityService facservice;
     
     @GetMapping("search")
-    public ResponseEntity<List<AccommodationDto>> getAddressSearch(@RequestParam String search) {
-        System.out.println("주소별 검색");
-        AccommodationParam param = new AccommodationParam();
-        search = "%" + search.replace(" ", "%") + "%";
-        param.setSearch(search);
+    public ResponseEntity<List<AccommodationDto>> getAddressSearch(
+    		@RequestParam(value = "search", required = false) String search,
+    	    @RequestParam(value = "type", required = false) String type,
+    	    @RequestParam(value = "startDate", required = false) String startDate,
+    	    @RequestParam(value = "endDate", required = false) String endDate) {
+
+    AccommodationParam param = new AccommodationParam();
+
+        if (search != null && !search.equals("")) {
+            search = "%" + search.replace(" ", "%") + "%";
+            System.out.println(search);
+            param.setSearch(search);
+        }
+
+        if (type != null && !type.equals("")) {
+        	System.out.println(type);
+            param.setType(type);
+        }
+
+        if (startDate != null && !startDate.equals("") && endDate != null && !endDate.equals("")) {
+            // 시작 날짜와 종료 날짜가 모두 제공된 경우에만 설정
+        	System.out.println(startDate+endDate);
+            param.setStartDate(startDate);
+            param.setEndDate(endDate);
+        }
+
         List<AccommodationDto> accommodations = service.getAddressSearch(param);
-        
+        System.out.println(param.toString());
+        System.out.println(accommodations);
         // 검색 결과가 비어 있는 경우 NOT_FOUND 응답을 반환할 수 있습니다.
         if (accommodations.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        
+
         // 검색 결과가 비어 있지 않은 경우 OK 응답과 함께 검색 결과를 반환합니다.
         return ResponseEntity.ok(accommodations);
     }
     
-    // (3) 숙소 등록이 진행됨
+    // 숙소 등록이 진행됨
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addAccommodation(@RequestParam("file") MultipartFile file,
                                                    @RequestParam("id") String id,

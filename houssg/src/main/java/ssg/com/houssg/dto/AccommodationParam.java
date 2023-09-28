@@ -5,7 +5,7 @@ public class AccommodationParam {
     private String search;
     private String type;
     private String startDate;
-    private String lastDate;
+    private String endDate;
 	public String getSearch() {
 		return search;
 	}
@@ -24,24 +24,26 @@ public class AccommodationParam {
 	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
-	public String getLastDate() {
-		return lastDate;
+	public String getEndDate() {
+		return endDate;
 	}
-	public void setLastDate(String lastDate) {
-		this.lastDate = lastDate;
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 	public AccommodationParam() {
 		super();
 	}
-	public AccommodationParam(String search, String type, String startDate, String lastDate) {
+	public AccommodationParam(String search, String type, String startDate, String endDate) {
 		super();
 		this.search = search;
 		this.type = type;
 		this.startDate = startDate;
-		this.lastDate = lastDate;
+		this.endDate  = endDate;
 	}
-    
-    
-
+	@Override
+	public String toString() {
+		return "AccommodationParam [search=" + search + ", type=" + type + ", startDate=" + startDate + ", endDate="
+				+ endDate + "]";
+	}
     
 }
