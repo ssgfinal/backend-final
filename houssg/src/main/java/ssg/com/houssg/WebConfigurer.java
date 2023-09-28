@@ -17,8 +17,8 @@ public class WebConfigurer implements WebMvcConfigurer{
 		 registry.addMapping("/**")
          .allowedOrigins("*") // 모든 출처 허용
          .allowedHeaders("*") // 모든 헤더 허용
-         .exposedHeaders("Access-Control-Allow-Origin") // 노출할 헤더 추가
-         .allowCredentials(true); // 인증 정보 허용
+         .exposedHeaders("Access-Control-Allow-Origin"); // 노출할 헤더 추가
+         
 	
 		
 		
