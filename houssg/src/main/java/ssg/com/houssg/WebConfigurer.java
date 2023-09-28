@@ -14,6 +14,14 @@ public class WebConfigurer implements WebMvcConfigurer{
 		registry.addMapping("/**").allowedOrigins("*");
 	//	registry.addMapping("/**").allowedOrigins("http://localhost:9100");
 		registry.addMapping("/**").allowedHeaders("*");
+		
+		registry.addMapping("/**")
+        .allowedOrigins("http://localhost:8080")
+        .allowedMethods("OPTIONS","GET","POST","PUT","DELETE");
+		
+		registry.addMapping("/**")
+        .allowedOrigins("http://52.79.147.124:80")
+        .allowedMethods("OPTIONS","GET","POST","PUT","DELETE");
 	}
 }
 
