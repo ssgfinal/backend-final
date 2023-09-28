@@ -45,7 +45,6 @@ public class UserController {
 	private SmsUtil smsUtil;
 
 	// 로그인
-	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody UserDto user) {
 		System.out.println("UserController login(UserDto user) " + new Date());
