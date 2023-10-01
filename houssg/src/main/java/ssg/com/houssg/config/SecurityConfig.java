@@ -33,6 +33,8 @@ public class SecurityConfig {
 				.requestMatchers("/room/get/**","/review/get/all/**","/search/**","/get/all/accom/**","/get/accom/**","/healthcheck/**").permitAll()
 				.anyRequest().authenticated(); // 이외 모든 요청은 인증필요
 				
+		http.cors(Customizer.withDefaults());
+				
 		return http.build();
 	}
 }
