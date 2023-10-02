@@ -83,6 +83,88 @@ public class AccommodationController {
     }
     
     // 숙소 등록이 진행됨
+//    @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<String> addAccommodation(@RequestParam("file") MultipartFile file,
+//                                                   @RequestParam("id") String id,
+//                                                   @RequestParam("accomName") String accomName,
+//                                                   @RequestParam("accomAddress") String accomAddress,
+//                                                   @RequestParam("teleNumber") String teleNumber,
+//                                                   @RequestParam("accomCategory") String accomCategory,
+//                                                   @RequestParam("accomDetails") String accomDetails,
+//                                                   @RequestParam("checkIn") String checkIn,
+//                                                   @RequestParam("checkOut") String checkOut,
+//                                                   @RequestParam("businessNumber") String businessNumber,
+//                                                   @RequestParam("zipCode") String zipCode,
+//                                                   @RequestBody FacilityDto facilityDto,
+//                                                   HttpServletRequest request) {
+//        System.out.println("숙소 추가 신청");
+//        
+//
+//        String path = request.getSession().getServletContext().getRealPath("/upload");
+//        String root = path + "\\" + "uploadFiles";
+//        String saveFileName = "";
+//
+//        File fileCheck = new File(root);
+//
+//        if (!fileCheck.exists()) fileCheck.mkdirs();
+//
+//        try {
+//            if (file != null && !file.isEmpty()) {
+//                String originalFileName = file.getOriginalFilename();
+//                String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+//                saveFileName = UUID.randomUUID().toString() + extension;
+//
+//                String filePath = root + "\\" + saveFileName;
+//
+//                file.transferTo(new File(filePath));
+//
+//                // AccommodationDto 객체를 생성하여 숙소 정보 저장
+//                AccommodationDto dto = new AccommodationDto();
+//                dto.setImg(filePath);
+//                dto.setId(id);
+//                dto.setAccomName(accomName);
+//                dto.setAccomAddress(accomAddress);
+//                dto.setTeleNumber(teleNumber);
+//                dto.setAccomCategory(accomCategory);
+//                dto.setAccomDetails(accomDetails);
+//                dto.setCheckIn(checkIn);
+//                dto.setCheckOut(checkOut);
+//                dto.setBusinessNumber(businessNumber);
+//                dto.setZipCode(zipCode);
+//
+//                // FacilityDto 객체를 생성하여 시설 정보 저장
+//                facilityDto.setNearbySea(nearbySea);
+//                facilityDto.setParkingAvailable(parkingAvailable);
+//                facilityDto.setPool(pool);
+//                facilityDto.setSpa(spa);
+//                facilityDto.setWifi(wifi);
+//                facilityDto.setTwinBed(twinBed);
+//                facilityDto.setBarbecue(barbecue);
+//                facilityDto.setNoSmoking(noSmoking);
+//                facilityDto.setLuggageStorage(luggageStorage);
+//                facilityDto.setFreeMovieOtt(freeMovieOtt);
+//
+//                // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
+//                int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
+//
+//                System.out.println(dto.toString());
+//                System.out.println(facilityDto.toString());
+//            }
+//
+//            // 숙소 등록 성공 시
+//            return ResponseEntity.ok("숙소 등록 성공");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("파일 업로드 실패");
+//
+//            // 업로드 실패 시 파일 삭제
+//            if (!saveFileName.isEmpty()) {
+//                new File(root + "\\" + saveFileName).delete();
+//            }
+//
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("숙소 등록 실패");
+//        }
+//    }
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addAccommodation(@RequestParam("file") MultipartFile file,
                                                    @RequestParam("id") String id,
@@ -95,19 +177,9 @@ public class AccommodationController {
                                                    @RequestParam("checkOut") String checkOut,
                                                    @RequestParam("businessNumber") String businessNumber,
                                                    @RequestParam("zipCode") String zipCode,
-                                                   @RequestParam("nearbySea") boolean nearbySea,
-                                                   @RequestParam("parkingAvailable") boolean parkingAvailable,
-                                                   @RequestParam("pool") boolean pool,
-                                                   @RequestParam("spa") boolean spa,
-                                                   @RequestParam("wifi") boolean wifi,
-                                                   @RequestParam("twinBed") boolean twinBed,
-                                                   @RequestParam("barbecue") boolean barbecue,
-                                                   @RequestParam("noSmoking") boolean noSmoking,
-                                                   @RequestParam("luggageStorage") boolean luggageStorage,
-                                                   @RequestParam("freeMovieOtt") boolean freeMovieOtt,
+                                                   @RequestBody FacilityDto facilityDto,
                                                    HttpServletRequest request) {
         System.out.println("숙소 추가 신청");
-        
 
         String path = request.getSession().getServletContext().getRealPath("/upload");
         String root = path + "\\" + "uploadFiles";
@@ -141,19 +213,6 @@ public class AccommodationController {
                 dto.setBusinessNumber(businessNumber);
                 dto.setZipCode(zipCode);
 
-                // FacilityDto 객체를 생성하여 시설 정보 저장
-                FacilityDto facilityDto = new FacilityDto();
-                facilityDto.setNearbySea(nearbySea);
-                facilityDto.setParkingAvailable(parkingAvailable);
-                facilityDto.setPool(pool);
-                facilityDto.setSpa(spa);
-                facilityDto.setWifi(wifi);
-                facilityDto.setTwinBed(twinBed);
-                facilityDto.setBarbecue(barbecue);
-                facilityDto.setNoSmoking(noSmoking);
-                facilityDto.setLuggageStorage(luggageStorage);
-                facilityDto.setFreeMovieOtt(freeMovieOtt);
-
                 // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
                 int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
 
@@ -175,7 +234,6 @@ public class AccommodationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("숙소 등록 실패");
         }
     }
-
 
 
     @GetMapping("mypage/accom")
