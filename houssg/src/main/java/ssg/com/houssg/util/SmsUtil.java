@@ -25,7 +25,7 @@ public class SmsUtil {
             session.setAttribute(session.getId(), verificationCode);
 //            session.setAttribute("verificationCode", verificationCode);
 
-            SmsResponseDto data = smsService.sendSms(request.getRecipientPhoneNumber(), request.getContent(), session);
+            SmsResponseDto data = smsService.sendSms(request.getRecipientPhoneNumber(), verificationCode, session);
             return ResponseEntity.ok().body(data);
         } catch (Exception e) {
             e.printStackTrace();
