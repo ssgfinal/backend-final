@@ -3,7 +3,7 @@
 
 <mapper namespace="ssg.com.houssg.dao.CouponDao">
 
-	<!-- 쿠폰 발행 -->
+	<!-- 쿠폰 발행(관리자) -->
 	<insert id="couponIssued"
 		parameterType="ssg.com.houssg.dto.CouponDto">
 		insert into coupon(coupon_number, coupon_name, discount,
@@ -12,16 +12,17 @@
 		#{couponName}, #{discount}, #{expirationDate}, 0)
 	</insert>
 
-	<!-- 쿠폰번호 중복확인 -->
-	<select id="couponNumberCheck" parameterType="java.lang.String"
-		resultType="java.lang.Integer">
+	<!-- 쿠폰번호 중복확인(관리자 쿠폰 발행 + 유저 쿠폰 등록에 쓰임 -->
+	<select id="userCouponNumberCheck"
+		parameterType="java.lang.String" resultType="java.lang.Integer">
 		select count(*)
-		from coupon
+		from
+		user_coupon
 		where
 		coupon_number=#{couponNumber}
 	</select>
 
-	<!-- 유효기간 만료 상태 변경 -->
+	<!-- 유효기간 만료 상태 변경(관리자) -->
 	<update id="updateExpirationStatus"
 		parameterType="ssg.com.houssg.dto.CouponDto">
 		update coupon SET expiration_status = 1
@@ -29,8 +30,8 @@
 		expiration_status = 0 AND
 		expiration_date &lt; CURRENT_TIMESTAMP;
 	</update>
-	
-	<!-- 쿠폰 조회 -->
+
+	<!-- 쿠폰 조회(유효기간이 남은 쿠폰) -->
 	<select id="getValidCoupons" parameterType="java.lang.String"
 		resultType="ssg.com.houssg.dto.CouponDto">
 		select coupon_number, coupon_name, discount,
@@ -38,4 +39,19 @@
 		from coupon
 		where expiration_status=0
 	</select>
+
+	 <!-- 유저 - ID와 함께 쿠폰 다운로드(저장) -->
+    <insert id="enrollUserCoupon" parameterType="map">
+        <!-- user_coupon 테이블에 데이터 삽입 -->
+        INSERT INTO user_coupon (id, coupon_number, coupon_name, discount, expiration_date, is_used)
+        VALUES (#{id}, #{dto.couponNumber}, #{dto.couponName}, #{dto.discount}, #{dto.expirationDate}, 0)
+    </insert>
+
+	<!-- coupon 테이블에서 쿠폰 정보를 쿠폰 번호로 조회 -->
+	<select id="findCouponByNumber" parameterType="string"
+		resultType="ssg.com.houssg.dto.CouponDto">
+		SELECT * FROM coupon WHERE coupon_number = #{couponNumber}
+	</select>
+
+
 </mapper>

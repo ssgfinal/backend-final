@@ -1,13 +1,17 @@
 package ssg.com.houssg.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -61,6 +65,11 @@ public class UserController {
 			System.out.println("생성된 토큰: " + token);
 			String refreshToken = jwtTokenProvider.createRefreshToken(dto);
 			System.out.println("생성된 리프레시 토큰: " + refreshToken);
+			
+			 Map<String, Object> responseMap = new HashMap<>();
+		        responseMap.put("message", "로그인 성공");
+		        responseMap.put("nickname", dto.getNickname()); // 닉네임 추가
+			
 			HttpHeaders headers = new HttpHeaders();
 	        headers.add("Authorization", "Bearer " + token);
 	        headers.add("Refresh-Token" , refreshToken);
@@ -69,7 +78,7 @@ public class UserController {
 	        System.out.println("로그인 성공" + new Date());
 	        
 			return ResponseEntity.ok().headers(headers)
-		            .body("로그인 성공"); // 토큰 반환
+		            .body(responseMap); // 토큰 반환
 		}		
 
 		return ResponseEntity.notFound().build();
@@ -135,7 +144,7 @@ public class UserController {
 
 	// 아이디 찾기
 	@PostMapping("findid")
-	public ResponseEntity<UserDto> findId(@RequestParam("phone_number") String phone_number, HttpSession session) {
+	public ResponseEntity<SmsResponseDto> findId(@RequestParam("phone_number") String phone_number, HttpSession session) {
 
 		// 휴대폰 번호 중복 검사
 		int count = service.phoneNumberCheck(phone_number);
@@ -155,12 +164,12 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok().body(smsResponse.getBody());
 	}
 
 	// 비밀번호 찾기
 	@PostMapping("findpw")
-	public ResponseEntity<UserDto> findPw(@RequestParam("id") String id,
+	public ResponseEntity<SmsResponseDto> findPw(@RequestParam("id") String id,
 			@RequestParam("phone_number") String phone_number, HttpSession session) {
 
 		// 휴대폰 번호 중복 검사
@@ -182,23 +191,19 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok().body(smsResponse.getBody());
 	}
 
 	// 비밀번호 변경
 	@PostMapping("updatePassword")
-	public ResponseEntity<String> updatePassword(@RequestParam("id") String id, @RequestParam("newPassword") String newPassword, @RequestParam("confirmPassword") String confirmPassword) {
+	public ResponseEntity<String> updatePassword(@RequestParam("id") String id, @RequestParam("newPassword") String newPassword) {
 	    UserUtil userUtil = new UserUtil();
 
-	    if (userUtil.isNullOrEmpty(id) || userUtil.isNullOrEmpty(newPassword) || userUtil.isNullOrEmpty(confirmPassword)) {
+	    if (userUtil.isNullOrEmpty(id) || userUtil.isNullOrEmpty(newPassword)) {
 	        System.out.println("ID, 패스워드 입력 오류");
-	        return ResponseEntity.badRequest().body("아이디, 비밀번호, 비밀번호 확인 란이 공백입니다.");
+	        return ResponseEntity.badRequest().body("아이디, 비밀번호 란이 공백입니다.");
 	    }
 
-	    if (!newPassword.equals(confirmPassword)) {
-	        System.out.println("비밀번호, 비밀번호 확인 값 불일치");
-	        return ResponseEntity.badRequest().body("새로운 비밀번호와 비밀번호 확인 값이 일치하지 않습니다.");
-	    }
 
 	    // 비밀번호 유효성 검사
 	    if (!userUtil.isValidPassword(newPassword)) {

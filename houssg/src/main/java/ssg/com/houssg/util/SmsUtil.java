@@ -21,7 +21,9 @@ public class SmsUtil {
         try {
             // 생성된 인증번호를 세션에 저장
             String verificationCode = smsService.generateVerificationCode();
-            session.setAttribute("verificationCode", verificationCode);
+            System.out.println("세션 아이디"+session.getId());
+            session.setAttribute(session.getId(), verificationCode);
+//            session.setAttribute("verificationCode", verificationCode);
 
             SmsResponseDto data = smsService.sendSms(request.getRecipientPhoneNumber(), request.getContent(), session);
             return ResponseEntity.ok().body(data);
