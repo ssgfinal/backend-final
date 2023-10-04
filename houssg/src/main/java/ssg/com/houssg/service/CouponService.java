@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.ibatis.annotations.Param;
 
 import ssg.com.houssg.dao.CouponDao;
 import ssg.com.houssg.dto.CouponDto;
@@ -28,28 +29,24 @@ public class CouponService {
 	}
 
 	// 유저 - 쿠폰번호로 쿠폰 정보 조회
-	public CouponDto findByCouponNumber(String couponNumber) {
-		return dao.findBycouponNumber(couponNumber);
+	public CouponDto findCouponByNumber(String couponNumber) {
+		return dao.findCouponByNumber(couponNumber);
 	}
 	
 	// 유저 - ID와 함께 쿠폰 다운로드(저장)
-    public String enrollUserCoupon(String Id, UserCouponDto dto) {
-        // 쿠폰번호로 중복 체크
-        int couponExists = dao.userCouponNumberCheck(dto.getCouponNumber());
+	public int enrollUserCoupon(String userId, CouponDto couponInfo, UserCouponDto dto) {
+	    // 사용자 쿠폰 정보와 사용자 ID를 함께 저장
+	    dto.setId(userId);
+	    dto.setCouponNumber(couponInfo.getCouponNumber());
+	    dto.setCouponName(couponInfo.getCouponName());
+	    dto.setDiscount(couponInfo.getDiscount());
+	    dto.setExpirationDate(couponInfo.getExpirationDate());
 
-        // 이미 쿠폰번호가 등록된 경우 중복 등록을 막음
-        if (couponExists > 0) {
-            return "중복";
-        } else {
-            int result = dao.enrollUserCoupon(Id, dto);
-            if (result > 0) {
-                return "success";
-            } else {
-                return "failed";
-            }
-        }
-    }
+	    // user_coupon 테이블에 저장
+	    return dao.enrollUserCoupon(userId, dto);
+	}
 
+    
 	public int userCouponNumberCheck(String couponNumber) {	
 		return dao.userCouponNumberCheck(couponNumber);
 	}

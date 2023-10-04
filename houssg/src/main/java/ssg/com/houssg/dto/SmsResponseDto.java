@@ -7,8 +7,17 @@ public class SmsResponseDto {
     private LocalDateTime requestTime;
     private String statusCode;
     private String statusName;
+    private String sessionId; // 세션 id 추가
 
-    public String getRequestId() {
+   public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public String getRequestId() {
         return requestId;
     }
 
