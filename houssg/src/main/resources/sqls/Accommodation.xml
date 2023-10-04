@@ -4,11 +4,28 @@
 <mapper namespace="ssg.com.houssg.dao.AccommodationDao">
 	
 	<select id="getAddressSearch" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
-   		SELECT a.*
-   	 	FROM accommodation a
-   	 	JOIN rooms r ON a.accom_number = r.accom_number
-   	 	WHERE a.accom_address like CONCAT('%', #{search}, '%')
+	    SELECT DISTINCT a.*
+	    FROM accommodation a
+	    WHERE
+	    <if test="search != null and search != ''">
+	        a.accom_address LIKE CONCAT('%', #{search}, '%')
+	    </if>
+	    <if test="type != null and type != ''">
+	        AND a.accom_category = #{type}
+	    </if>
+	    AND EXISTS (
+	        SELECT 1
+	        FROM rooms r
+	        WHERE r.accom_number = a.accom_number
+	    )
+	    AND EXISTS (
+	        SELECT 1
+	        FROM reservation re
+	        WHERE re.accom_number = a.accom_number
+	        AND re.start_date &lt;= #{startDate} AND re.end_date &gt;= #{endDate}
+	    )
 	</select>
+
 	
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
 	<insert id="insertAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
