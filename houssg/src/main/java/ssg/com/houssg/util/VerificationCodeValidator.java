@@ -1,6 +1,5 @@
 package ssg.com.houssg.util;
 
-import jakarta.servlet.http.HttpSession;
 import ssg.com.houssg.dao.SmsCodeDao;
 import ssg.com.houssg.dto.SmsCodeDto;
 
@@ -12,22 +11,30 @@ public class VerificationCodeValidator {
 	        this.smsCodeDao = smsCodeDao;
 	    }
 
-	
-    public  boolean isValidVerificationCode(String Code, HttpSession session) {
-    	System.out.println(session.getId());
-    	session.getAttribute(session.getId());
-    	System.out.println("세션에 저장된 코드" + session.getAttribute(session.getId()));
-    	System.out.println("사용자가 입력한 코드 "+ Code);
-    	
-    	
-    	String sessionCode = (String) session.getAttribute(session.getId());
-    	
-    	if (sessionCode != null && sessionCode.equals(Code)) {
-            // 세션에 저장된 코드와 사용자가 입력한 코드가 일치하면 true를 반환합니다.
-            return true;
-        } else {
-            // 일치하지 않으면 false를 반환합니다.
+    public  boolean isValidVerificationCode(String sessionId, String Code) {
+
+    	// DB에서 해당 세션 아이디에 저장된 SMS 코드 정보를 가져옴
+        SmsCodeDto smsCodeDto = smsCodeDao.getCodeBySessionId(sessionId);
+        
+        if (smsCodeDto == null) {
+            // 해당 세션 아이디에 대한 정보가 DB에 없음
             return false;
         }
+
+        // DB에 저장된 세션 아이디와 인증번호를 클라이언트에서 받은 값과 비교
+        if (sessionId.equals(smsCodeDto.getSessionId()) && Code.equals(smsCodeDto.getVerificationCode())) {
+            // 세션 아이디와 인증번호가 일치
+
+            // 유효 시간 체크
+            long currentTime = System.currentTimeMillis();
+            long expirationTime = smsCodeDto.getExpirationTime().getTime();
+
+            if (currentTime <= expirationTime) {
+                // 유효 시간 내에 검증됨
+                return true;
+            }
+        }
+        // 인증번호가 일치하지 않거나 유효 시간이 지났음
+        return false;
     }
 }

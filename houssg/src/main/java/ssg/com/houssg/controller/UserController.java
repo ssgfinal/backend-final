@@ -108,7 +108,7 @@ public class UserController {
 	}
 
 	// 닉네임 중복확인
-	@PostMapping("nicknamecheck")
+	@PostMapping("nickname-check")
 	public String nicknameCheck(String nickname) {
 		System.out.println("UserController nicknameCheck(String nickname) " + new Date());
 
@@ -121,7 +121,7 @@ public class UserController {
 	}
 
 	// 회원가입
-	@PostMapping("/signup")
+	@PostMapping("/sign-up")
 	public String signUp(@RequestBody UserDto user) {
 		System.out.println("UserController signUp(UserDto dto) " + new Date());
 
@@ -195,7 +195,7 @@ public class UserController {
 	}
 
 	// 비밀번호 변경
-	@PostMapping("updatePassword")
+	@PostMapping("updatepassword")
 	public ResponseEntity<String> updatePassword(@RequestParam("id") String id, @RequestParam("newPassword") String newPassword) {
 	    UserUtil userUtil = new UserUtil();
 

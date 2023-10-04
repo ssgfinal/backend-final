@@ -21,7 +21,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.UserCouponDto;
-import ssg.com.houssg.security.JwtTokenProvider;
 import ssg.com.houssg.service.CouponService;
 import ssg.com.houssg.util.CouponUtil;
 
@@ -65,19 +64,19 @@ public class CouponController {
 	}
 
 	// 쿠폰 가져오기(다운가능한 쿠폰 목록 출력)
-	@GetMapping("/getValidCoupons")
+	@GetMapping("/get-valid-coupons")
 	public List<CouponDto> getValidCoupons() {
 		return service.getCoupons();
 	}
 
 	// 유저 - 쿠폰번호로 쿠폰 정보 조회
-	@GetMapping("/findCouponByNumber")
+	@GetMapping("/find-couponinfo")
 	public CouponDto findCouponByNumber(@RequestParam String couponNumber) {
 		return service.findCouponByNumber(couponNumber);
 	}
 
 	// 유저 - ID와 함께 쿠폰 다운로드(저장)
-	@PostMapping("/enrollUserCoupon")
+	@PostMapping("/enroll-usercoupon")
 	public ResponseEntity<String> enrollUserCoupon(@RequestBody UserCouponDto dto, HttpServletRequest request) {
 		String token = getTokenFromRequest(request);
 
