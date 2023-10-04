@@ -22,7 +22,7 @@ import ssg.com.houssg.util.VerificationCodeValidator;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("message")
+@RequestMapping("sms")
 public class SmsController {
 
 	@Autowired
@@ -36,28 +36,40 @@ public class SmsController {
 	
 	@Autowired
     private VerificationCodeCleanupService verificationCodeCleanupService;
+	
 
-
-	@PostMapping("/sms")
+	@PostMapping("/signup")
 	public ResponseEntity<SmsResponseDto> sendSms(@RequestBody RequestDto request, HttpSession session) {
-		return smsUtil.sendSms(request, session);
-	}
+		String phoneNumber = request.getRecipientPhoneNumber();
+		
+		// 전화번호 중복 확인
+		int count = userService.phoneNumberCheck(phoneNumber);
+		
+        if (count > 0) {
+            // 중복된 전화번호인 경우 오류 응답 반환
+            return ResponseEntity.badRequest().build();
+        }
 
-	@PostMapping("/sms-check") // 인증번호 비교 확인
-	public ResponseEntity<String> checkVerificationCode(@RequestParam("verificationCode") String Code, HttpSession session) {
+        return smsUtil.sendSms(request, session);
+    }
+
+	
+
+	@PostMapping("/check") // 인증번호 비교 확인
+	public ResponseEntity<String> checkVerificationCode(@RequestParam("sessionId") String sessionId, @RequestParam("verificationCode") String Code) {
 		System.out.println(Code);
 		
 		// VerificationCodeValidator 클래스의 인스턴스 생성
-	    VerificationCodeValidator validator = new VerificationCodeValidator(smsCodeDao); // smsCodeDao는 여러분의 코드에 주입되어야 함
+	    VerificationCodeValidator validator = new VerificationCodeValidator(smsCodeDao);
 
 	    // 생성한 인스턴스를 사용하여 isValidVerificationCode 메서드 호출
-	    boolean isValid = validator.isValidVerificationCode(Code, session);
+	    boolean isValid = validator.isValidVerificationCode(sessionId ,Code);
 		System.out.println("입력받은 값 : "  + Code);
 		if (isValid) {
 			System.out.println(isValid);
 			
 			// 인증이 완료된 후에 삭제
-//			verificationCodeCleanupService.deleteSuccessVerificationCodes(sessionId);
+			verificationCodeCleanupService.deleteSuccessVerificationCodes(sessionId);
 
 			return ResponseEntity.ok("인증되었습니다.");
 		} else {
@@ -66,14 +78,14 @@ public class SmsController {
 		}
 	}
 
-	@PostMapping("/sms-check-findid") // 인증번호 비교 확인
-	public ResponseEntity<Object> findId(
-			@RequestParam("verificationCode") String Code, @RequestParam("phone_number") String phoneNumber, HttpSession session) {
+	@PostMapping("/check-findid") // 인증번호 비교 확인
+	public ResponseEntity<Object> findId(@RequestParam("sessionId") String sessionId,
+			@RequestParam("verificationCode") String Code, @RequestParam("phone_number") String phoneNumber) {
 		// VerificationCodeValidator 클래스의 인스턴스 생성
-	    VerificationCodeValidator validator = new VerificationCodeValidator(smsCodeDao); // smsCodeDao는 여러분의 코드에 주입되어야 함
+	    VerificationCodeValidator validator = new VerificationCodeValidator(smsCodeDao); 
 
 	    // 생성한 인스턴스를 사용하여 isValidVerificationCode 메서드 호출
-	    boolean isValid = validator.isValidVerificationCode(Code, session);
+	    boolean isValid = validator.isValidVerificationCode(sessionId, Code);
 
 		if (!isValid) {
 			return ResponseEntity.badRequest().body("유효하지 않는 인증번호입니다.");
@@ -91,7 +103,7 @@ public class SmsController {
 
 		if (foundId != null) {
 			// 인증이 완료된 후에 삭제
-//			verificationCodeCleanupService.deleteSuccessVerificationCodes(sessionId);
+			verificationCodeCleanupService.deleteSuccessVerificationCodes(sessionId);
 			return ResponseEntity.ok(foundId);
 		} else {
 			// 해당 휴대폰번호로 가입한 아이디가 없습니다

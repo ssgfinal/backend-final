@@ -47,30 +47,28 @@ public class SmsService {
 	@Autowired
 	public SmsCodeDao smsCodeDao;
 
-	public SmsResponseDto sendSms(String recipientPhoneNumber, String verificationCode, HttpSession session)
+	public SmsResponseDto sendSms(String recipientPhoneNumber, String content, HttpSession session)
 			throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException,
 			URISyntaxException {
 		Long time = System.currentTimeMillis();
-//
-//		// 6자리 난수 생성
-//		String verificationCode = generateVerificationCode();
-////      session.setAttribute("verificationCode", verificationCode);
-////      System.out.println("세션에 저장된 인증번호: " + session.getAttribute("verificationCode"));
-//
-//		// 세션 아이디 생성
-//		String sessionId = generateSessionId();
-//		
-//		// 세션 대신 DB에 세션 아이디, 인증 번호 및 유효 시간 저장
-//		SmsCodeDto smsCodeDto = new SmsCodeDto();
-//		smsCodeDto.setSessionId(sessionId); // 세션 아이디 생성 메서드 필요
-//		smsCodeDto.setVerificationCode(verificationCode);
-//		smsCodeDto.setExpirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000)); // 5분 유효 시간 설정
-//
-//		// DB에 저장
-//		smsCodeDao.saveCode(smsCodeDto);
-//
-//		// DB에 저장된 정보
-//		System.out.println(smsCodeDto);
+
+		// 6자리 난수 생성
+		String verificationCode = generateVerificationCode();
+
+		// 세션 아이디 생성
+		String sessionId = generateSessionId();
+		
+		// 세션 대신 DB에 세션 아이디, 인증 번호 및 유효 시간 저장
+		SmsCodeDto smsCodeDto = new SmsCodeDto();
+		smsCodeDto.setSessionId(sessionId); // 세션 아이디 생성 메서드 필요
+		smsCodeDto.setVerificationCode(verificationCode);
+		smsCodeDto.setExpirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000)); // 5분 유효 시간 설정
+
+		// DB에 저장
+		smsCodeDao.saveCode(smsCodeDto);
+
+		// DB에 저장된 정보
+		System.out.println(smsCodeDto);
 
 		String smsContent = "[HOUSS-G] 인증번호 " + "[" + verificationCode + "]" + "를 입력해주세요.";
 
@@ -96,7 +94,7 @@ public class SmsService {
 		SmsResponseDto smsResponse = restTemplate.postForObject(
 				new URI("https://sens.apigw.ntruss.com/sms/v2/services/" + this.serviceId + "/messages"), body,
 				SmsResponseDto.class);
-//		smsResponse.setSessionId(sessionId);
+		smsResponse.setSessionId(sessionId);
 		return smsResponse;
 	}
 
@@ -108,12 +106,12 @@ public class SmsService {
 	}
 
 	// 세션아이디 생성
-//	public String generateSessionId() {
-//		SecureRandom secureRandom = new SecureRandom();
-//		byte[] sessionIdBytes = new byte[16];
-//		secureRandom.nextBytes(sessionIdBytes);
-//		return Base64.encodeBase64String(sessionIdBytes);
-//	}
+	public String generateSessionId() {
+		SecureRandom secureRandom = new SecureRandom();
+		byte[] sessionIdBytes = new byte[16];
+		secureRandom.nextBytes(sessionIdBytes);
+		return Base64.encodeBase64String(sessionIdBytes);
+	}
 
 	public String makeSignature(Long time)
 			throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
@@ -138,4 +136,3 @@ public class SmsService {
 		return encodeBase64String;
 	}
 }
-
