@@ -69,10 +69,11 @@ public class UserController {
 			 Map<String, Object> responseMap = new HashMap<>();
 		        responseMap.put("message", "로그인 성공");
 		        responseMap.put("nickname", dto.getNickname()); // 닉네임 추가
-			
+		        responseMap.put("phone", dto.getPhonenumber()); // 휴대폰 번호 추가
+		        
 			HttpHeaders headers = new HttpHeaders();
 	        headers.add("Authorization", "Bearer " + token);
-	        headers.add("Refresh-Token" , refreshToken);
+	        headers.add("RefreshToken" , refreshToken);
 	        tokenService.storeRefreshToken(refreshToken, user);
 	        
 	        System.out.println("로그인 성공" + new Date());
