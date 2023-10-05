@@ -6,17 +6,17 @@
 	<!-- 세션아이디 + 인증번호를 유효기간과 함께 저장 -->
 	<insert id="saveCode"
 		parameterType="ssg.com.houssg.dto.SmsCodeDto">
-		insert into sms_code(session_id, verification_code,
+		insert into sms_code(phone_number, verification_code,
 		expiration_time)
-		values (#{sessionId}, #{verificationCode},
+		values (#{phoneNumber}, #{verificationCode},
 		#{expirationTime})
 	</insert>
 
 
 	<!-- 세션 아이디로 SMS 코드 정보 조회 -->
-	<select id="getCodeBySessionId" parameterType="java.lang.String"
+	<select id="getCodeByphoneNumber" parameterType="java.lang.String"
 		resultType="ssg.com.houssg.dto.SmsCodeDto">
-		SELECT * FROM sms_code WHERE session_id = #{sessionId}
+		SELECT * FROM sms_code WHERE phone_number = #{phoneNumber}
 	</select>
 	
 	<!-- 만료된 인증 코드를 삭제하는 쿼리문 -->
@@ -28,7 +28,7 @@
     <!-- 인증완료된 인증 코드를 삭제하는 쿼리문 -->
     <delete id="deleteSuccessVerificationCodes">
         DELETE FROM sms_code
-        WHERE session_id = #{sessionId};
+        WHERE phone_number = #{phoneNumber};
     </delete>
     
 </mapper>
