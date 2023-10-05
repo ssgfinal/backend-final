@@ -14,7 +14,7 @@ public class VerificationCodeCleanupService {
     
 
     // 3600000 = 1시간
-    @Scheduled(fixedRate = 3600000) // 1시간마다 실행 (시간 단위는 밀리초)
+    @Scheduled(fixedRate = 1800000) // 30분마다 실행 (시간 단위는 밀리초)
     public void cleanupExpiredVerificationCodes() {
         // 만료된 인증 코드를 삭제하는 로직 구현
         smsCodeDao.deleteExpiredVerificationCodes();

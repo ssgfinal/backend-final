@@ -3,7 +3,7 @@
 
 <mapper namespace="ssg.com.houssg.dao.SmsCodeDao">
 
-	<!-- 세션아이디 + 인증번호를 유효기간과 함께 저장 -->
+	<!-- 전화번호 + 인증번호를 유효기간과 함께 저장 -->
 	<insert id="saveCode"
 		parameterType="ssg.com.houssg.dto.SmsCodeDto">
 		insert into sms_code(phone_number, verification_code,
@@ -13,7 +13,7 @@
 	</insert>
 
 
-	<!-- 세션 아이디로 SMS 코드 정보 조회 -->
+	<!-- 전화번호로 SMS 코드 정보 조회 -->
 	<select id="getCodeByphoneNumber" parameterType="java.lang.String"
 		resultType="ssg.com.houssg.dto.SmsCodeDto">
 		SELECT * FROM sms_code WHERE phone_number = #{phoneNumber}
@@ -30,5 +30,13 @@
         DELETE FROM sms_code
         WHERE phone_number = #{phoneNumber};
     </delete>
+    
+    <!-- 인증번호 업데이트 -->
+	<update id="updateCode"
+		parameterType="ssg.com.houssg.dto.SmsCodeDto">
+		UPDATE sms_code
+		SET verification_code = #{verificationCode}, expiration_time = #{expirationTime}, request_count = request_count + 1
+		WHERE phone_number = #{phoneNumber};
+	</update>
     
 </mapper>

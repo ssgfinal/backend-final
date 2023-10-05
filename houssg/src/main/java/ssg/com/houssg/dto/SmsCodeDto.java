@@ -7,6 +7,7 @@ public class SmsCodeDto {
 	private String phoneNumber;
 	private String verificationCode;
 	private Date expirationTime;
+	private int requestCount;
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -18,6 +19,14 @@ public class SmsCodeDto {
 
 	public String getVerificationCode() {
 		return verificationCode;
+	}
+
+	public int getRequestCount() {
+		return requestCount;
+	}
+
+	public void setRequestCount(int requestCount) {
+		this.requestCount = requestCount;
 	}
 
 	public void setVerificationCode(String verificationCode) {
@@ -35,7 +44,7 @@ public class SmsCodeDto {
 	@Override
 	public String toString() {
 		return "SmsCodeDto [phoneNumber=" + phoneNumber + ", verificationCode=" + verificationCode + ", expirationTime="
-				+ expirationTime + "]";
+				+ expirationTime + ", requestCount=" + requestCount + "]";
 	}
 
 }

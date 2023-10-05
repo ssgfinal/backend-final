@@ -11,10 +11,10 @@ public class VerificationCodeValidator {
 	        this.smsCodeDao = smsCodeDao;
 	    }
 
-    public  boolean isValidVerificationCode(String sessionId, String Code) {
+    public  boolean isValidVerificationCode(String phoneNumber, String Code) {
 
     	// DB에서 해당 세션 아이디에 저장된 SMS 코드 정보를 가져옴
-        SmsCodeDto smsCodeDto = smsCodeDao.getCodeByphoneNumber(sessionId);
+        SmsCodeDto smsCodeDto = smsCodeDao.getCodeByphoneNumber(phoneNumber);
         
         if (smsCodeDto == null) {
             // 해당 세션 아이디에 대한 정보가 DB에 없음
@@ -22,7 +22,7 @@ public class VerificationCodeValidator {
         }
 
         // DB에 저장된 세션 아이디와 인증번호를 클라이언트에서 받은 값과 비교
-        if (sessionId.equals(smsCodeDto.getPhoneNumber()) && Code.equals(smsCodeDto.getVerificationCode())) {
+        if (phoneNumber.equals(smsCodeDto.getPhoneNumber()) && Code.equals(smsCodeDto.getVerificationCode())) {
             // 세션 아이디와 인증번호가 일치
 
             // 유효 시간 체크

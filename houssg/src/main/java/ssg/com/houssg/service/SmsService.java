@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.apache.commons.codec.binary.Base64;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,7 +24,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -48,25 +46,47 @@ public class SmsService {
 	public SmsCodeDao smsCodeDao;
 
 	public SmsResponseDto sendSms(String recipientPhoneNumber, String content, HttpSession session)
-			throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException,
-			URISyntaxException {
+			throws Exception {
 		Long time = System.currentTimeMillis();
 
 		// 6자리 난수 생성
 		String verificationCode = generateVerificationCode();
-
 		
-		// DB에 휴대폰번호, 인증 번호 및 유효 시간 저장
-		SmsCodeDto smsCodeDto = new SmsCodeDto();
-		smsCodeDto.setPhoneNumber(recipientPhoneNumber);
-		smsCodeDto.setVerificationCode(verificationCode);
-		smsCodeDto.setExpirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000)); // 5분 유효 시간 설정
+		// DB에서 recipientPhoneNumber로 이미 저장된 인증 번호 레코드를 조회
+	    SmsCodeDto smsCodeDto = smsCodeDao.getCodeByphoneNumber(recipientPhoneNumber);
 
-		// DB에 저장
-		smsCodeDao.saveCode(smsCodeDto);
+	    if (smsCodeDto == null) {
+	        // 기존 레코드가 없으면 새로운 6자리 인증 번호 생성
+	    	smsCodeDto = new SmsCodeDto();
+	    	smsCodeDto.setPhoneNumber(recipientPhoneNumber);
+	    	smsCodeDto.setVerificationCode(generateVerificationCode());
+	    	smsCodeDto.setExpirationTime(new Date(System.currentTimeMillis() + 3 * 60 * 1000 + 30 * 1000));
+	    	smsCodeDao.saveCode(smsCodeDto);
+	    }
+	    else {
+	        // 기존 레코드가 있으면 request_count를 확인하여 제한을 검사하고 업데이트
+	        if (smsCodeDto.getRequestCount() >= 5) {
+	            // 제한을 초과한 경우
+	            throw new Exception("요청 횟수 제한을 초과했습니다.");
+	        }
+	    }
+	    
+	    // 새로운 6자리 인증 번호 생성
+	    String newVerificationCode = generateVerificationCode();
 
-		// DB에 저장된 정보
-		System.out.println(smsCodeDto);
+	    // 유저에게 새로운 인증 번호를 전달 또는 저장
+	    smsCodeDto.setVerificationCode(newVerificationCode);
+
+	    // 유효 시간 업데이트 (3분 30초)
+	    smsCodeDto.setExpirationTime(new Date(System.currentTimeMillis() + 3 * 60 * 1000 + 30 * 1000));
+	    
+	    // request_count 업데이트
+	    smsCodeDto.setRequestCount(smsCodeDto.getRequestCount() + 1);
+	    // DB에 저장 또는 업데이트
+	    smsCodeDao.updateCode(smsCodeDto);
+
+	    // DB에 저장된 정보
+	    System.out.println(smsCodeDto);
 
 		String smsContent = "[HOUSS-G] 인증번호 " + "[" + verificationCode + "]" + "를 입력해주세요.";
 
@@ -100,14 +120,6 @@ public class SmsService {
 		SecureRandom secureRandom = new SecureRandom();
 		int code = secureRandom.nextInt(900000) + 100000; // 100000부터 999999까지의 난수 생성
 		return String.valueOf(code);
-	}
-
-	// 세션아이디 생성
-	public String generateSessionId() {
-		SecureRandom secureRandom = new SecureRandom();
-		byte[] sessionIdBytes = new byte[16];
-		secureRandom.nextBytes(sessionIdBytes);
-		return Base64.encodeBase64String(sessionIdBytes);
 	}
 
 	public String makeSignature(Long time)
