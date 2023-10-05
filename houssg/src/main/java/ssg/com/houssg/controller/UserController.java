@@ -49,7 +49,7 @@ public class UserController {
 	private SmsUtil smsUtil;
 
 	// 로그인
-	@PostMapping("/login")
+	@PostMapping("/log-in")
 	public ResponseEntity<?> login(@RequestBody UserDto user) {
 		System.out.println("UserController login(UserDto user) " + new Date());
 		System.out.println("클라이언트로 부터 받은 데이터 : " + user.toString());
@@ -86,7 +86,7 @@ public class UserController {
 	}
 
 	// 로그아웃
-	@PostMapping("logout")
+	@PostMapping("log-out")
 	public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
 		String token = authorizationHeader.replace("Bearer ", "");
 
@@ -96,7 +96,7 @@ public class UserController {
 	}
 
 	// 아이디 중복확인
-	@PostMapping("idcheck")
+	@PostMapping("id-check")
 	public String idCheck(String id) {
 		System.out.println("UserController idCheck(String id) " + new Date());
 
@@ -144,7 +144,7 @@ public class UserController {
 	}
 
 	// 아이디 찾기
-	@PostMapping("findid")
+	@PostMapping("find-id")
 	public ResponseEntity<SmsResponseDto> findId(@RequestParam("phone_number") String phone_number, HttpSession session) {
 
 		// 휴대폰 번호 중복 검사
@@ -169,7 +169,7 @@ public class UserController {
 	}
 
 	// 비밀번호 찾기
-	@PostMapping("findpw")
+	@PostMapping("find-pw")
 	public ResponseEntity<SmsResponseDto> findPw(@RequestParam("id") String id,
 			@RequestParam("phone_number") String phone_number, HttpSession session) {
 
@@ -196,7 +196,7 @@ public class UserController {
 	}
 
 	// 비밀번호 변경
-	@PostMapping("updatepassword")
+	@PostMapping("update-pw")
 	public ResponseEntity<String> updatePassword(@RequestParam("id") String id, @RequestParam("newPassword") String newPassword) {
 	    UserUtil userUtil = new UserUtil();
 
