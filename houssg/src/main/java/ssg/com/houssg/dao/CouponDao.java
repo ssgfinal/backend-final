@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Param;
 
 import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -22,7 +23,7 @@ public interface CouponDao {
     List<CouponDto> getValidCoupons();
 
     // 유저 - 쿠폰번호로 쿠폰 정보 조회
-	CouponDto findBycouponNumber(String couponNumber);
+    CouponDto findCouponByNumber(@Param("couponNumber") String couponNumber);
 	
 	// 유저 - ID와 함꼐 쿠폰 다운로드(저장)
 	int enrollUserCoupon(String id, UserCouponDto dto);

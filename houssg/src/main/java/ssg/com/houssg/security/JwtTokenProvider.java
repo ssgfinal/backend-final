@@ -19,7 +19,7 @@ import java.util.Map;
 public class JwtTokenProvider {
 
 	@Value("${jwt.secret}")
-	private String secretKey;
+	private  String secretKey;
 
 	@Value("${jwt.expiration}")
 	private long accessTokenValidityInMilliseconds;
@@ -131,23 +131,4 @@ public class JwtTokenProvider {
 		}
 	}
 
-//	public String refreshAccessToken(String refreshToken) {
-//		if (isRefreshTokenValid(refreshToken)) {
-//			Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
-//					.parseClaimsJws(refreshToken).getBody();
-//
-//			// Refresh 토큰의 클레임 정보로 사용자 객체 생성
-//			UserDto user = new UserDto();
-//			user.setId(claims.get("id", String.class));
-//			// 다른 필요한 클레임 정보를 설정
-//
-//			// 새로운 Access 토큰 생성
-//			String newAccessToken = createAccessToken(user);
-//
-//			return newAccessToken;
-//		} else {
-//			// Refresh 토큰이 유효하지 않을 경우 InvalidTokenException을 사용하여 예외 처리
-//			throw new RuntimeException("Invalid Refresh Token");
-//		}
-//	}
 }

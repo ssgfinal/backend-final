@@ -33,8 +33,10 @@ public class SecurityConfig {
 				//.cors().disable()
 				.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests()
-				.requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/message/**").permitAll()
+
+				.requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/sms/**").permitAll()
 				.requestMatchers("/room/get/**","/review/get/all/**","/search/**","/accom/all/**","/accom/detail/**","/accom/score/**","/healthcheck/**").permitAll()
+
 				.anyRequest().authenticated(); // 이외 모든 요청은 인증필요
 				
 		http.cors(Customizer.withDefaults());
@@ -49,8 +51,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("*"));  
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PATCH", "DELETE"));
-        configuration.addExposedHeader("authorization");
-        configuration.addExposedHeader("Refreshtoken");
+        configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("RefreshToken");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();  
         source.registerCorsConfiguration("/**", configuration);
