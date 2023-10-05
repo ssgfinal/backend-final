@@ -11,6 +11,8 @@ import ssg.com.houssg.dto.FacilityDto;
 @Repository
 public interface FacilityDao  {
 	
+	 FacilityDto getFacility(int accomNum);
+	 
 	 void insertFacility(FacilityDto dto);
 	 
 	 void updateFacility(FacilityDto facilityDto);

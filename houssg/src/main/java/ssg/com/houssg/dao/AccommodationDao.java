@@ -37,4 +37,6 @@ public interface AccommodationDao {
 	int accomApprovalX(int accomNumber);
 	
 	List<AccommodationDto> getApprovalAccom();
+	
+	List<AccommodationDto> accomScore();
 }

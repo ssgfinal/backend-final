@@ -34,7 +34,7 @@ public class SecurityConfig {
 				.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests()
 				.requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/message/**").permitAll()
-				.requestMatchers("/room/get/**","/review/get/all/**","/search/**","/get/all/accom/**","/get/accom/**","/healthcheck/**").permitAll()
+				.requestMatchers("/room/get/**","/review/get/all/**","/search/**","/accom/all/**","/accom/detail/**","/accom/score/**","/healthcheck/**").permitAll()
 				.anyRequest().authenticated(); // 이외 모든 요청은 인증필요
 				
 		http.cors(Customizer.withDefaults());

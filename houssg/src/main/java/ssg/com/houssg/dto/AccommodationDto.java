@@ -19,8 +19,17 @@ public class AccommodationDto {
 	private String zipCode;
 	private String img;
 	private int addRequest;
-	private List<FacilityDto> facilities;
+	private int[] service;
+	private double reviewRating;
+//	private FacilityDto facilityDto;
 	
+	public double getReviewRating() {
+		return reviewRating;
+	}
+	public void setReviewRating(double reviewRating) {
+		this.reviewRating = reviewRating;
+	}
+	private List<FacilityDto> facilityList;
 	public int getAccomNumber() {
 		return accomNumber;
 	}
@@ -111,19 +120,30 @@ public class AccommodationDto {
 	public void setImg(String img) {
 		this.img = img;
 	}
-
 	public int getAddRequest() {
 		return addRequest;
 	}
 	public void setAddRequest(int addRequest) {
 		this.addRequest = addRequest;
 	}
+	public int[] getService() {
+		return service;
+	}
+	public void setService(int[] service) {
+		this.service = service;
+	}
+//	public FacilityDto getFacilityDto() {
+//        return facilityDto;
+//    }
+//    public void setFacilityDto(FacilityDto facilityDto) {
+//        this.facilityDto = facilityDto;
+//    }
 	public AccommodationDto() {
 		super();
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber, String id,
-			int auth, int approvalRequest, int deletionRequest, String zipCode, String img,int addRequest) {
+			int auth, int approvalRequest, int deletionRequest, String zipCode, String img,int addRequest, FacilityDto facilityDto) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -149,7 +169,7 @@ public class AccommodationDto {
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
 				+ businessNumber + ", id=" + id + ", auth=" + auth + ", approvalRequest=" + approvalRequest
 				+ ", deletionRequest=" + deletionRequest + ", zipCode=" + zipCode + ", img=" + img + ", addRequest="
-				+ addRequest + ", facilities=" + facilities + "]";
+				+ addRequest + "]";
 	}
 	
 	
