@@ -55,12 +55,10 @@ public class SmsService {
 		// 6자리 난수 생성
 		String verificationCode = generateVerificationCode();
 
-		// 세션 아이디 생성
-		String sessionId = generateSessionId();
 		
-		// 세션 대신 DB에 세션 아이디, 인증 번호 및 유효 시간 저장
+		// DB에 휴대폰번호, 인증 번호 및 유효 시간 저장
 		SmsCodeDto smsCodeDto = new SmsCodeDto();
-		smsCodeDto.setSessionId(sessionId); // 세션 아이디 생성 메서드 필요
+		smsCodeDto.setPhoneNumber(recipientPhoneNumber);
 		smsCodeDto.setVerificationCode(verificationCode);
 		smsCodeDto.setExpirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000)); // 5분 유효 시간 설정
 
@@ -94,7 +92,6 @@ public class SmsService {
 		SmsResponseDto smsResponse = restTemplate.postForObject(
 				new URI("https://sens.apigw.ntruss.com/sms/v2/services/" + this.serviceId + "/messages"), body,
 				SmsResponseDto.class);
-		smsResponse.setSessionId(sessionId);
 		return smsResponse;
 	}
 

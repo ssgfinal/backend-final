@@ -3,33 +3,39 @@ package ssg.com.houssg.dto;
 import java.util.Date;
 
 public class SmsCodeDto {
-	
-	private String sessionId;
+
+	private String phoneNumber;
 	private String verificationCode;
 	private Date expirationTime;
-	
-	public String getSessionId() {
-		return sessionId;
+
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
+
 	public String getVerificationCode() {
 		return verificationCode;
 	}
+
 	public void setVerificationCode(String verificationCode) {
 		this.verificationCode = verificationCode;
 	}
+
 	public Date getExpirationTime() {
 		return expirationTime;
 	}
+
 	public void setExpirationTime(Date expirationTime) {
 		this.expirationTime = expirationTime;
 	}
+
 	@Override
 	public String toString() {
-		return "SmsCodeDto [sessionId=" + sessionId + ", verificationCode=" + verificationCode + ", expirationTime="
+		return "SmsCodeDto [phoneNumber=" + phoneNumber + ", verificationCode=" + verificationCode + ", expirationTime="
 				+ expirationTime + "]";
 	}
-	
+
 }

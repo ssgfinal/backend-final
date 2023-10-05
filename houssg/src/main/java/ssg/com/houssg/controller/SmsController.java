@@ -56,20 +56,20 @@ public class SmsController {
 	
 
 	@PostMapping("/check") // 인증번호 비교 확인
-	public ResponseEntity<String> checkVerificationCode(@RequestParam("sessionId") String sessionId, @RequestParam("verificationCode") String Code) {
+	public ResponseEntity<String> checkVerificationCode(@RequestParam("phoneNumber") String phoneNumber, @RequestParam("verificationCode") String Code) {
 		System.out.println(Code);
 		
 		// VerificationCodeValidator 클래스의 인스턴스 생성
 	    VerificationCodeValidator validator = new VerificationCodeValidator(smsCodeDao);
 
 	    // 생성한 인스턴스를 사용하여 isValidVerificationCode 메서드 호출
-	    boolean isValid = validator.isValidVerificationCode(sessionId ,Code);
+	    boolean isValid = validator.isValidVerificationCode(phoneNumber ,Code);
 		System.out.println("입력받은 값 : "  + Code);
 		if (isValid) {
 			System.out.println(isValid);
 			
 			// 인증이 완료된 후에 삭제
-			verificationCodeCleanupService.deleteSuccessVerificationCodes(sessionId);
+			verificationCodeCleanupService.deleteSuccessVerificationCodes(phoneNumber);
 
 			return ResponseEntity.ok("인증되었습니다.");
 		} else {
@@ -79,13 +79,13 @@ public class SmsController {
 	}
 
 	@PostMapping("/check-findid") // 인증번호 비교 확인
-	public ResponseEntity<Object> findId(@RequestParam("sessionId") String sessionId,
-			@RequestParam("verificationCode") String Code, @RequestParam("phone_number") String phoneNumber) {
+	public ResponseEntity<Object> findId(@RequestParam("phoneNumber") String phoneNumber,
+			@RequestParam("verificationCode") String Code) {
 		// VerificationCodeValidator 클래스의 인스턴스 생성
 	    VerificationCodeValidator validator = new VerificationCodeValidator(smsCodeDao); 
 
 	    // 생성한 인스턴스를 사용하여 isValidVerificationCode 메서드 호출
-	    boolean isValid = validator.isValidVerificationCode(sessionId, Code);
+	    boolean isValid = validator.isValidVerificationCode(phoneNumber, Code);
 
 		if (!isValid) {
 			return ResponseEntity.badRequest().body("유효하지 않는 인증번호입니다.");
@@ -103,7 +103,7 @@ public class SmsController {
 
 		if (foundId != null) {
 			// 인증이 완료된 후에 삭제
-			verificationCodeCleanupService.deleteSuccessVerificationCodes(sessionId);
+			verificationCodeCleanupService.deleteSuccessVerificationCodes(phoneNumber);
 			return ResponseEntity.ok(foundId);
 		} else {
 			// 해당 휴대폰번호로 가입한 아이디가 없습니다
