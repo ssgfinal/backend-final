@@ -1,5 +1,6 @@
 package ssg.com.houssg.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,27 @@ public class AccommodationService {
     }
     
     public List<AccommodationDto> getMyAccom(String id){
-    	return dao.getMyAccom(id);
+    	List<AccommodationDto> accommodationDtoList = dao.getMyAccom(id);
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
+            int[] serviceList = {
+                facilityDto.getNearbySea(),
+                facilityDto.getOceanView(),
+                facilityDto.getParkingAvailable(),
+                facilityDto.getPool(),
+                facilityDto.getSpa(),
+                facilityDto.getCouplePc(),
+                facilityDto.getWifi(),
+                facilityDto.getFamily(),
+                facilityDto.getTwinBed(),
+                facilityDto.getBarbecue(),
+                facilityDto.getNoSmoking(),
+                facilityDto.getLuggageStorage(),
+                facilityDto.getFreeMovieOtt()
+            };
+            accommodationDto.setService(serviceList);
+        }
+        return accommodationDtoList;
     }
     public int updateAccom(AccommodationDto dto) {
     	return dao.updateAccom(dto);
@@ -60,7 +81,26 @@ public class AccommodationService {
     }
     
     public AccommodationDto getAccom(int accomNumber){
-    	return dao.getAccom(accomNumber);
+    	AccommodationDto accommodationDto = dao.getAccom(accomNumber);
+    	FacilityDto facilityDto = facdao.getFacility(accomNumber);
+    	int[] serviceList = {
+    			facilityDto.getNearbySea(),
+    			facilityDto.getOceanView(),
+    			facilityDto.getParkingAvailable(),
+    			facilityDto.getPool(),
+    			facilityDto.getSpa(),
+    			facilityDto.getCouplePc(),
+    			facilityDto.getWifi(),
+    			facilityDto.getFamily(),
+    			facilityDto.getTwinBed(),
+    			facilityDto.getBarbecue(),
+    			facilityDto.getNoSmoking(),
+    			facilityDto.getLuggageStorage(),
+    			facilityDto.getFreeMovieOtt()
+    	};
+    	accommodationDto.setService(serviceList);
+    	//accommodationDto.setFacilityDto(facilityDto);
+    	return accommodationDto;
     }
     
     public int updateRequest(int accomNumber) {
@@ -70,7 +110,34 @@ public class AccommodationService {
     	return dao.deleteRequest();
     }
     public List<AccommodationDto> getAllAccom(){
-    	return dao.getAllAccom();
+    	List<AccommodationDto> accommodationDtoList = dao.getAllAccom();
+
+        // 각 숙소에 대한 시설 정보 설정
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
+            
+            // facilityDto가 null이 아닌 경우에만 시설 정보 설정
+            if (facilityDto != null) {
+                int[] serviceList = {
+                    facilityDto.getNearbySea(),
+                    facilityDto.getOceanView(),
+                    facilityDto.getParkingAvailable(),
+                    facilityDto.getPool(),
+                    facilityDto.getSpa(),
+                    facilityDto.getCouplePc(),
+                    facilityDto.getWifi(),
+                    facilityDto.getFamily(),
+                    facilityDto.getTwinBed(),
+                    facilityDto.getBarbecue(),
+                    facilityDto.getNoSmoking(),
+                    facilityDto.getLuggageStorage(),
+                    facilityDto.getFreeMovieOtt()
+                };
+                accommodationDto.setService(serviceList);
+            }
+        }
+
+        return accommodationDtoList;
     }
     public int accomApproval(int accomNumber) {
     	return dao.accomApproval(accomNumber);
@@ -79,6 +146,58 @@ public class AccommodationService {
     	return dao.accomApprovalX(accomNumber);
     }
     public List<AccommodationDto> getApprovalAccom(){
-    	return dao.getApprovalAccom();
+    	List<AccommodationDto> accommodationDtoList = dao.getApprovalAccom();
+
+        // 각 승인된 숙소에 대한 시설 정보 설정
+        for (AccommodationDto accommodationDto : accommodationDtoList) {
+            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
+            int[] serviceList = {
+                facilityDto.getNearbySea(),
+                facilityDto.getOceanView(),
+                facilityDto.getParkingAvailable(),
+                facilityDto.getPool(),
+                facilityDto.getSpa(),
+                facilityDto.getCouplePc(),
+                facilityDto.getWifi(),
+                facilityDto.getFamily(),
+                facilityDto.getTwinBed(),
+                facilityDto.getBarbecue(),
+                facilityDto.getNoSmoking(),
+                facilityDto.getLuggageStorage(),
+                facilityDto.getFreeMovieOtt()
+            };
+            accommodationDto.setService(serviceList);
+        }
+
+        return accommodationDtoList;
+    }
+    public List<AccommodationDto> accomScore(){
+    	List<AccommodationDto> accommodationDtoList =  dao.accomScore();
+    	 // 각 승인된 숙소에 대한 시설 정보 설정
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
+
+            // facilityDto가 null이 아닌 경우에만 시설 정보를 설정합니다.
+            if (facilityDto != null) {
+                int[] serviceList = {
+                    facilityDto.getNearbySea(),
+                    facilityDto.getOceanView(),
+                    facilityDto.getParkingAvailable(),
+                    facilityDto.getPool(),
+                    facilityDto.getSpa(),
+                    facilityDto.getCouplePc(),
+                    facilityDto.getWifi(),
+                    facilityDto.getFamily(),
+                    facilityDto.getTwinBed(),
+                    facilityDto.getBarbecue(),
+                    facilityDto.getNoSmoking(),
+                    facilityDto.getLuggageStorage(),
+                    facilityDto.getFreeMovieOtt()
+                };
+                accommodationDto.setService(serviceList);
+            }
+        }
+
+        return accommodationDtoList;
     }
 }

@@ -2,20 +2,20 @@ package ssg.com.houssg.dto;
 
 public class FacilityDto {
 
-	private int accomNumber;
-	private boolean nearbySea;
-	private boolean oceanView;
-	private boolean parkingAvailable;
-	private boolean pool;
-	private boolean spa;
-	private boolean couplePc;
-	private boolean wifi;
-	private boolean family;
-	private boolean twinBed;
-	private boolean barbecue;
-	private boolean noSmoking;
-	private boolean luggageStorage;
-	private boolean freeMovieOtt;
+	public int accomNumber;
+	public int nearbySea;
+	public int oceanView;
+	public int parkingAvailable;
+	public int pool;
+	public int spa;
+	public int couplePc;
+	public int wifi;
+	public int family;
+	public int twinBed;
+	public int barbecue;
+	public int noSmoking;
+	public int luggageStorage;
+	public int freeMovieOtt;
     
 	public int getAccomNumber() {
 		return accomNumber;
@@ -23,90 +23,131 @@ public class FacilityDto {
 	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
 	}
-	public boolean isNearbySea() {
+	public int isNearbySea() {
 		return nearbySea;
 	}
-	public void setNearbySea(boolean nearbySea) {
+	public void setNearbySea(int nearbySea) {
 		this.nearbySea = nearbySea;
 	}
-	public boolean isOceanView() {
+	public int isOceanView() {
 		return oceanView;
 	}
-	public void setOceanView(boolean oceanView) {
+	public void setOceanView(int oceanView) {
 		this.oceanView = oceanView;
 	}
-	public boolean isParkingAvailable() {
+	public int isParkingAvailable() {
 		return parkingAvailable;
 	}
-	public void setParkingAvailable(boolean parkingAvailable) {
+	public void setParkingAvailable(int parkingAvailable) {
 		this.parkingAvailable = parkingAvailable;
 	}
-	public boolean isPool() {
+	public int isPool() {
 		return pool;
 	}
-	public void setPool(boolean pool) {
+	public void setPool(int pool) {
 		this.pool = pool;
 	}
-	public boolean isSpa() {
+	public int isSpa() {
 		return spa;
 	}
-	public void setSpa(boolean spa) {
+	public void setSpa(int spa) {
 		this.spa = spa;
 	}
-	public boolean isCouplePc() {
+	public int isCouplePc() {
 		return couplePc;
 	}
-	public void setCouplePc(boolean couplePc) {
+	public void setCouplePc(int couplePc) {
 		this.couplePc = couplePc;
 	}
-	public boolean isWifi() {
+	public int isWifi() {
 		return wifi;
 	}
-	public void setWifi(boolean wifi) {
+	public void setWifi(int wifi) {
 		this.wifi = wifi;
 	}
-	public boolean isFamily() {
+	public int isFamily() {
 		return family;
 	}
-	public void setFamily(boolean family) {
+	public void setFamily(int family) {
 		this.family = family;
 	}
-	public boolean isTwinBed() {
+	public int isTwinBed() {
 		return twinBed;
 	}
-	public void setTwinBed(boolean twinBed) {
+	public void setTwinBed(int twinBed) {
 		this.twinBed = twinBed;
 	}
-	public boolean isBarbecue() {
+	public int isBarbecue() {
 		return barbecue;
 	}
-	public void setBarbecue(boolean barbecue) {
+	public void setBarbecue(int barbecue) {
 		this.barbecue = barbecue;
 	}
-	public boolean isNoSmoking() {
+	public int isNoSmoking() {
 		return noSmoking;
 	}
-	public void setNoSmoking(boolean noSmoking) {
+	public void setNoSmoking(int noSmoking) {
 		this.noSmoking = noSmoking;
 	}
-	public boolean isLuggageStorage() {
+	public int isLuggageStorage() {
 		return luggageStorage;
 	}
-	public void setLuggageStorage(boolean luggageStorage) {
+	public void setLuggageStorage(int luggageStorage) {
 		this.luggageStorage = luggageStorage;
 	}
-	public boolean isFreeMovieOtt() {
+	public int isFreeMovieOtt() {
 		return freeMovieOtt;
 	}
-	public void setFreeMovieOtt(boolean freeMovieOtt) {
+	public void setFreeMovieOtt(int freeMovieOtt) {
 		this.freeMovieOtt = freeMovieOtt;
 	}
 	public FacilityDto() {
 		super();
 	}
-	public FacilityDto(int accomNumber, boolean nearbySea, boolean oceanView, boolean parkingAvailable, boolean pool,
-			boolean spa, boolean couplePc, boolean wifi, boolean family, boolean twinBed, boolean barbecue,
-			boolean noSmoking, boolean luggageStorage, boolean freeMovieOtt) {
+	
+	
+	public int getNearbySea() {
+		return nearbySea;
+	}
+	public int getOceanView() {
+		return oceanView;
+	}
+	public int getParkingAvailable() {
+		return parkingAvailable;
+	}
+	public int getPool() {
+		return pool;
+	}
+	public int getSpa() {
+		return spa;
+	}
+	public int getCouplePc() {
+		return couplePc;
+	}
+	public int getWifi() {
+		return wifi;
+	}
+	public int getFamily() {
+		return family;
+	}
+	public int getTwinBed() {
+		return twinBed;
+	}
+	public int getBarbecue() {
+		return barbecue;
+	}
+	public int getNoSmoking() {
+		return noSmoking;
+	}
+	public int getLuggageStorage() {
+		return luggageStorage;
+	}
+	public int getFreeMovieOtt() {
+		return freeMovieOtt;
+	}
+	public FacilityDto(int accomNumber, int nearbySea, int oceanView, int parkingAvailable, int pool,
+			int spa, int couplePc, int wifi, int family, int twinBed, int barbecue,
+			int noSmoking, int luggageStorage, int freeMovieOtt) {
 		super();
 		this.accomNumber = accomNumber;
 		this.nearbySea = nearbySea;
