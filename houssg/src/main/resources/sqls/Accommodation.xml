@@ -30,16 +30,18 @@
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
 	<insert id="insertAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
 	    INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, approval_request, deletion_request, img, zip_code,add_request)
-	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 1, 0, 0, #{img}, #{zipCode},1)
+	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 0, 0, 0, #{img}, #{zipCode},1)
 	    <selectKey keyProperty="accomNumber" resultType="int" order="AFTER">
 	        SELECT LAST_INSERT_ID()
 	    </selectKey>
 	</insert>
 	
 	<select id="getMyAccom" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT *
-		FROM accommodation
-		WHERE id=#{id} and deletion_request = 0
+		SELECT a.*,f.*
+		FROM accommodation a
+		JOIN facility f ON a.accom_number = f.accom_number
+		JOIN user u ON a.id = u.id
+		WHERE a.id=#{id}
 	</select>
 	
 	<update id="updateAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
@@ -57,9 +59,10 @@
     </update>
 
 	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT *
-		FROM accommodation
-		WHERE accom_number = #{accomNumber} and deletion_request = 0 
+		SELECT a.*, f.*
+		FROM accommodation a
+		JOIN facility f ON a.accom_number = f.accom_number
+		WHERE a.accom_number = #{accomNumber} and a.deletion_request = 0 
 	</select>
 	
 	<update id="updateRequest" parameterType="int">
@@ -94,9 +97,18 @@
 	</update>
 	
 	<select id="getApprovalAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
-	    SELECT *
-	    FROM accommodation
-	    WHERE add_request = 1
+	    SELECT a.*,f.*
+	    FROM accommodation a
+	    JOIN facility f ON a.accom_number = f.accom_number
+	    WHERE a.add_request = 1
+	</select>
+	
+	<select id="accomScore" resultType="ssg.com.houssg.dto.AccommodationDto">
+		SELECT a.*, AVG(r.review_rating) AS average_rating
+		FROM accommodation a
+		JOIN review r ON a.accom_number = r.accom_number
+		GROUP BY a.accom_number
+		ORDER BY average_rating DESC;	
 	</select>
     
 </mapper>

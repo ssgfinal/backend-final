@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="ssg.com.houssg.dao.FacilityDao">
+	<select id="getFacility" parameterType="int" resultType="ssg.com.houssg.dto.FacilityDto">
+		SELECT * FROM facility
+		WHERE accom_number = #{accomNumber} 
+	</select>
+	
 	<insert id="insertFacility" parameterType="ssg.com.houssg.dto.FacilityDto">
         INSERT INTO facility (accom_number, nearby_sea, parking_available, pool, spa, wifi, twin_bed, barbecue, no_smoking, luggage_storage, free_movie_ott)
         VALUES (#{accomNumber}, #{nearbySea}, #{parkingAvailable}, #{pool}, #{spa}, #{wifi}, #{twinBed}, #{barbecue}, #{noSmoking}, #{luggageStorage}, #{freeMovieOtt})
