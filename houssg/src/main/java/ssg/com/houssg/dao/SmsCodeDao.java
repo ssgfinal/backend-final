@@ -20,4 +20,7 @@ public interface SmsCodeDao {
 	 
 	 // 인증완료된 인증번호 삭제
 	 void deleteSuccessVerificationCodes(String phoneNumber);
+	 
+	 // 인증번호 업데이트
+	 void updateCode(SmsCodeDto smsCodeDto);
 }

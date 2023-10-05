@@ -38,7 +38,7 @@ public class SmsController {
     private VerificationCodeCleanupService verificationCodeCleanupService;
 	
 
-	@PostMapping("/signup")
+	@PostMapping("/sign-up")
 	public ResponseEntity<SmsResponseDto> sendSms(@RequestBody RequestDto request, HttpSession session) {
 		String phoneNumber = request.getRecipientPhoneNumber();
 		
