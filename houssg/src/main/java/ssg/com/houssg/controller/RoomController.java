@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.InnerDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -27,6 +32,9 @@ import ssg.com.houssg.service.RoomService;
 
 @RestController
 public class RoomController {
+	
+	@Value("${jwt.secret}")
+	private String secretKey;
 
 	@Autowired
 	private RoomService service;
@@ -37,7 +45,7 @@ public class RoomController {
 
 	@PostMapping(value = "room/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addroom(
-	        @RequestParam("multiFile") List<MultipartFile> multiFileList,
+	        @RequestPart("multiFile") List<MultipartFile> multiFileList,
 	        @RequestParam("roomCategory") String roomCategory,
 	        @RequestParam("roomDetails") String roomDetails,
 	        @RequestParam("roomPrice") int roomPrice,
@@ -314,4 +322,25 @@ public class RoomController {
 	            return new ResponseEntity<>("객실 업데이트 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	        } 
 	 }
+	 private String getTokenFromRequest(HttpServletRequest request) {
+			String token = request.getHeader("Authorization");
+
+			if (token != null && token.startsWith("Bearer ")) {
+				return token.substring(7);
+			}
+
+			return null;
+		}
+	    
+	    private String getUserIdFromToken(String token) {
+			try {
+				Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
+						.parseClaimsJws(token).getBody();
+				return claims.get("id", String.class); // "id" 클레임 추출
+			} catch (Exception e) {
+				// 토큰 파싱 실패
+				e.printStackTrace();
+				return null;
+			}
+		}
 }

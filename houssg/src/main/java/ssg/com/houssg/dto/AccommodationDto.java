@@ -16,7 +16,6 @@ public class AccommodationDto {
 	private int auth;
 	private int approvalRequest;
 	private int deletionRequest;
-	private String zipCode;
 	private String img;
 	private int addRequest;
 	private int[] service;
@@ -108,12 +107,6 @@ public class AccommodationDto {
 	public void setDeletionRequest(int deletionRequest) {
 		this.deletionRequest = deletionRequest;
 	}
-	public String getZipCode() {
-		return zipCode;
-	}
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
 	public String getImg() {
 		return img;
 	}
@@ -143,7 +136,7 @@ public class AccommodationDto {
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber, String id,
-			int auth, int approvalRequest, int deletionRequest, String zipCode, String img,int addRequest, FacilityDto facilityDto) {
+			int auth, int approvalRequest, int deletionRequest, String img,int addRequest, FacilityDto facilityDto) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -158,7 +151,6 @@ public class AccommodationDto {
 		this.auth = auth;
 		this.approvalRequest = approvalRequest;
 		this.deletionRequest = deletionRequest;
-		this.zipCode = zipCode;
 		this.img = img;
 		this.addRequest = addRequest;
 	}
@@ -168,7 +160,7 @@ public class AccommodationDto {
 				+ accomAddress + ", teleNumber=" + teleNumber + ", accomCategory=" + accomCategory + ", accomDetails="
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
 				+ businessNumber + ", id=" + id + ", auth=" + auth + ", approvalRequest=" + approvalRequest
-				+ ", deletionRequest=" + deletionRequest + ", zipCode=" + zipCode + ", img=" + img + ", addRequest="
+				+ ", deletionRequest=" + deletionRequest + ", img=" + img + ", addRequest="
 				+ addRequest + "]";
 	}
 	

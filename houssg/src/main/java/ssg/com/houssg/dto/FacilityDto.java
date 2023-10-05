@@ -17,133 +17,90 @@ public class FacilityDto {
 	public int luggageStorage;
 	public int freeMovieOtt;
     
+
 	public int getAccomNumber() {
 		return accomNumber;
 	}
 	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
 	}
-	public int isNearbySea() {
+	public int getNearbySea() {
 		return nearbySea;
 	}
 	public void setNearbySea(int nearbySea) {
 		this.nearbySea = nearbySea;
 	}
-	public int isOceanView() {
+	public int getOceanView() {
 		return oceanView;
 	}
 	public void setOceanView(int oceanView) {
 		this.oceanView = oceanView;
 	}
-	public int isParkingAvailable() {
+	public int getParkingAvailable() {
 		return parkingAvailable;
 	}
 	public void setParkingAvailable(int parkingAvailable) {
 		this.parkingAvailable = parkingAvailable;
 	}
-	public int isPool() {
+	public int getPool() {
 		return pool;
 	}
 	public void setPool(int pool) {
 		this.pool = pool;
 	}
-	public int isSpa() {
+	public int getSpa() {
 		return spa;
 	}
 	public void setSpa(int spa) {
 		this.spa = spa;
 	}
-	public int isCouplePc() {
+	public int getCouplePc() {
 		return couplePc;
 	}
 	public void setCouplePc(int couplePc) {
 		this.couplePc = couplePc;
 	}
-	public int isWifi() {
+	public int getWifi() {
 		return wifi;
 	}
 	public void setWifi(int wifi) {
 		this.wifi = wifi;
 	}
-	public int isFamily() {
+	public int getFamily() {
 		return family;
 	}
 	public void setFamily(int family) {
 		this.family = family;
 	}
-	public int isTwinBed() {
+	public int getTwinBed() {
 		return twinBed;
 	}
 	public void setTwinBed(int twinBed) {
 		this.twinBed = twinBed;
 	}
-	public int isBarbecue() {
+	public int getBarbecue() {
 		return barbecue;
 	}
 	public void setBarbecue(int barbecue) {
 		this.barbecue = barbecue;
 	}
-	public int isNoSmoking() {
+	public int getNoSmoking() {
 		return noSmoking;
 	}
 	public void setNoSmoking(int noSmoking) {
 		this.noSmoking = noSmoking;
 	}
-	public int isLuggageStorage() {
+	public int getLuggageStorage() {
 		return luggageStorage;
 	}
 	public void setLuggageStorage(int luggageStorage) {
 		this.luggageStorage = luggageStorage;
 	}
-	public int isFreeMovieOtt() {
+	public int getFreeMovieOtt() {
 		return freeMovieOtt;
 	}
 	public void setFreeMovieOtt(int freeMovieOtt) {
 		this.freeMovieOtt = freeMovieOtt;
-	}
-	public FacilityDto() {
-		super();
-	}
-	
-	
-	public int getNearbySea() {
-		return nearbySea;
-	}
-	public int getOceanView() {
-		return oceanView;
-	}
-	public int getParkingAvailable() {
-		return parkingAvailable;
-	}
-	public int getPool() {
-		return pool;
-	}
-	public int getSpa() {
-		return spa;
-	}
-	public int getCouplePc() {
-		return couplePc;
-	}
-	public int getWifi() {
-		return wifi;
-	}
-	public int getFamily() {
-		return family;
-	}
-	public int getTwinBed() {
-		return twinBed;
-	}
-	public int getBarbecue() {
-		return barbecue;
-	}
-	public int getNoSmoking() {
-		return noSmoking;
-	}
-	public int getLuggageStorage() {
-		return luggageStorage;
-	}
-	public int getFreeMovieOtt() {
-		return freeMovieOtt;
 	}
 	public FacilityDto(int accomNumber, int nearbySea, int oceanView, int parkingAvailable, int pool,
 			int spa, int couplePc, int wifi, int family, int twinBed, int barbecue,
