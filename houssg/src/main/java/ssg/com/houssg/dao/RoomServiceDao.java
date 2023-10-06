@@ -12,4 +12,6 @@ public interface RoomServiceDao {
 	int insertRoomService(RoomServiceDto dto);
 	
 	int updateRoomService(RoomServiceDto roomServiceDto);
+	
+	RoomServiceDto getService(int roomNumber);
 }

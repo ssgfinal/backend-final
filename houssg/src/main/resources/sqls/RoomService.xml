@@ -11,4 +11,10 @@
 	    SET city_view = #{cityView}, ocean_view = #{oceanView}, pc = #{pc}, no_smoking = #{noSmoking}, double_bed = #{doubleBed}, queen_bed = #{queenBed}, king_bed = #{kingBed}
 	    WHERE room_number = #{roomNumber}
 	</update>
+	
+	<select id="getService" parameterType="int" resultType="ssg.com.houssg.dto.RoomServiceDto">
+		SELECT *
+		FROM room_service
+		WHERE room_number = #{roomNumber}
+	</select>
 </mapper>

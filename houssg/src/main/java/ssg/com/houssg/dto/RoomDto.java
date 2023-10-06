@@ -8,7 +8,7 @@ public class RoomDto {
 	private int roomPrice;
 	private int roomAvailability;
 	private int accomNumber;
-	private int roomUse;
+	private int[] service;
 	public int getRoomNumber() {
 		return roomNumber;
 	}
@@ -45,17 +45,17 @@ public class RoomDto {
 	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
 	}
-	public int getRoomUse() {
-		return roomUse;
+	public int[] getService() {
+		return service;
 	}
-	public void setRoomUse(int roomUse) {
-		this.roomUse = roomUse;
+	public void setService(int[] service) {
+		this.service = service;
 	}
 	public RoomDto() {
 		super();
 	}
 	public RoomDto(int roomNumber, String roomCategory, String roomDetails, int roomPrice, int roomAvailability,
-			int accomNumber, int roomUse) {
+			int accomNumber, int[] service) {
 		super();
 		this.roomNumber = roomNumber;
 		this.roomCategory = roomCategory;
@@ -63,16 +63,6 @@ public class RoomDto {
 		this.roomPrice = roomPrice;
 		this.roomAvailability = roomAvailability;
 		this.accomNumber = accomNumber;
-		this.roomUse = roomUse;
-	}
-	@Override
-	public String toString() {
-		return "RoomDto [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomDetails=" + roomDetails
-				+ ", roomPrice=" + roomPrice + ", roomAvailability=" + roomAvailability + ", accomNumber=" + accomNumber
-				+ ", roomUse=" + roomUse + "]";
-	}
-	
-	
-	
-	
+		this.service = service;
+	}	
 }

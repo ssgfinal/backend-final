@@ -37,8 +37,32 @@ public class RoomService {
 	}
 
 	
-	public List<RoomDto> choiceAccom(int roomNumber){
-		return dao.choiceAccom(roomNumber);
+	public List<RoomDto> choiceAccom(int accomNumber) {
+	    List<RoomDto> roomDtoList = dao.choiceAccom(accomNumber);
+	    System.out.println(roomDtoList);
+	    
+	    for (RoomDto roomDto : roomDtoList) {
+	        RoomServiceDto roomServiceDto = serdao.getService(roomDto.getRoomNumber());
+	        
+	        if (roomServiceDto != null) {
+	            System.out.println(roomDto.getRoomNumber());
+	            int[] serviceList = {
+	                roomServiceDto.getCityView(),
+	                roomServiceDto.getOceanView(),
+	                roomServiceDto.getPc(),
+	                roomServiceDto.getNoSmoking(),
+	                roomServiceDto.getDoubleBed(),
+	                roomServiceDto.getQueenBed(),
+	                roomServiceDto.getKingBed()
+	            };
+	            roomDto.setService(serviceList);
+	        } else {
+	            // roomServiceDto가 null인 경우, 필드 값을 null로 설정
+	            roomDto.setService(null);
+	        }
+	    }
+	    
+	    return roomDtoList;
 	}
 	
 	public int getRoomNumberFromDatabase() {

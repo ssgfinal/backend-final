@@ -363,7 +363,32 @@ public class AccommodationController {
         List<AccommodationDto> accommodationDtoList = service.accomScore();
         
         if (accommodationDtoList.isEmpty()) {
-            // 숙소 목록이 비어있는 경우, NOT_FOUND 상태 코드와 함께 빈 목록을 반환합니다.
+            // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        
+        // 숙소 목록이 비어있지 않은 경우, OK 상태 코드와 함께 숙소 목록을 반환합니다.
+        return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
+    }
+    @PostMapping("accom/20")
+    public ResponseEntity<List<AccommodationDto>> newAccom20() {
+        System.out.println("전체 숙소 리스트 20개 보기");
+        List<AccommodationDto> accommodationList = service.newAccom20();
+        
+        // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
+        if (accommodationList == null || accommodationList.isEmpty()) {
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(accommodationList, HttpStatus.OK);
+    }
+    @PostMapping("accom/score/20")
+    public ResponseEntity<List<AccommodationDto>> accomScore20(){
+        System.out.println("평점 높은 순으로 숙소 20개 보기");
+        List<AccommodationDto> accommodationDtoList = service.accomScore20();
+        
+        if (accommodationDtoList.isEmpty()) {
+            // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         

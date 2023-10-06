@@ -2,67 +2,67 @@ package ssg.com.houssg.dto;
 
 public class RoomServiceDto {
 	
-    private int roomNumber;
-    private boolean cityView;
-    private boolean oceanView;
-    private boolean pc;
-    private boolean noSmoking;
-    private boolean doubleBed;
-    private boolean queenBed;
-    private boolean kingBed;
+    public int roomNumber;
+    public int cityView;
+    public int oceanView;
+    public int pc;
+    public int noSmoking;
+    public int doubleBed;
+    public int queenBed;
+    public int kingBed;
 	public int getRoomNumber() {
 		return roomNumber;
 	}
 	public void setRoomNumber(int roomNumber) {
 		this.roomNumber = roomNumber;
 	}
-	public boolean isCityView() {
+	public int getCityView() {
 		return cityView;
 	}
-	public void setCityView(boolean cityView) {
+	public void setCityView(int cityView) {
 		this.cityView = cityView;
 	}
-	public boolean isOceanView() {
+	public int getOceanView() {
 		return oceanView;
 	}
-	public void setOceanView(boolean oceanView) {
+	public void setOceanView(int oceanView) {
 		this.oceanView = oceanView;
 	}
-	public boolean isPc() {
+	public int getPc() {
 		return pc;
 	}
-	public void setPc(boolean pc) {
+	public void setPc(int pc) {
 		this.pc = pc;
 	}
-	public boolean isNoSmoking() {
+	public int getNoSmoking() {
 		return noSmoking;
 	}
-	public void setNoSmoking(boolean noSmoking) {
+	public void setNoSmoking(int noSmoking) {
 		this.noSmoking = noSmoking;
 	}
-	public boolean isDoubleBed() {
+	public int getDoubleBed() {
 		return doubleBed;
 	}
-	public void setDoubleBed(boolean doubleBed) {
+	public void setDoubleBed(int doubleBed) {
 		this.doubleBed = doubleBed;
 	}
-	public boolean isQueenBed() {
+	public int getQueenBed() {
 		return queenBed;
 	}
-	public void setQueenBed(boolean queenBed) {
+	public void setQueenBed(int queenBed) {
 		this.queenBed = queenBed;
 	}
-	public boolean isKingBed() {
+	public int getKingBed() {
 		return kingBed;
 	}
-	public void setKingBed(boolean kingBed) {
+	public void setKingBed(int kingBed) {
 		this.kingBed = kingBed;
 	}
 	public RoomServiceDto() {
 		super();
 	}
-	public RoomServiceDto(int roomNumber, boolean cityView, boolean oceanView, boolean pc,
-			boolean noSmoking, boolean doubleBed, boolean queenBed, boolean kingBed) {
+	public RoomServiceDto(int roomNumber, int cityView, int oceanView, int pc, int noSmoking, int doubleBed,
+			int queenBed, int kingBed) {
 		super();
 		this.roomNumber = roomNumber;
 		this.cityView = cityView;
@@ -76,8 +76,8 @@ public class RoomServiceDto {
 	@Override
 	public String toString() {
 		return "RoomServiceDto [roomNumber=" + roomNumber + ", cityView=" + cityView + ", oceanView=" + oceanView
-				+ ", pc=" + pc + ", noSmoking=" + noSmoking + ", doubleBed=" + doubleBed
-				+ ", queenBed=" + queenBed + ", kingBed=" + kingBed+"]";
+				+ ", pc=" + pc + ", noSmoking=" + noSmoking + ", doubleBed=" + doubleBed + ", queenBed=" + queenBed
+				+ ", kingBed=" + kingBed + "]";
 	}
-    
+	
 }

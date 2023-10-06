@@ -79,10 +79,13 @@
 	</update>
 	
 	<select id="getAllAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
-	    SELECT *
-	    FROM accommodation
-	    WHERE deletion_request = 0 and add_request = 0
-	    ORDER BY accom_number DESC
+		SELECT a.*, FORMAT(AVG(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
+		FROM accommodation a
+		JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN review r ON a.accom_number = r.accom_number
+		WHERE a.deletion_request = 0 AND a.add_request = 0
+		GROUP BY a.accom_number
+		ORDER BY a.accom_number DESC
 	</select>	
 	
 	<update id="accomApproval" parameterType="int">
@@ -105,11 +108,36 @@
 	</select>
 	
 	<select id="accomScore" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT *
+		SELECT a.*, FORMAT(avg(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
 		FROM accommodation a
-		JOIN review r ON a.accom_number = r.accom_number
+		JOIN rooms ro ON  a.accom_number = ro.accom_number
+		LEFT JOIN review r ON a.accom_number = r.accom_number
+		WHERE a.deletion_request = 0 AND a.add_request = 0
 		GROUP BY a.accom_number
-		ORDER BY average_rating DESC;	
+		ORDER BY avg_rating DESC	
+	</select>
+	
+	<select id="accomScore20" resultType="ssg.com.houssg.dto.AccommodationDto">
+	    SELECT a.*, ROUND(avg(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
+	    FROM accommodation a
+	    JOIN rooms ro ON a.accom_number = ro.accom_number
+	    LEFT JOIN review r ON a.accom_number = r.accom_number
+	    WHERE a.deletion_request = 0 AND a.add_request = 0
+	    GROUP BY a.accom_number
+	    ORDER BY avg_rating DESC
+	    LIMIT 20
+	</select>
+
+	
+	<select id="newAccom20" resultType="ssg.com.houssg.dto.AccommodationDto">
+		SELECT a.*, FORMAT(AVG(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
+		FROM accommodation a
+		JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN review r ON a.accom_number = r.accom_number
+		WHERE a.deletion_request = 0 AND a.add_request = 0
+		GROUP BY a.accom_number
+		ORDER BY a.accom_number DESC
+		LIMIT 20
 	</select>
     
 </mapper>

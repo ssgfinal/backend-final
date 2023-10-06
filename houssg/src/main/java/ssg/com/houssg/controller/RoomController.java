@@ -26,6 +26,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.InnerDto;
 import ssg.com.houssg.dto.RoomDto;
+import ssg.com.houssg.dto.RoomRequest;
 import ssg.com.houssg.dto.RoomServiceDto;
 import ssg.com.houssg.service.InnerService;
 import ssg.com.houssg.service.RoomService;
@@ -44,25 +45,12 @@ public class RoomController {
 	
 
 	@PostMapping(value = "room/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> addroom(
-	        @RequestPart("multiFile") List<MultipartFile> multiFileList,
-	        @RequestParam("roomCategory") String roomCategory,
-	        @RequestParam("roomDetails") String roomDetails,
-	        @RequestParam("roomPrice") int roomPrice,
-	        @RequestParam("roomAvailability") int roomAvailability,
-	        @RequestParam("accomNumber") int accomNumber,
-	        @RequestParam("cityView") boolean cityView,
-	        @RequestParam("oceanView") boolean oceanView,
-	        @RequestParam("pc") boolean pc,
-	        @RequestParam("noSmoking") boolean noSmoking,
-	        @RequestParam("doubleBed") boolean doubleBed,
-	        @RequestParam("queenBed") boolean queenBed,
-	        @RequestParam("kingBed") boolean kingBed,
-	        HttpServletRequest request
-	) {
+	public ResponseEntity<String> addroom(@RequestPart("multiFile") List<MultipartFile> multiFileList,
+							   	          @RequestPart RoomRequest request,
+								          HttpServletRequest httprequest) {
 	    System.out.println("객실 추가");
 
-	    String path = request.getSession().getServletContext().getRealPath("/upload");
+	    String path = httprequest.getSession().getServletContext().getRealPath("/upload");
 	    String root = path + File.separator + "uploadFiles";
 
 	    File fileCheck = new File(root);
@@ -106,25 +94,17 @@ public class RoomController {
 
 	    // 'RoomDto' 객체 생성
 	    RoomDto roomDto = new RoomDto();
-	    roomDto.setRoomCategory(roomCategory);
-	    roomDto.setRoomDetails(roomDetails);
-	    roomDto.setRoomPrice(roomPrice);
-	    roomDto.setRoomAvailability(roomAvailability);
-	    roomDto.setAccomNumber(accomNumber);
+	    roomDto.setRoomCategory(request.getRoomCategory());
+	    roomDto.setRoomDetails(request.getRoomDetails());
+	    roomDto.setRoomPrice(request.getRoomPrice());
+	    roomDto.setRoomAvailability(request.getRoomAvailability());
+	    roomDto.setAccomNumber(request.getAccomNumber());
 	    System.out.println(roomDto.toString());
 	    // 방 추가 로직
 	    
 	    
-	    RoomServiceDto roomServiceDto = new RoomServiceDto();
-	    roomServiceDto.setRoomNumber(roomDto.getRoomNumber());
-	    roomServiceDto.setCityView(cityView);
-	    roomServiceDto.setOceanView(oceanView);
-	    roomServiceDto.setPc(pc);
-	    roomServiceDto.setNoSmoking(noSmoking);
-	    roomServiceDto.setDoubleBed(doubleBed);
-	    roomServiceDto.setQueenBed(queenBed);
-	    roomServiceDto.setKingBed(kingBed);
-	    System.out.println(roomServiceDto.toString());
+	    RoomServiceDto roomServiceDto = request.getRoomServiceDto();
+	   
 	    // 'rooms' 테이블에 방 정보 추가
 	    int roomCount = service.addRoom(roomDto, roomServiceDto);
 	    if (roomCount == 0) {
@@ -180,7 +160,7 @@ public class RoomController {
 
 
 	
-	 @GetMapping("room/get")
+	 @GetMapping("room/detail")
 	    public ResponseEntity<List<RoomDto>> choiceAccom(@RequestParam int accomNumber) {
 	        System.out.println(accomNumber);
 	        System.out.println("숙소상세로 들어갑니다");
@@ -190,34 +170,20 @@ public class RoomController {
 	            // 숙소 정보가 존재할 경우 200 OK 응답과 데이터 반환
 	            return new ResponseEntity<>(list, HttpStatus.OK);
 	        } else {
-	            // 숙소 정보가 없을 경우 404 Not Found 응답 반환
-	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	            // 숙소 정보가 없을 경우 404 NO_CONTENT 응답 반환
+	            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	        }
 	    }
 	 
 	 @PatchMapping(value = "room/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	    public ResponseEntity<String> updateRoom(
-	            @RequestParam(value = "multiFile", required = false) List<MultipartFile> multiFileList,
-	            @RequestParam("roomNumber") int roomNumber,
-	            @RequestParam("roomCategory") String roomCategory,
-	            @RequestParam("roomDetails") String roomDetails,
-	            @RequestParam("roomPrice") int roomPrice,
-	            @RequestParam("roomAvailability") int roomAvailability,
-	            @RequestParam("accomNumber") int accomNumber,
-	            @RequestParam("cityView") boolean cityView,
-	            @RequestParam("oceanView") boolean oceanView,
-	            @RequestParam("pc") boolean pc,
-	            @RequestParam("noSmoking") boolean noSmoking,
-	            @RequestParam("doubleBed") boolean doubleBed,
-	            @RequestParam("queenBed") boolean queenBed,
-	            @RequestParam("kingBed") boolean kingBed,
-	            HttpServletRequest request
-	    ) {
+	    public ResponseEntity<String> updateRoom(@RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFileList,
+	            								 @RequestPart RoomRequest request,
+	            								 HttpServletRequest httprequest) {
 	        try {
 	            System.out.println("객실 업데이트 시작");
 
 	            // 파일 업로드 경로 설정
-	            String path = request.getSession().getServletContext().getRealPath("/upload");
+	            String path = httprequest.getSession().getServletContext().getRealPath("/upload");
 	            String root = path + File.separator + "uploadFiles";
 	            System.out.println(root);
 	            // 업로드 경로가 없으면 생성
@@ -250,23 +216,14 @@ public class RoomController {
 
 	            // 'RoomDto' 객체 생성
 	            RoomDto roomDto = new RoomDto();
-	            roomDto.setRoomNumber(roomNumber); // 업데이트 대상 방 번호
-	            roomDto.setRoomCategory(roomCategory);
-	            roomDto.setRoomDetails(roomDetails);
-	            roomDto.setRoomPrice(roomPrice);
-	            roomDto.setRoomAvailability(roomAvailability);
-	            roomDto.setAccomNumber(accomNumber);
-	            System.out.println(roomDto.toString());
+	    	    roomDto.setRoomCategory(request.getRoomCategory());
+	    	    roomDto.setRoomDetails(request.getRoomDetails());
+	    	    roomDto.setRoomPrice(request.getRoomPrice());
+	    	    roomDto.setRoomAvailability(request.getRoomAvailability());
+	    	    roomDto.setAccomNumber(request.getAccomNumber());
 	            
-	            RoomServiceDto roomServiceDto = new RoomServiceDto();
-	    	    roomServiceDto.setRoomNumber(roomDto.getRoomNumber());
-	    	    roomServiceDto.setCityView(cityView);
-	    	    roomServiceDto.setOceanView(oceanView);
-	    	    roomServiceDto.setPc(pc);
-	    	    roomServiceDto.setNoSmoking(noSmoking);
-	    	    roomServiceDto.setDoubleBed(doubleBed);
-	    	    roomServiceDto.setQueenBed(queenBed);
-	    	    roomServiceDto.setKingBed(kingBed);
+	            RoomServiceDto roomServiceDto = request.getRoomServiceDto();
+	    	    
 	    	    System.out.println(roomServiceDto.toString());
 	    	    
 	    	    service.updateRoom(roomDto, roomServiceDto);
@@ -322,25 +279,4 @@ public class RoomController {
 	            return new ResponseEntity<>("객실 업데이트 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	        } 
 	 }
-	 private String getTokenFromRequest(HttpServletRequest request) {
-			String token = request.getHeader("Authorization");
-
-			if (token != null && token.startsWith("Bearer ")) {
-				return token.substring(7);
-			}
-
-			return null;
-		}
-	    
-	    private String getUserIdFromToken(String token) {
-			try {
-				Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
-						.parseClaimsJws(token).getBody();
-				return claims.get("id", String.class); // "id" 클레임 추출
-			} catch (Exception e) {
-				// 토큰 파싱 실패
-				e.printStackTrace();
-				return null;
-			}
-		}
 }
