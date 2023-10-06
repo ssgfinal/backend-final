@@ -34,13 +34,10 @@ public class AccommodationService {
             FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
             int[] serviceList = {
                 facilityDto.getNearbySea(),
-                facilityDto.getOceanView(),
                 facilityDto.getParkingAvailable(),
                 facilityDto.getPool(),
                 facilityDto.getSpa(),
-                facilityDto.getCouplePc(),
                 facilityDto.getWifi(),
-                facilityDto.getFamily(),
                 facilityDto.getTwinBed(),
                 facilityDto.getBarbecue(),
                 facilityDto.getNoSmoking(),
@@ -85,18 +82,15 @@ public class AccommodationService {
     	FacilityDto facilityDto = facdao.getFacility(accomNumber);
     	int[] serviceList = {
     			facilityDto.getNearbySea(),
-    			facilityDto.getOceanView(),
-    			facilityDto.getParkingAvailable(),
-    			facilityDto.getPool(),
-    			facilityDto.getSpa(),
-    			facilityDto.getCouplePc(),
-    			facilityDto.getWifi(),
-    			facilityDto.getFamily(),
-    			facilityDto.getTwinBed(),
-    			facilityDto.getBarbecue(),
-    			facilityDto.getNoSmoking(),
-    			facilityDto.getLuggageStorage(),
-    			facilityDto.getFreeMovieOtt()
+                facilityDto.getParkingAvailable(),
+                facilityDto.getPool(),
+                facilityDto.getSpa(),
+                facilityDto.getWifi(),
+                facilityDto.getTwinBed(),
+                facilityDto.getBarbecue(),
+                facilityDto.getNoSmoking(),
+                facilityDto.getLuggageStorage(),
+                facilityDto.getFreeMovieOtt()
     	};
     	accommodationDto.setService(serviceList);
     	//accommodationDto.setFacilityDto(facilityDto);
@@ -119,19 +113,16 @@ public class AccommodationService {
             // facilityDto가 null이 아닌 경우에만 시설 정보 설정
             if (facilityDto != null) {
                 int[] serviceList = {
-                    facilityDto.getNearbySea(),
-                    facilityDto.getOceanView(),
-                    facilityDto.getParkingAvailable(),
-                    facilityDto.getPool(),
-                    facilityDto.getSpa(),
-                    facilityDto.getCouplePc(),
-                    facilityDto.getWifi(),
-                    facilityDto.getFamily(),
-                    facilityDto.getTwinBed(),
-                    facilityDto.getBarbecue(),
-                    facilityDto.getNoSmoking(),
-                    facilityDto.getLuggageStorage(),
-                    facilityDto.getFreeMovieOtt()
+                		facilityDto.getNearbySea(),
+                        facilityDto.getParkingAvailable(),
+                        facilityDto.getPool(),
+                        facilityDto.getSpa(),
+                        facilityDto.getWifi(),
+                        facilityDto.getTwinBed(),
+                        facilityDto.getBarbecue(),
+                        facilityDto.getNoSmoking(),
+                        facilityDto.getLuggageStorage(),
+                        facilityDto.getFreeMovieOtt()
                 };
                 accommodationDto.setService(serviceList);
             }
@@ -152,19 +143,16 @@ public class AccommodationService {
         for (AccommodationDto accommodationDto : accommodationDtoList) {
             FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
             int[] serviceList = {
-                facilityDto.getNearbySea(),
-                facilityDto.getOceanView(),
-                facilityDto.getParkingAvailable(),
-                facilityDto.getPool(),
-                facilityDto.getSpa(),
-                facilityDto.getCouplePc(),
-                facilityDto.getWifi(),
-                facilityDto.getFamily(),
-                facilityDto.getTwinBed(),
-                facilityDto.getBarbecue(),
-                facilityDto.getNoSmoking(),
-                facilityDto.getLuggageStorage(),
-                facilityDto.getFreeMovieOtt()
+            		facilityDto.getNearbySea(),
+                    facilityDto.getParkingAvailable(),
+                    facilityDto.getPool(),
+                    facilityDto.getSpa(),
+                    facilityDto.getWifi(),
+                    facilityDto.getTwinBed(),
+                    facilityDto.getBarbecue(),
+                    facilityDto.getNoSmoking(),
+                    facilityDto.getLuggageStorage(),
+                    facilityDto.getFreeMovieOtt()
             };
             accommodationDto.setService(serviceList);
         }
@@ -180,19 +168,16 @@ public class AccommodationService {
             // facilityDto가 null이 아닌 경우에만 시설 정보를 설정합니다.
             if (facilityDto != null) {
                 int[] serviceList = {
-                    facilityDto.getNearbySea(),
-                    facilityDto.getOceanView(),
-                    facilityDto.getParkingAvailable(),
-                    facilityDto.getPool(),
-                    facilityDto.getSpa(),
-                    facilityDto.getCouplePc(),
-                    facilityDto.getWifi(),
-                    facilityDto.getFamily(),
-                    facilityDto.getTwinBed(),
-                    facilityDto.getBarbecue(),
-                    facilityDto.getNoSmoking(),
-                    facilityDto.getLuggageStorage(),
-                    facilityDto.getFreeMovieOtt()
+                		facilityDto.getNearbySea(),
+                        facilityDto.getParkingAvailable(),
+                        facilityDto.getPool(),
+                        facilityDto.getSpa(),
+                        facilityDto.getWifi(),
+                        facilityDto.getTwinBed(),
+                        facilityDto.getBarbecue(),
+                        facilityDto.getNoSmoking(),
+                        facilityDto.getLuggageStorage(),
+                        facilityDto.getFreeMovieOtt()
                 };
                 accommodationDto.setService(serviceList);
             }
