@@ -43,9 +43,6 @@ public class AccommodationController {
 	
 	@Value("${jwt.secret}")
 	private String secretKey;
-	
-	@Value("${upload.directory}")
-    private String uploadDirectory;
 
     @Autowired
     private AccommodationService service;
@@ -53,8 +50,7 @@ public class AccommodationController {
     @Autowired
     private FacilityService facservice;
     
-    @Autowired
-    private HttpServletRequest httpRequest;
+
     
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
@@ -97,88 +93,87 @@ public class AccommodationController {
     
 
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> addAccommodation(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart AccommodationRequest request
-    ) {
-    	
+    public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart("file") MultipartFile file,
+                                                                @RequestPart AccommodationRequest request,
+                                                                HttpServletRequest httpRequest) {
+        System.out.println("숙소 추가 신청");
+        System.out.println(request.toString());
+        String path = httpRequest.getSession().getServletContext().getRealPath("/upload");
+        String root = path + File.separator + "uploadFiles";
+        String saveFileName = "";
+
+        File fileCheck = new File(root);
+
+        if (!fileCheck.exists()) fileCheck.mkdirs();
+        AccommodationDto dto = new AccommodationDto();
+        String token = getTokenFromRequest(httpRequest);
+        String userId = getUserIdFromToken(token);
         try {
             if (file != null && !file.isEmpty()) {
-                // 파일 업로드 처리
-                String filePath = uploadFile(file);
+                String originalFileName = file.getOriginalFilename();
+                String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                saveFileName = UUID.randomUUID().toString() + extension;
+
+                String filePath = root + File.separator + saveFileName;
+                file.transferTo(new File(filePath));
 
                 // AccommodationDto 객체를 생성하여 숙소 정보 저장
-                AccommodationDto dto = createAccommodationDto(request, filePath);
+
+                dto.setImg(filePath);
+
+                // DTO에 Request에서 매핑한 값을 설정
+                dto.setId(userId);
+                dto.setAccomName(request.getAccomName());
+                dto.setAccomAddress(request.getAccomAddress());
+                dto.setTeleNumber(request.getTeleNumber());
+                dto.setAccomCategory(request.getAccomCategory());
+                dto.setAccomDetails(request.getAccomDetails());
+                dto.setCheckIn(request.getCheckIn());
+                dto.setCheckOut(request.getCheckOut());
+                dto.setBusinessNumber(request.getBusinessNumber());
 
                 // FacilityDto 객체를 생성하여 시설 정보 저장
+                System.out.println(request.toString());
                 FacilityDto facilityDto = request.getFacilityDto();
 
                 // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
                 int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
 
+                System.out.println(dto.toString());
+                System.out.println(facilityDto.toString());
+
                 // 성공한 정보를 JSON 형식으로 클라이언트에 반환
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "숙소 등록 성공");
-                response.put("accommodationId", String.valueOf(insertedAccomNumber));
+                response.put("accommodationId", String.valueOf(insertedAccomNumber)); // 등록된 숙소 ID
 
                 return ResponseEntity.ok(response);
             }
 
             // 파일 업로드 실패 시
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("파일 업로드 실패");
+
+            // 업로드 실패 시 파일 삭제
+            if (!saveFileName.isEmpty()) {
+                new File(root + File.separator + saveFileName).delete();
+            }
 
             // 실패한 정보를 JSON 형식으로 클라이언트에 반환
             Map<String, String> response = new HashMap<>();
             response.put("message", "숙소 등록 실패");
-            response.put("error", e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-
-    private String uploadFile(MultipartFile file) throws IOException {
-        String originalFileName = file.getOriginalFilename();
-        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String saveFileName = UUID.randomUUID().toString() + extension;
-        String filePath = uploadDirectory + File.separator + saveFileName;
-
-        File fileCheck = new File(uploadDirectory);
-        if (!fileCheck.exists()) {
-            fileCheck.mkdirs();
-        }
-
-        file.transferTo(new File(filePath));
-        return filePath;
-    }
-
-    private AccommodationDto createAccommodationDto(AccommodationRequest request, String filePath) {
-    	String token = getTokenFromRequest(httpRequest);
-    	String userid = getUserIdFromToken(token);
-        AccommodationDto dto = new AccommodationDto();
-        // 필요한 토큰 또는 요청 정보를 여기에서 설정하십시오.
-        dto.setImg(filePath);
-        
-        dto.setId(userid);
-        dto.setAccomName(request.getAccomName());
-        dto.setAccomAddress(request.getAccomAddress());
-        dto.setTeleNumber(request.getTeleNumber());
-        dto.setAccomCategory(request.getAccomCategory());
-        dto.setAccomDetails(request.getAccomDetails());
-        dto.setCheckIn(request.getCheckIn());
-        dto.setCheckOut(request.getCheckOut());
-        dto.setBusinessNumber(request.getBusinessNumber());
-        return dto;
-    }
-
     @PostMapping("mypage/accom")
     public ResponseEntity<List<AccommodationDto>> getMyAccom(HttpServletRequest httpRequest) {
         System.out.println("내 숙소 조회");
         String token = getTokenFromRequest(httpRequest);
-        String userid = getUserIdFromToken(token);
-        List<AccommodationDto> myAccommodations = service.getMyAccom(userid);
+        String userId = getUserIdFromToken(token);
+        List<AccommodationDto> myAccommodations = service.getMyAccom(userId);
         
         // 내숙소 조회 결과가 비어 있는 경우 NOT_FOUND 응답을 반환할 수 있습니다.
         if (myAccommodations.isEmpty()) {
@@ -192,7 +187,7 @@ public class AccommodationController {
     
     @PatchMapping(value = "accom", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateAccommodation(@RequestParam(value = "file", required = false) MultipartFile file,
-                                                      @RequestPart AccommodationRequest request,
+    												  @RequestPart AccommodationRequest request,
                                                       HttpServletRequest httpRequest) {
         System.out.println("숙소 업데이트");
 
@@ -220,18 +215,16 @@ public class AccommodationController {
                 String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
                 saveFileName = UUID.randomUUID().toString() + extension;
 
-                filePath = root + File.separator + saveFileName;
+                filePath = root + "\\" + saveFileName;
                 file.transferTo(new File(filePath));
+                
             } else {
                 // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
                 filePath = previousFilePath;
             }
 
             // AccommodationDto 객체를 생성하여 숙소 정보 업데이트
-
-            // 이전 코드에서 dto.setId(dto.getId());를 아래와 같이 수정합니다.
-            dto.setId(dto.getId());
-
+            
             dto.setAccomName(request.getAccomName());
             dto.setAccomAddress(request.getAccomAddress());
             dto.setTeleNumber(request.getTeleNumber());

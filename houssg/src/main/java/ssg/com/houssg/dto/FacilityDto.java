@@ -1,6 +1,8 @@
 package ssg.com.houssg.dto;
 
-public class FacilityDto {
+import java.io.Serializable;
+
+public class FacilityDto implements Serializable{
 
 	public int accomNumber;
 	public int nearbySea;
@@ -17,6 +19,8 @@ public class FacilityDto {
 	public int luggageStorage;
 	public int freeMovieOtt;
     
+	public FacilityDto() {
+	}
 
 	public int getAccomNumber() {
 		return accomNumber;

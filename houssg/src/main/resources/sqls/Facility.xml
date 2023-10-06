@@ -3,7 +3,8 @@
 
 <mapper namespace="ssg.com.houssg.dao.FacilityDao">
 	<select id="getFacility" parameterType="int" resultType="ssg.com.houssg.dto.FacilityDto">
-		SELECT * FROM facility
+		SELECT * 
+		FROM facility
 		WHERE accom_number = #{accomNumber} 
 	</select>
 	
