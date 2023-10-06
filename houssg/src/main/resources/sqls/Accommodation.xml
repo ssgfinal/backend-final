@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="ssg.com.houssg.dao.AccommodationDao">
 	
@@ -37,7 +38,7 @@
 	</insert>
 	
 	<select id="getMyAccom" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.*,f.*
+		SELECT *
 		FROM accommodation a
 		JOIN facility f ON a.accom_number = f.accom_number
 		JOIN user u ON a.id = u.id
@@ -59,7 +60,7 @@
     </update>
 
 	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.*, f.*
+		SELECT *
 		FROM accommodation a
 		JOIN facility f ON a.accom_number = f.accom_number
 		WHERE a.accom_number = #{accomNumber} and a.deletion_request = 0 
@@ -97,14 +98,14 @@
 	</update>
 	
 	<select id="getApprovalAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
-	    SELECT a.*,f.*
+	    SELECT *
 	    FROM accommodation a
 	    JOIN facility f ON a.accom_number = f.accom_number
 	    WHERE a.add_request = 1
 	</select>
 	
 	<select id="accomScore" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.*, AVG(r.review_rating) AS average_rating
+		SELECT *
 		FROM accommodation a
 		JOIN review r ON a.accom_number = r.accom_number
 		GROUP BY a.accom_number

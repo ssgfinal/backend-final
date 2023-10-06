@@ -1,8 +1,9 @@
 package ssg.com.houssg.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AccommodationDto {
+public class AccommodationDto implements Serializable {
 	private int accomNumber;
 	private String accomName;
 	private String accomAddress;
@@ -19,16 +20,10 @@ public class AccommodationDto {
 	private String img;
 	private int addRequest;
 	private int[] service;
-	private double reviewRating;
 //	private FacilityDto facilityDto;
 	
-	public double getReviewRating() {
-		return reviewRating;
-	}
-	public void setReviewRating(double reviewRating) {
-		this.reviewRating = reviewRating;
-	}
 	private List<FacilityDto> facilityList;
+	
 	public int getAccomNumber() {
 		return accomNumber;
 	}
@@ -132,11 +127,13 @@ public class AccommodationDto {
 //        this.facilityDto = facilityDto;
 //    }
 	public AccommodationDto() {
-		super();
 	}
-	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
-			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber, String id,
-			int auth, int approvalRequest, int deletionRequest, String img,int addRequest, FacilityDto facilityDto) {
+	
+	
+	
+	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber, String accomCategory,
+		String accomDetails, String checkIn, String checkOut, String businessNumber, String id, int auth,
+		int approvalRequest, int deletionRequest, String img, int addRequest, int[] service) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -153,6 +150,7 @@ public class AccommodationDto {
 		this.deletionRequest = deletionRequest;
 		this.img = img;
 		this.addRequest = addRequest;
+		this.service = service;
 	}
 	@Override
 	public String toString() {
