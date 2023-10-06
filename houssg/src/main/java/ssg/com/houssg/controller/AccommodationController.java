@@ -175,9 +175,9 @@ public class AccommodationController {
         String userId = getUserIdFromToken(token);
         List<AccommodationDto> myAccommodations = service.getMyAccom(userId);
         
-        // 내숙소 조회 결과가 비어 있는 경우 NOT_FOUND 응답을 반환할 수 있습니다.
+        // 내숙소 조회 결과가 비어 있는 경우 빈 응답을 반환할 수 있습니다.
         if (myAccommodations.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         
         // 내숙소 조회 결과가 비어 있지 않은 경우 OK 응답과 함께 조회 결과를 반환합니다.
@@ -314,7 +314,7 @@ public class AccommodationController {
         
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
         if (accommodationList == null || accommodationList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
@@ -354,7 +354,7 @@ public class AccommodationController {
         if (approvalAccomList != null && !approvalAccomList.isEmpty()) {
             return ResponseEntity.ok(approvalAccomList); // 성공한 경우 숙소 목록 반환
         } else {
-            return ResponseEntity.noContent().build(); // 숙소 목록이 없는 경우 No Content(204) 반환
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 숙소 목록이 없는 경우 No Content(204) 반환
         }
     }
     @PostMapping("accom/score")
@@ -364,7 +364,7 @@ public class AccommodationController {
         
         if (accommodationDtoList.isEmpty()) {
             // 숙소 목록이 비어있는 경우, NOT_FOUND 상태 코드와 함께 빈 목록을 반환합니다.
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         
         // 숙소 목록이 비어있지 않은 경우, OK 상태 코드와 함께 숙소 목록을 반환합니다.
