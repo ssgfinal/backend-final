@@ -35,7 +35,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests()
 
 				.requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/sms/**").permitAll()
-				.requestMatchers("/room/**","/review/get/all/**","/search/**","/accom/all/**","/accom/detail/**","/accom/score/**","/healthcheck/**").permitAll()
+				.requestMatchers("/room/detail/**","/review/get/all/**","/search/**","/accom/all/**","/accom/detail/**","/accom/score/**","/accom/20/**","/healthcheck/**").permitAll()
 
 				.anyRequest().authenticated(); // 이외 모든 요청은 인증필요
 				

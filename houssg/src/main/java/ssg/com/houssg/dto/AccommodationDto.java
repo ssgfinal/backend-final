@@ -20,10 +20,9 @@ public class AccommodationDto implements Serializable {
 	private String img;
 	private int addRequest;
 	private int[] service;
-//	private FacilityDto facilityDto;
-	
-	private List<FacilityDto> facilityList;
-	
+	private double avgRating;
+	private int maxPrice;
+
 	public int getAccomNumber() {
 		return accomNumber;
 	}
@@ -120,12 +119,18 @@ public class AccommodationDto implements Serializable {
 	public void setService(int[] service) {
 		this.service = service;
 	}
-//	public FacilityDto getFacilityDto() {
-//        return facilityDto;
-//    }
-//    public void setFacilityDto(FacilityDto facilityDto) {
-//        this.facilityDto = facilityDto;
-//    }
+	public double getAvgRating() {
+		return avgRating;
+	}
+	public void setAvgRating(double avgRating) {
+		this.avgRating = avgRating;
+	}
+	public int getMaxPrice() {
+		return maxPrice;
+	}
+	public void setMaxPrice(int maxPrice) {
+		this.maxPrice = maxPrice;
+	}
 	public AccommodationDto() {
 	}
 	
@@ -133,7 +138,7 @@ public class AccommodationDto implements Serializable {
 	
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber, String accomCategory,
 		String accomDetails, String checkIn, String checkOut, String businessNumber, String id, int auth,
-		int approvalRequest, int deletionRequest, String img, int addRequest, int[] service) {
+		int approvalRequest, int deletionRequest, String img, int addRequest, int[] service, double avgRating, int maxPrice) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -151,6 +156,8 @@ public class AccommodationDto implements Serializable {
 		this.img = img;
 		this.addRequest = addRequest;
 		this.service = service;
+		this.avgRating = avgRating;
+		this.maxPrice = maxPrice;
 	}
 	@Override
 	public String toString() {
@@ -159,9 +166,6 @@ public class AccommodationDto implements Serializable {
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
 				+ businessNumber + ", id=" + id + ", auth=" + auth + ", approvalRequest=" + approvalRequest
 				+ ", deletionRequest=" + deletionRequest + ", img=" + img + ", addRequest="
-				+ addRequest + "]";
+				+ addRequest + "avgRating" + avgRating + "maxPrice" + maxPrice + "]";
 	}
-	
-	
-	
 }

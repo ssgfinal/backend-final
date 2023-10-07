@@ -185,4 +185,57 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
+    public List<AccommodationDto> newAccom20(){
+    	List<AccommodationDto> accommodationDtoList = dao.newAccom20();
+
+        // 각 숙소에 대한 시설 정보 설정
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
+            
+            // facilityDto가 null이 아닌 경우에만 시설 정보 설정
+            if (facilityDto != null) {
+                int[] serviceList = {
+                		facilityDto.getNearbySea(),
+                        facilityDto.getParkingAvailable(),
+                        facilityDto.getPool(),
+                        facilityDto.getSpa(),
+                        facilityDto.getWifi(),
+                        facilityDto.getTwinBed(),
+                        facilityDto.getBarbecue(),
+                        facilityDto.getNoSmoking(),
+                        facilityDto.getLuggageStorage(),
+                        facilityDto.getFreeMovieOtt()
+                };
+                accommodationDto.setService(serviceList);
+            }
+        }
+
+        return accommodationDtoList;
+    }
+    public List<AccommodationDto> accomScore20(){
+    	List<AccommodationDto> accommodationDtoList =  dao.accomScore20();
+    	 // 각 승인된 숙소에 대한 시설 정보 설정
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
+
+            // facilityDto가 null이 아닌 경우에만 시설 정보를 설정합니다.
+            if (facilityDto != null) {
+                int[] serviceList = {
+                		facilityDto.getNearbySea(),
+                        facilityDto.getParkingAvailable(),
+                        facilityDto.getPool(),
+                        facilityDto.getSpa(),
+                        facilityDto.getWifi(),
+                        facilityDto.getTwinBed(),
+                        facilityDto.getBarbecue(),
+                        facilityDto.getNoSmoking(),
+                        facilityDto.getLuggageStorage(),
+                        facilityDto.getFreeMovieOtt()
+                };
+                accommodationDto.setService(serviceList);
+            }
+        }
+
+        return accommodationDtoList;
+    }
 }
