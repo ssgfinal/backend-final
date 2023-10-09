@@ -63,7 +63,7 @@
 		SELECT *
 		FROM accommodation a
 		JOIN facility f ON a.accom_number = f.accom_number
-		WHERE a.accom_number = #{accomNumber} and a.deletion_request = 0 
+		WHERE a.accom_number = #{accomNumber} and (a.deletion_request = 0 OR a.deletion_request = 1)
 	</select>
 	
 	<update id="updateRequest" parameterType="int">
