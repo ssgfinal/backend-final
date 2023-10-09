@@ -24,6 +24,7 @@ public class AccommodationDto implements Serializable {
 	private int minPrice;
 	private int reviewCount;
 	private int isFavorite;
+	private String owerId;
 	public int getAccomNumber() {
 		return accomNumber;
 	}
@@ -78,20 +79,11 @@ public class AccommodationDto implements Serializable {
 	public void setBusinessNumber(String businessNumber) {
 		this.businessNumber = businessNumber;
 	}
-	public String getId() {
-		return id;
-	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public int getAuth() {
-		return auth;
-	}
 	public void setAuth(int auth) {
 		this.auth = auth;
-	}
-	public int getDeletionRequest() {
-		return deletionRequest;
 	}
 	public void setDeletionRequest(int deletionRequest) {
 		this.deletionRequest = deletionRequest;
@@ -102,9 +94,6 @@ public class AccommodationDto implements Serializable {
 	public void setImg(String img) {
 		this.img = img;
 	}
-	public int getAddRequest() {
-		return addRequest;
-	}
 	public void setAddRequest(int addRequest) {
 		this.addRequest = addRequest;
 	}
@@ -113,6 +102,12 @@ public class AccommodationDto implements Serializable {
 	}
 	public void setService(int[] service) {
 		this.service = service;
+	}
+	public String getOwerId() {
+		return owerId;
+	}
+	public void setOwerId(String owerId) {
+		this.owerId = owerId;
 	}
 	public double getAvgRating() {
 		return avgRating;
@@ -129,7 +124,7 @@ public class AccommodationDto implements Serializable {
 	public int getReviewCount() {
 		return reviewCount;
 	}
-	public void setReview_count(int reviewCount) {
+	public void setReviewCount(int reviewCount) {
 		this.reviewCount = reviewCount;
 	}
 	public int getIsFavorite() {
