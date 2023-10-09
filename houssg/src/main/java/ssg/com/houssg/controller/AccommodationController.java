@@ -370,9 +370,9 @@ public class AccommodationController {
         // 숙소 목록이 비어있지 않은 경우, OK 상태 코드와 함께 숙소 목록을 반환합니다.
         return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
     }
-    @PostMapping("accom/20")
+    @PostMapping("accom/20/date")
     public ResponseEntity<List<AccommodationDto>> newAccom20() {
-        System.out.println("전체 숙소 리스트 20개 보기");
+        System.out.println("전체 숙소 리스트 날짜순 20개 보기");
         List<AccommodationDto> accommodationList = service.newAccom20();
         
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
@@ -382,7 +382,7 @@ public class AccommodationController {
 
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
     }
-    @PostMapping("accom/score/20")
+    @PostMapping("accom/20/score")
     public ResponseEntity<List<AccommodationDto>> accomScore20(){
         System.out.println("평점 높은 순으로 숙소 20개 보기");
         List<AccommodationDto> accommodationDtoList = service.accomScore20();
