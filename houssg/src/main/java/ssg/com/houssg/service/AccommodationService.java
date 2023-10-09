@@ -80,19 +80,21 @@ public class AccommodationService {
     public AccommodationDto getAccom(int accomNumber){
     	AccommodationDto accommodationDto = dao.getAccom(accomNumber);
     	FacilityDto facilityDto = facdao.getFacility(accomNumber);
-    	int[] serviceList = {
-    			facilityDto.getNearbySea(),
-                facilityDto.getParkingAvailable(),
-                facilityDto.getPool(),
-                facilityDto.getSpa(),
-                facilityDto.getWifi(),
-                facilityDto.getTwinBed(),
-                facilityDto.getBarbecue(),
-                facilityDto.getNoSmoking(),
-                facilityDto.getLuggageStorage(),
-                facilityDto.getFreeMovieOtt()
-    	};
+    	if (facilityDto != null) {
+	    	int[] serviceList = {
+	    			facilityDto.getNearbySea(),
+	                facilityDto.getParkingAvailable(),
+	                facilityDto.getPool(),
+	                facilityDto.getSpa(),
+	                facilityDto.getWifi(),
+	                facilityDto.getTwinBed(),
+	                facilityDto.getBarbecue(),
+	                facilityDto.getNoSmoking(),
+	                facilityDto.getLuggageStorage(),
+	                facilityDto.getFreeMovieOtt()
+	    	};
     	accommodationDto.setService(serviceList);
+    	}
     	//accommodationDto.setFacilityDto(facilityDto);
     	return accommodationDto;
     }

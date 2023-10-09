@@ -30,8 +30,8 @@
 	
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
 	<insert id="insertAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
-	    INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, approval_request, deletion_request, img, add_request)
-	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 0, 0, 0, #{img},1)
+	    INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, deletion_request, img, add_request)
+	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 0, 0, #{img},1)
 	    <selectKey keyProperty="accomNumber" resultType="int" order="AFTER">
 	        SELECT LAST_INSERT_ID()
 	    </selectKey>
@@ -60,30 +60,49 @@
     </update>
 
 	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT *
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
 		FROM accommodation a
-		JOIN facility f ON a.accom_number = f.accom_number
-		WHERE a.accom_number = #{accomNumber} and a.deletion_request = 0 
+		JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE a.accom_number = #{accomNumber} and (a.deletion_request = 0 OR a.deletion_request = 1)
 	</select>
 	
 	<update id="updateRequest" parameterType="int">
 		UPDATE accommodation
-		SET approval_request = 1
-		WHERE accom_number = #{accomNumber} and approval_request = 0
+		SET deletion_request = 1
+		WHERE accom_number = #{accomNumber} and deletion_request = 0
 	</update>
 	
 	<update id="deleteRequest">
 		UPDATE accommodation
-		SET deletion_request = 1
-		WHERE approval_request = 1
+		SET deletion_request = 2
+		WHERE deletion_request = 1
 	</update>
 	
 	<select id="getAllAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.*, FORMAT(AVG(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
-		LEFT JOIN review r ON a.accom_number = r.accom_number
-		WHERE a.deletion_request = 0 AND a.add_request = 0
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
 		GROUP BY a.accom_number
 		ORDER BY a.accom_number DESC
 	</select>	
@@ -108,33 +127,60 @@
 	</select>
 	
 	<select id="accomScore" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.*, FORMAT(avg(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
 		FROM accommodation a
-		JOIN rooms ro ON  a.accom_number = ro.accom_number
-		LEFT JOIN review r ON a.accom_number = r.accom_number
-		WHERE a.deletion_request = 0 AND a.add_request = 0
+		JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
 		GROUP BY a.accom_number
 		ORDER BY avg_rating DESC	
 	</select>
 	
 	<select id="accomScore20" resultType="ssg.com.houssg.dto.AccommodationDto">
-	    SELECT a.*, ROUND(avg(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
-	    FROM accommodation a
-	    JOIN rooms ro ON a.accom_number = ro.accom_number
-	    LEFT JOIN review r ON a.accom_number = r.accom_number
-	    WHERE a.deletion_request = 0 AND a.add_request = 0
-	    GROUP BY a.accom_number
+	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		FROM accommodation a
+		JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
+		GROUP BY a.accom_number
 	    ORDER BY avg_rating DESC
 	    LIMIT 20
 	</select>
 
 	
 	<select id="newAccom20" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.*, FORMAT(AVG(r.review_rating), 1) AS avg_rating, MAX(ro.room_price) AS max_price
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
-		LEFT JOIN review r ON a.accom_number = r.accom_number
-		WHERE a.deletion_request = 0 AND a.add_request = 0
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
 		GROUP BY a.accom_number
 		ORDER BY a.accom_number DESC
 		LIMIT 20
