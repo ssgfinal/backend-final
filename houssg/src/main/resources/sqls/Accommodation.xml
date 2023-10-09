@@ -30,8 +30,8 @@
 	
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
 	<insert id="insertAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
-	    INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, approval_request, deletion_request, img, add_request)
-	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 0, 0, 0, #{img},1)
+	    INSERT INTO accommodation (accom_name, accom_address, tele_number, accom_category, accom_details, check_in, check_out, business_number, id, auth, deletion_request, img, add_request)
+	    VALUES (#{accomName}, #{accomAddress}, #{teleNumber}, #{accomCategory}, #{accomDetails}, #{checkIn}, #{checkOut}, #{businessNumber}, #{id}, 0, 0, #{img},1)
 	    <selectKey keyProperty="accomNumber" resultType="int" order="AFTER">
 	        SELECT LAST_INSERT_ID()
 	    </selectKey>
@@ -68,14 +68,14 @@
 	
 	<update id="updateRequest" parameterType="int">
 		UPDATE accommodation
-		SET approval_request = 1
-		WHERE accom_number = #{accomNumber} and approval_request = 0
+		SET deletion_request = 1
+		WHERE accom_number = #{accomNumber} and deletion_request = 0
 	</update>
 	
 	<update id="deleteRequest">
 		UPDATE accommodation
-		SET deletion_request = 1
-		WHERE approval_request = 1
+		SET deletion_request = 2
+		WHERE deletion_request = 1
 	</update>
 	
 	<select id="getAllAccom" resultType="ssg.com.houssg.dto.AccommodationDto">

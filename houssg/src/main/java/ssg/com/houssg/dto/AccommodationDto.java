@@ -16,7 +16,6 @@ public class AccommodationDto implements Serializable {
 	private String businessNumber;
 	private String id;
 	private int auth;
-	private int approvalRequest;
 	private int deletionRequest;
 	private String img;
 	private int addRequest;
@@ -91,12 +90,6 @@ public class AccommodationDto implements Serializable {
 	public void setAuth(int auth) {
 		this.auth = auth;
 	}
-	public int getApprovalRequest() {
-		return approvalRequest;
-	}
-	public void setApprovalRequest(int approvalRequest) {
-		this.approvalRequest = approvalRequest;
-	}
 	public int getDeletionRequest() {
 		return deletionRequest;
 	}
@@ -150,7 +143,7 @@ public class AccommodationDto implements Serializable {
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber,
-			String id, int auth, int approvalRequest, int deletionRequest, String img, int addRequest, int[] service,
+			String id, int auth, int deletionRequest, String img, int addRequest, int[] service,
 			double avgRating, int minPrice, int reviewCount, int isFavorite) {
 		super();
 		this.accomNumber = accomNumber;
@@ -164,7 +157,6 @@ public class AccommodationDto implements Serializable {
 		this.businessNumber = businessNumber;
 		this.id = id;
 		this.auth = auth;
-		this.approvalRequest = approvalRequest;
 		this.deletionRequest = deletionRequest;
 		this.img = img;
 		this.addRequest = addRequest;
@@ -179,11 +171,10 @@ public class AccommodationDto implements Serializable {
 		return "AccommodationDto [accomNumber=" + accomNumber + ", accomName=" + accomName + ", accomAddress="
 				+ accomAddress + ", teleNumber=" + teleNumber + ", accomCategory=" + accomCategory + ", accomDetails="
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
-				+ businessNumber + ", id=" + id + ", auth=" + auth + ", approvalRequest=" + approvalRequest
-				+ ", deletionRequest=" + deletionRequest + ", img=" + img + ", addRequest=" + addRequest + ", service="
-				+ Arrays.toString(service) + ", avgRating=" + avgRating + ", minPrice=" + minPrice + ", reviewCount="
-				+ reviewCount + ", isFavorite=" + isFavorite + "]";
+				+ businessNumber + ", id=" + id + ", auth=" + auth + ", deletionRequest=" + deletionRequest + ", img="
+				+ img + ", addRequest=" + addRequest + ", service=" + Arrays.toString(service) + ", avgRating="
+				+ avgRating + ", minPrice=" + minPrice + ", reviewCount=" + reviewCount + ", isFavorite=" + isFavorite
+				+ "]";
 	}
-
 
 }
