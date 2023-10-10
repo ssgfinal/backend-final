@@ -61,28 +61,10 @@
 		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
-		LEFT JOIN (
-		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
-		    FROM review
-		    GROUP BY accom_number
-		) r ON a.accom_number = r.accom_number
-		WHERE a.accom_number = #{accomNumber} and (a.deletion_request = 0 OR a.deletion_request = 1)
-	</select>
-	
-	<select id="getAccomid" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
-		    MIN(ro.room_price) AS min_price, 
-		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
-		FROM accommodation a
-		JOIN rooms ro ON a.accom_number = ro.accom_number
-		LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
@@ -107,8 +89,7 @@
 		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
@@ -145,30 +126,10 @@
 		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
-		LEFT JOIN (
-		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
-		    FROM review
-		    GROUP BY accom_number
-		) r ON a.accom_number = r.accom_number
-		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
-		GROUP BY a.accom_number
-		ORDER BY avg_rating DESC	
-	</select>
-	
-	<select id="accomScoreid" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
-		    MIN(ro.room_price) AS min_price, 
-		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
-		FROM accommodation a
-		JOIN rooms ro ON a.accom_number = ro.accom_number
-		LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
@@ -183,31 +144,10 @@
 	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
-		LEFT JOIN (
-		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
-		    FROM review
-		    GROUP BY accom_number
-		) r ON a.accom_number = r.accom_number
-		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
-		GROUP BY a.accom_number
-	    ORDER BY avg_rating DESC
-	    LIMIT 20
-	</select>
-
-	<select id="accomScore20id" resultType="ssg.com.houssg.dto.AccommodationDto">
-	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
-		    MIN(ro.room_price) AS min_price, 
-		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
-		FROM accommodation a
-		JOIN rooms ro ON a.accom_number = ro.accom_number
-		LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
@@ -224,7 +164,6 @@
         MIN(ro.room_price) AS min_price, 
         IFNULL(r.review_count, 0) AS review_count,
         IFNULL(r.avg_rating, 0.0) AS avg_rating,
-        CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
         FROM accommodation a
         JOIN rooms ro ON a.accom_number = ro.accom_number
         LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
@@ -239,24 +178,5 @@
         LIMIT 20
 	</select>
     
-    <select id="newAccom20id" parameterType="String" resultType="ssg.com.houssg.dto.AccommodationDto">
-        SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
-        MIN(ro.room_price) AS min_price, 
-        IFNULL(r.review_count, 0) AS review_count,
-        IFNULL(r.avg_rating, 0.0) AS avg_rating,
-        CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
-        FROM accommodation a
-        JOIN rooms ro ON a.accom_number = ro.accom_number
-        LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
-        LEFT JOIN (
-            SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
-            FROM review
-            GROUP BY accom_number
-        ) r ON a.accom_number = r.accom_number
-        WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0 
-        GROUP BY a.accom_number
-        ORDER BY a.accom_number DESC
-        LIMIT 20
-    </select>
 </mapper>
 
