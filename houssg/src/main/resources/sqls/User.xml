@@ -31,9 +31,9 @@
 
 	<insert id="signUp" parameterType="ssg.com.houssg.dto.UserDto">
 		insert into user(auth,
-		nickname, phonenumber, password, id)
+		nickname, phonenumber, password, id, point)
 		values(0, #{nickname},
-		#{phonenumber}, #{password}, #{id})
+		#{phonenumber}, #{password}, #{id}, 0)
 	</insert>
 
 	<select id="login" parameterType="ssg.com.houssg.dto.UserDto"
