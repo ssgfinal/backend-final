@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ssg.com.houssg.dao.ReservationDao">
+
+	<!-- 숙소 정보 조회 -->
+	<select id="getAccommodationInfo"
+		resultType="ssg.com.houssg.dto.AccommodationDto">
+		SELECT accom_number, accom_name
+		FROM accommodation where
+		accom_number = #{accomNumber}
+	</select>
+
+	<!-- 객실 정보 조회 -->
+	<select id="getRoomInfo" resultType="ssg.com.houssg.dto.RoomDto">
+		SELECT room_number,
+		room_category, room_price
+		FROM rooms where room_number = #{roomNumber}
+	</select>
+
+	<!-- 객실 정보 조회 -->
+	<select id="getAccomNumberByRoomNumber" resultType="int">
+		SELECT
+		accom_number
+		FROM rooms where room_number = #{roomNumber}
+	</select>
+
+	<!-- 쿠폰 정보 조회 -->
+	<select id="getCouponInfo"
+		resultType="ssg.com.houssg.dto.UserCouponDto">
+		SELECT coupon_number, coupon_name, discount
+		FROM user_coupon
+		where id = #{userId}
+	</select>
+
+	<!-- 보유 포인트 조회 -->
+	<select id="getUserPoints" resultType="int">
+		SELECT point
+		FROM user
+		WHERE id = #{Id}
+	</select>
+
+	<!-- 예약등록(생성) -->
+	<insert id="enrollReservation"
+		parameterType="ssg.com.houssg.dto.ReservationDto">
+		insert into reservation(reservation_number,
+		reservation_time,
+		id,
+		start_date,
+		period,
+		status,
+		nickname,
+		phone_number,
+		room_category,
+		room_price,
+		coupon_number,
+		coupon_name,
+		discount,
+		use_point,
+		total_price,
+		payment_amount,
+		guest_name,
+		guest_phone,
+		accom_number,
+		accom_name,
+		room_number)
+		values (#{reservationNumber},
+		#{reservationTime}, #{id}, #{startDate},#{period}, 0,
+		#{nickname},#{phoneNumber},
+		#{roomCategory},#{roomPrice},#{couponNumber},#{couponName},#{discount},
+		#{usePoint},#{totalPrice},#{paymentAmount},#{gusetName},#{gusetPhone},
+		#{accomNumber},#{accomName},#{roomNumber})
+	</insert>
+
+	<!-- 예약완료 시 쿠폰 사용 여부 변경 -->
+	<update id="usedCoupon"
+		parameterType="ssg.com.houssg.dto.UserCouponDto">
+		UPDATE user
+		SET point = point - #{usePoint}
+		WHERE id =
+		#{Id}
+	</update>
+
+
+	<!-- 예약완료 시 사용한 포인트 차감 -->
+	<update id="usedPoint"
+		parameterType="ssg.com.houssg.dto.UserDto">
+		UPDATE user
+		SET point = point - #{usePoint}
+		WHERE id =
+		#{Id}
+	</update>
+
+	<!-- 이용완료 시 포인트 적립 -->
+	<update id="accumulatePoints"
+		parameterType="ssg.com.houssg.dto.UserDto">
+		UPDATE user
+		SET point = point + (#{paymentAmount} * 0.05)
+		WHERE id = #{Id}
+	</update>
+
+
+
+</mapper>

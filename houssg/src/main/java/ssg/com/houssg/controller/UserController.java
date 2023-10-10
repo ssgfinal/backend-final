@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -143,8 +144,8 @@ public class UserController {
 		return "NO";
 	}
 
-	// 아이디 찾기
-	@PostMapping("find-id")
+	// 아이디 찾기 및 전화번호 변경
+	@RequestMapping(value = {"find-id", "change-phone"}, method = RequestMethod.POST)
 	public ResponseEntity<SmsResponseDto> findId(@RequestParam("phone_number") String phone_number, HttpSession session) {
 
 		// 휴대폰 번호 중복 검사
