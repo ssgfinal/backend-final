@@ -168,7 +168,7 @@ public class AccommodationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-    @PostMapping("mypage/accom")
+    @GetMapping("mypage/accom")
     public ResponseEntity<List<AccommodationDto>> getMyAccom(HttpServletRequest httpRequest) {
         System.out.println("내 숙소 조회");
         String token = getTokenFromRequest(httpRequest);
