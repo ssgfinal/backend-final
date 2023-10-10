@@ -1,6 +1,7 @@
 package ssg.com.houssg.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,65 +40,38 @@ public class ReviewController {
 	
 	// 리뷰 추가
 	@PostMapping(value = "review/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> addReview(
-	    @RequestParam(value = "file", required = false) MultipartFile file,
-	    @RequestParam("reviewContent") String reviewContent,
-	    @RequestParam("reviewRating") double reviewRating,
-	    @RequestParam("reservationNumber") int reservationNumber,
-	    @RequestParam("roomNumber") int roomNumber,
-	    @RequestParam("accomNumber") int accomNumber,
-	    @RequestParam("id") String id,
-	    HttpServletRequest request
-	) {
+	public ResponseEntity<String> addReview(@RequestPart(value = "file", required = false) MultipartFile file,
+	                                        @RequestPart ReviewDto reviewDto,
+	                                        HttpServletRequest httpRequest) {
 	    System.out.println("리뷰 추가");
 
-	    String path = request.getSession().getServletContext().getRealPath("/upload");
-	    String root = path + "\\" + "uploadFiles";
-	    String saveFileName = ""; // 변수를 미리 초기화
+	    String path = httpRequest.getSession().getServletContext().getRealPath("/upload");
+	    String root = path + File.separator + "uploadFiles";
+	    String saveFileName = "";
 
 	    File fileCheck = new File(root);
-
+	    String token = getTokenFromRequest(httpRequest);
+	    String userId = getUserIdFromToken(token);
 	    if (!fileCheck.exists()) fileCheck.mkdirs();
 
 	    try {
 	        // 파일 업로드 여부 확인
 	        if (file != null && !file.isEmpty()) {
 	            // 파일 업로드된 경우 처리
-	            // 업로드된 파일을 저장할 파일명 생성
-	            String originalFileName = file.getOriginalFilename();
-	            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-	            saveFileName = UUID.randomUUID().toString() + extension; // 변수 초기화
-
-	            // 파일 저장 경로 설정
-	            String filePath = root + "\\" + saveFileName;
-
-	            // 파일 저장
-	            file.transferTo(new File(filePath));
-
-	            // 리뷰 등록 로직 추가
-	            ReviewDto dto = new ReviewDto();
-	            dto.setImg(filePath); // 파일 경로 설정
-	            dto.setReviewContent(reviewContent); // 다른 리뷰 관련 필드 설정
-	            dto.setReviewRating(reviewRating);
-	            dto.setReservationNumber(reservationNumber);
-	            dto.setRoomNumber(roomNumber);
-	            dto.setAccomNumber(accomNumber);
-	            dto.setId(id);
-
-	            service.addReview(dto);
-	        } else {
-	            // 파일이 업로드되지 않은 경우 처리
-	            // 리뷰 등록 로직 추가 (파일 관련 필드를 제외한 나머지 필드만 사용)
-	            ReviewDto dto = new ReviewDto();
-	            dto.setReviewContent(reviewContent);
-	            dto.setReviewRating(reviewRating);
-	            dto.setReservationNumber(reservationNumber);
-	            dto.setRoomNumber(roomNumber);
-	            dto.setAccomNumber(accomNumber);
-	            dto.setId(id);
-
-	            service.addReview(dto);
+	            saveFileName = saveUploadedFile(file, root);
 	        }
+
+	        // 리뷰 등록 로직 추가
+	        ReviewDto dto = new ReviewDto();
+	        dto.setImg(saveFileName); // 파일 경로 설정
+	        dto.setReviewContent(reviewDto.getReviewContent());
+	        dto.setReviewRating(reviewDto.getReviewRating());
+	        dto.setReservationNumber(reviewDto.getReservationNumber());
+	        dto.setRoomNumber(reviewDto.getRoomNumber());
+	        dto.setAccomNumber(reviewDto.getAccomNumber());
+	        dto.setId(userId);
+
+	        service.addReview(dto);
 
 	        // 리뷰 등록 성공 시
 	        return ResponseEntity.ok("리뷰 등록 성공");
@@ -106,12 +81,22 @@ public class ReviewController {
 
 	        // 업로드 실패 시 파일 삭제
 	        if (!saveFileName.isEmpty()) {
-	            new File(root + "\\" + saveFileName).delete();
+	            new File(root + File.separator + saveFileName).delete();
 	        }
 
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 등록 실패"); // 400 에러
 	    }
 	}
+
+	private String saveUploadedFile(MultipartFile file, String uploadDir) throws IOException {
+	    String originalFileName = file.getOriginalFilename();
+	    String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+	    String saveFileName = UUID.randomUUID().toString() + extension;
+	    String filePath = uploadDir + File.separator + saveFileName;
+	    file.transferTo(new File(filePath));
+	    return saveFileName;
+	}
+
 
 	// my 리뷰 보기
 	@PostMapping("mypage/review")

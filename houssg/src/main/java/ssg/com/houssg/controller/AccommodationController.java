@@ -215,7 +215,7 @@ public class AccommodationController {
                 String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
                 saveFileName = UUID.randomUUID().toString() + extension;
 
-                filePath = root + "\\" + saveFileName;
+                filePath = root + File.separator + saveFileName;
                 file.transferTo(new File(filePath));
                 
             } else {
