@@ -64,7 +64,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
@@ -81,7 +81,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
@@ -110,7 +110,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
@@ -129,7 +129,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
@@ -167,7 +167,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
@@ -186,7 +186,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
@@ -205,7 +205,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
@@ -225,7 +225,7 @@
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating,
-		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE null END AS is_favorite
+		    CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
 		FROM accommodation a
 		JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
@@ -245,7 +245,7 @@
         MIN(ro.room_price) AS min_price, 
         IFNULL(r.review_count, 0) AS review_count,
         IFNULL(r.avg_rating, 0.0) AS avg_rating,
-        CASE WHEN f.accom_number IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
+        CASE WHEN f.accom_number IS NOT NULL THEN 0 ELSE 0 END AS is_favorite
         FROM accommodation a
         JOIN rooms ro ON a.accom_number = ro.accom_number
         LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}

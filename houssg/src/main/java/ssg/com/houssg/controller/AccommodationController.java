@@ -296,18 +296,11 @@ public class AccommodationController {
         }
     }
     @PostMapping("accom/detail")
-    public ResponseEntity<AccommodationDto> getAccom(@RequestParam int accomNumber,HttpServletRequest httpRequest) {
+    public ResponseEntity<AccommodationDto> getAccom(@RequestParam int accomNumber) {
         System.out.println("리스트에 접근합니다");
-        String token = getTokenFromRequest(httpRequest);
-        String userId = getUserIdFromToken(token);
         AccommodationDto accommodation;
-        if (userId == null) {
-        	System.out.println("비로그인");
-        	accommodation = service.getAccom(accomNumber);
-        } else {
-        	System.out.println("로그인");
-        	accommodation = service.getAccomid(accomNumber, userId);
-        }
+        accommodation = service.getAccom(accomNumber);
+
         // accommodation이 null인 경우 NOT_FOUND 반환
         if (accommodation == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -315,19 +308,41 @@ public class AccommodationController {
 
         return new ResponseEntity<>(accommodation, HttpStatus.OK);
     }
+    @PostMapping("accom/detail/id")
+    public ResponseEntity<AccommodationDto> getAccomid(@RequestParam int accomNumber, HttpServletRequest httpRequest) {
+        System.out.println("리스트에 접근합니다");
+        String token = getTokenFromRequest(httpRequest);
+        AccommodationDto accommodation;
+        String userId = getUserIdFromToken(token);
+        accommodation = service.getAccomid(accomNumber, userId);
+   
+        // accommodation이 null인 경우 NOT_FOUND 반환
+        if (accommodation == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(accommodation, HttpStatus.OK);
+    } 
+
     @PostMapping("accom/all")
-    public ResponseEntity<List<AccommodationDto>> getAllAccom(HttpServletRequest httpRequest) {
+    public ResponseEntity<List<AccommodationDto>> getAllAccom() {
+        System.out.println("전체 숙소 리스트 보기");
+        List<AccommodationDto> accommodationList;
+        accommodationList = service.getAllAccom();
+        // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
+        if (accommodationList == null || accommodationList.isEmpty()) {
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(accommodationList, HttpStatus.OK);
+    }
+    @PostMapping("accom/all/id")
+    public ResponseEntity<List<AccommodationDto>> getAllAccomid(HttpServletRequest httpRequest) {
         System.out.println("전체 숙소 리스트 보기");
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
         List<AccommodationDto> accommodationList;
-        if(userId == null) {
-        	System.out.println("비로그인");
-        	accommodationList = service.getAllAccom();
-        } else {
-        	System.out.println("로그인");
-        	accommodationList = service.getAllAccomid(userId);
-        }
+        accommodationList = service.getAllAccomid(userId);
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
         if (accommodationList == null || accommodationList.isEmpty()) {
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -374,18 +389,25 @@ public class AccommodationController {
         }
     }
     @PostMapping("accom/score")
-    public ResponseEntity<List<AccommodationDto>> accomScore(HttpServletRequest httpRequest){
+    public ResponseEntity<List<AccommodationDto>> accomScore(){
+        System.out.println("평점 높은 순으로 숙소 보기");
+        List<AccommodationDto> accommodationDtoList;
+        accommodationDtoList = service.accomScore();
+        if (accommodationDtoList.isEmpty()) {
+            // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        
+        // 숙소 목록이 비어있지 않은 경우, OK 상태 코드와 함께 숙소 목록을 반환합니다.
+        return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
+    }
+    @PostMapping("accom/score/id")
+    public ResponseEntity<List<AccommodationDto>> accomScoreid(HttpServletRequest httpRequest){
         System.out.println("평점 높은 순으로 숙소 보기");
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
         List<AccommodationDto> accommodationDtoList;
-        if (userId == null) {
-        	System.out.println("비로그인");
-        	accommodationDtoList = service.accomScore();
-        } else {
-        	System.out.println("로그인");
-        	accommodationDtoList = service.accomScoreid(userId);
-        }
+        accommodationDtoList = service.accomScoreid(userId);
         if (accommodationDtoList.isEmpty()) {
             // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -395,20 +417,24 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
     }
     @PostMapping("accom/20/date")
-    public ResponseEntity<List<AccommodationDto>> newAccom20(HttpServletRequest httpRequest) {
+    public ResponseEntity<List<AccommodationDto>> newAccom20() {
+        System.out.println("전체 숙소 리스트 날짜순 20개 보기");
+        List<AccommodationDto> accommodationList;
+        accommodationList = service.newAccom20();   
+        // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
+        if (accommodationList == null || accommodationList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(accommodationList, HttpStatus.OK);
+    }
+    @PostMapping("accom/20/date/id")
+    public ResponseEntity<List<AccommodationDto>> newAccom20id(HttpServletRequest httpRequest) {
         System.out.println("전체 숙소 리스트 날짜순 20개 보기");
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
         List<AccommodationDto> accommodationList;
-
-        if (userId == null) {
-        	System.out.println("비로그인");
-            accommodationList = service.newAccom20();
-        } else {
-        	System.out.println("로그인");
-            accommodationList = service.newAccom20id(userId);
-        }
-
+        accommodationList = service.newAccom20id(userId);
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
         if (accommodationList == null || accommodationList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -417,19 +443,25 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
     }
     @PostMapping("accom/20/score")
-    public ResponseEntity<List<AccommodationDto>> accomScore20(HttpServletRequest httpRequest){
+    public ResponseEntity<List<AccommodationDto>> accomScore20(){
+        System.out.println("평점 높은 순으로 숙소 20개 보기");
+        List<AccommodationDto> accommodationDtoList;
+        accommodationDtoList = service.accomScore20();
+        if (accommodationDtoList.isEmpty()) {
+            // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        
+        // 숙소 목록이 비어있지 않은 경우, OK 상태 코드와 함께 숙소 목록을 반환합니다.
+        return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
+    }
+    @PostMapping("accom/20/score/id")
+    public ResponseEntity<List<AccommodationDto>> accomScore20id(HttpServletRequest httpRequest){
         System.out.println("평점 높은 순으로 숙소 20개 보기");
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
-        List<AccommodationDto> accommodationDtoList;
-        
-        if (userId == null) {
-        	System.out.println("비로그인");
-        	accommodationDtoList = service.accomScore20();
-        } else {
-        	System.out.println("로그인");
-        	accommodationDtoList = service.accomScore20id(userId);
-        }
+        List<AccommodationDto> accommodationDtoList;;
+        accommodationDtoList = service.accomScore20id(userId);
         if (accommodationDtoList.isEmpty()) {
             // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
