@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -19,12 +20,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.ReviewDto;
 import ssg.com.houssg.service.ReviewService;
 
 @RestController
-public class ReviewController { 
+public class ReviewController {
+	
+	@Value("${jwt.secret}")
+	private String secretKey;
 
 	@Autowired
 	ReviewService service;
@@ -108,10 +115,11 @@ public class ReviewController {
 
 	// my 리뷰 보기
 	@PostMapping("mypage/review")
-	public ResponseEntity<List<ReviewDto>> getMyReview(@RequestParam String nickname) {
+	public ResponseEntity<List<ReviewDto>> getMyReview(HttpServletRequest httpRequest) {
 	    System.out.println("나의 리뷰 보기");
-
-	    List<ReviewDto> reviews = service.getMyReview(nickname);
+	    String token = getTokenFromRequest(httpRequest);
+        String userId = getUserIdFromToken(token);
+	    List<ReviewDto> reviews = service.getMyReview(userId);
 
 	    if (reviews.isEmpty()) {
 	        // 리뷰가 없는 경우
@@ -224,5 +232,26 @@ public class ReviewController {
 	    } else {
 	        return new ResponseEntity<>("Comment update failed", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
+	}
+	private String getTokenFromRequest(HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
+
+		if (token != null && token.startsWith("Bearer ")) {
+			return token.substring(7);
+		}
+
+		return null;
+	}
+    
+    private String getUserIdFromToken(String token) {
+		try {
+			Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
+					.parseClaimsJws(token).getBody();
+			return claims.get("id", String.class); // "id" 클레임 추출
+		} catch (Exception e) {
+			// 토큰 파싱 실패
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
