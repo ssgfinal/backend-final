@@ -93,7 +93,7 @@ public class AccommodationController {
     
 
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart("file") MultipartFile file,
+    public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart(value="file",required = false) MultipartFile file,
                                                                 @RequestPart AccommodationRequest request,
                                                                 HttpServletRequest httpRequest) {
         System.out.println("숙소 추가 신청");
@@ -131,11 +131,24 @@ public class AccommodationController {
                 dto.setCheckIn(request.getCheckIn());
                 dto.setCheckOut(request.getCheckOut());
                 dto.setBusinessNumber(request.getBusinessNumber());
+                
+                
 
                 // FacilityDto 객체를 생성하여 시설 정보 저장
-                System.out.println(request.toString());
-                FacilityDto facilityDto = request.getFacilityDto();
-
+                
+                FacilityDto facilityDto = new FacilityDto();
+                int[] facilityDtoList = request.getFacilityDto();
+                facilityDto.setNearbySea(facilityDtoList[0]);
+                facilityDto.setParkingAvailable(facilityDtoList[1]);
+                facilityDto.setPool(facilityDtoList[2]);
+                facilityDto.setSpa(facilityDtoList[3]);
+                facilityDto.setWifi(facilityDtoList[4]);
+                facilityDto.setTwinBed(facilityDtoList[5]);
+                facilityDto.setBarbecue(facilityDtoList[6]);
+                facilityDto.setNoSmoking(facilityDtoList[7]);
+                facilityDto.setLuggageStorage(facilityDtoList[8]);
+                facilityDto.setFreeMovieOtt(facilityDtoList[9]);
+                
                 // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
                 int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
 
@@ -148,6 +161,8 @@ public class AccommodationController {
                 response.put("accommodationId", String.valueOf(insertedAccomNumber)); // 등록된 숙소 ID
 
                 return ResponseEntity.ok(response);
+                
+
             }
 
             // 파일 업로드 실패 시
@@ -167,6 +182,7 @@ public class AccommodationController {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+        
     }
     @PostMapping("mypage/accom")
     public ResponseEntity<List<AccommodationDto>> getMyAccom(HttpServletRequest httpRequest) {
@@ -184,13 +200,13 @@ public class AccommodationController {
         return ResponseEntity.ok(myAccommodations);
     }
     
-    
+
     @PatchMapping(value = "accom", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateAccommodation(@RequestParam(value = "file", required = false) MultipartFile file,
     												  @RequestPart AccommodationRequest request,
                                                       HttpServletRequest httpRequest) {
         System.out.println("숙소 업데이트");
-
+        System.out.println(request.toString());
         String path = httpRequest.getSession().getServletContext().getRealPath("/upload");
         String root = path + File.separator + "uploadFiles";
         String saveFileName = "";
@@ -224,15 +240,12 @@ public class AccommodationController {
             }
 
             // AccommodationDto 객체를 생성하여 숙소 정보 업데이트
-            
-            dto.setAccomName(request.getAccomName());
-            dto.setAccomAddress(request.getAccomAddress());
-            dto.setTeleNumber(request.getTeleNumber());
-            dto.setAccomCategory(request.getAccomCategory());
+            dto.setAccomNumber(request.getAccomNumber());                 
+            dto.setTeleNumber(request.getTeleNumber());   
             dto.setAccomDetails(request.getAccomDetails());
             dto.setCheckIn(request.getCheckIn());
             dto.setCheckOut(request.getCheckOut());
-            dto.setBusinessNumber(request.getBusinessNumber());
+
 
             // 파일을 업로드한 경우에만 이미지 경로 설정
             if (file != null && !file.isEmpty()) {
@@ -243,7 +256,18 @@ public class AccommodationController {
             }
 
             // FacilityDto 객체를 생성하여 시설 정보 업데이트
-            FacilityDto facilityDto = request.getFacilityDto();
+            FacilityDto facilityDto = new FacilityDto();
+            int[] facilityDtoList = request.getFacilityDto();
+            facilityDto.setNearbySea(facilityDtoList[0]);
+            facilityDto.setParkingAvailable(facilityDtoList[1]);
+            facilityDto.setPool(facilityDtoList[2]);
+            facilityDto.setSpa(facilityDtoList[3]);
+            facilityDto.setWifi(facilityDtoList[4]);
+            facilityDto.setTwinBed(facilityDtoList[5]);
+            facilityDto.setBarbecue(facilityDtoList[6]);
+            facilityDto.setNoSmoking(facilityDtoList[7]);
+            facilityDto.setLuggageStorage(facilityDtoList[8]);
+            facilityDto.setFreeMovieOtt(facilityDtoList[9]);
 
             // AccommodationService를 호출하여 숙소 정보 및 시설 정보 업데이트
             service.updateAccommodationAndFacility(dto, facilityDto);
@@ -329,20 +353,6 @@ public class AccommodationController {
         System.out.println("전체 숙소 리스트 보기");
         List<AccommodationDto> accommodationList;
         accommodationList = service.getAllAccom();
-        // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
-        if (accommodationList == null || accommodationList.isEmpty()) {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        return new ResponseEntity<>(accommodationList, HttpStatus.OK);
-    }
-    @PostMapping("accom/all/id")
-    public ResponseEntity<List<AccommodationDto>> getAllAccomid(HttpServletRequest httpRequest) {
-        System.out.println("전체 숙소 리스트 보기");
-        String token = getTokenFromRequest(httpRequest);
-        String userId = getUserIdFromToken(token);
-        List<AccommodationDto> accommodationList;
-        accommodationList = service.getAllAccomid(userId);
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
         if (accommodationList == null || accommodationList.isEmpty()) {
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
