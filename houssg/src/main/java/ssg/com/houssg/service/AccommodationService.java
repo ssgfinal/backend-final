@@ -54,7 +54,22 @@ public class AccommodationService {
     public int deleteAccommodationById(int accommodationId) {
         return dao.deleteAccommodationById(accommodationId);
     }
-    
+    public int accomApproval(int accomNumber) {
+    	return dao.accomApproval(accomNumber);
+    }
+    public int accomApprovalX(int accomNumber) {
+    	return dao.accomApprovalX(accomNumber);
+    }
+    public List<AccommodationDto> getApprovalAccom(){
+    	List<AccommodationDto> accommodationDtoList = dao.getApprovalAccom();
+
+        // 각 승인된 숙소에 대한 시설 정보 설정
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            setFacilityData(accommodationDto);
+        }
+
+        return accommodationDtoList;
+    }
     @Transactional
     public int addAccommodationAndFacility(AccommodationDto dto, FacilityDto facilityDto) {
         // AccommodationDto를 accommodation 테이블에 삽입

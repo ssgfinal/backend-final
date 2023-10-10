@@ -93,7 +93,7 @@ public class AccommodationController {
     
 
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart(value="file",required = false) MultipartFile file,
+    public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart("file") MultipartFile file,
                                                                 @RequestPart AccommodationRequest request,
                                                                 HttpServletRequest httpRequest) {
         System.out.println("숙소 추가 신청");
@@ -202,7 +202,7 @@ public class AccommodationController {
     
 
     @PatchMapping(value = "accom", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateAccommodation(@RequestParam(value = "file", required = false) MultipartFile file,
+    public ResponseEntity<String> updateAccommodation(@RequestParam("file") MultipartFile file,
     												  @RequestPart AccommodationRequest request,
                                                       HttpServletRequest httpRequest) {
         System.out.println("숙소 업데이트");
@@ -383,6 +383,7 @@ public class AccommodationController {
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 숙소 목록이 없는 경우 No Content(204) 반환
         }
     }
+    
     @PostMapping("accom/score")
     public ResponseEntity<List<AccommodationDto>> accomScore(){
         System.out.println("평점 높은 순으로 숙소 보기");
