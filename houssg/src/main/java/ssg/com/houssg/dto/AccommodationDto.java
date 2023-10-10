@@ -1,8 +1,10 @@
 package ssg.com.houssg.dto;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
-public class AccommodationDto {
+public class AccommodationDto implements Serializable {
 	private int accomNumber;
 	private String accomName;
 	private String accomAddress;
@@ -14,22 +16,14 @@ public class AccommodationDto {
 	private String businessNumber;
 	private String id;
 	private int auth;
-	private int approvalRequest;
 	private int deletionRequest;
-	private String zipCode;
 	private String img;
 	private int addRequest;
 	private int[] service;
-	private double reviewRating;
-//	private FacilityDto facilityDto;
-	
-	public double getReviewRating() {
-		return reviewRating;
-	}
-	public void setReviewRating(double reviewRating) {
-		this.reviewRating = reviewRating;
-	}
-	private List<FacilityDto> facilityList;
+	private double avgRating;
+	private int minPrice;
+	private int reviewCount;
+	private int isFavorite;
 	public int getAccomNumber() {
 		return accomNumber;
 	}
@@ -96,23 +90,11 @@ public class AccommodationDto {
 	public void setAuth(int auth) {
 		this.auth = auth;
 	}
-	public int getApprovalRequest() {
-		return approvalRequest;
-	}
-	public void setApprovalRequest(int approvalRequest) {
-		this.approvalRequest = approvalRequest;
-	}
 	public int getDeletionRequest() {
 		return deletionRequest;
 	}
 	public void setDeletionRequest(int deletionRequest) {
 		this.deletionRequest = deletionRequest;
-	}
-	public String getZipCode() {
-		return zipCode;
-	}
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
 	}
 	public String getImg() {
 		return img;
@@ -132,18 +114,37 @@ public class AccommodationDto {
 	public void setService(int[] service) {
 		this.service = service;
 	}
-//	public FacilityDto getFacilityDto() {
-//        return facilityDto;
-//    }
-//    public void setFacilityDto(FacilityDto facilityDto) {
-//        this.facilityDto = facilityDto;
-//    }
+	public double getAvgRating() {
+		return avgRating;
+	}
+	public void setAvgRating(double avgRating) {
+		this.avgRating = avgRating;
+	}
+	public int getMinPrice() {
+		return minPrice;
+	}
+	public void setMinPrice(int minPrice) {
+		this.minPrice = minPrice;
+	}
+	public int getReviewCount() {
+		return reviewCount;
+	}
+	public void setReview_count(int reviewCount) {
+		this.reviewCount = reviewCount;
+	}
+	public int getIsFavorite() {
+		return isFavorite;
+	}
+	public void setIsFavorite(int isFavorite) {
+		this.isFavorite = isFavorite;
+	}
 	public AccommodationDto() {
 		super();
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
-			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber, String id,
-			int auth, int approvalRequest, int deletionRequest, String zipCode, String img,int addRequest, FacilityDto facilityDto) {
+			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber,
+			String id, int auth, int deletionRequest, String img, int addRequest, int[] service,
+			double avgRating, int minPrice, int reviewCount, int isFavorite) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -156,22 +157,24 @@ public class AccommodationDto {
 		this.businessNumber = businessNumber;
 		this.id = id;
 		this.auth = auth;
-		this.approvalRequest = approvalRequest;
 		this.deletionRequest = deletionRequest;
-		this.zipCode = zipCode;
 		this.img = img;
 		this.addRequest = addRequest;
+		this.service = service;
+		this.avgRating = avgRating;
+		this.minPrice = minPrice;
+		this.reviewCount = reviewCount;
+		this.isFavorite = isFavorite;
 	}
 	@Override
 	public String toString() {
 		return "AccommodationDto [accomNumber=" + accomNumber + ", accomName=" + accomName + ", accomAddress="
 				+ accomAddress + ", teleNumber=" + teleNumber + ", accomCategory=" + accomCategory + ", accomDetails="
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
-				+ businessNumber + ", id=" + id + ", auth=" + auth + ", approvalRequest=" + approvalRequest
-				+ ", deletionRequest=" + deletionRequest + ", zipCode=" + zipCode + ", img=" + img + ", addRequest="
-				+ addRequest + "]";
+				+ businessNumber + ", id=" + id + ", auth=" + auth + ", deletionRequest=" + deletionRequest + ", img="
+				+ img + ", addRequest=" + addRequest + ", service=" + Arrays.toString(service) + ", avgRating="
+				+ avgRating + ", minPrice=" + minPrice + ", reviewCount=" + reviewCount + ", isFavorite=" + isFavorite
+				+ "]";
 	}
-	
-	
-	
+
 }

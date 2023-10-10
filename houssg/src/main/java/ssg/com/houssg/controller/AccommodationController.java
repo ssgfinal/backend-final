@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import ch.qos.logback.core.subst.Token.Type;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.AccommodationParam;
@@ -36,12 +40,17 @@ import ssg.com.houssg.service.FacilityService;
 
 @RestController
 public class AccommodationController {
+	
+	@Value("${jwt.secret}")
+	private String secretKey;
 
     @Autowired
     private AccommodationService service;
     
     @Autowired
     private FacilityService facservice;
+    
+
     
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
@@ -97,6 +106,8 @@ public class AccommodationController {
 
         if (!fileCheck.exists()) fileCheck.mkdirs();
         AccommodationDto dto = new AccommodationDto();
+        String token = getTokenFromRequest(httpRequest);
+        String userId = getUserIdFromToken(token);
         try {
             if (file != null && !file.isEmpty()) {
                 String originalFileName = file.getOriginalFilename();
@@ -111,7 +122,7 @@ public class AccommodationController {
                 dto.setImg(filePath);
 
                 // DTO에 Request에서 매핑한 값을 설정
-                dto.setId(request.getId());
+                dto.setId(userId);
                 dto.setAccomName(request.getAccomName());
                 dto.setAccomAddress(request.getAccomAddress());
                 dto.setTeleNumber(request.getTeleNumber());
@@ -120,7 +131,6 @@ public class AccommodationController {
                 dto.setCheckIn(request.getCheckIn());
                 dto.setCheckOut(request.getCheckOut());
                 dto.setBusinessNumber(request.getBusinessNumber());
-                dto.setZipCode(request.getZipCode());
 
                 // FacilityDto 객체를 생성하여 시설 정보 저장
                 System.out.println(request.toString());
@@ -158,15 +168,16 @@ public class AccommodationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-    
-    @PostMapping("accom/mine")
-    public ResponseEntity<List<AccommodationDto>> getMyAccom(@RequestParam String id) {
+    @PostMapping("mypage/accom")
+    public ResponseEntity<List<AccommodationDto>> getMyAccom(HttpServletRequest httpRequest) {
         System.out.println("내 숙소 조회");
-        List<AccommodationDto> myAccommodations = service.getMyAccom(id);
+        String token = getTokenFromRequest(httpRequest);
+        String userId = getUserIdFromToken(token);
+        List<AccommodationDto> myAccommodations = service.getMyAccom(userId);
         
-        // 내숙소 조회 결과가 비어 있는 경우 NOT_FOUND 응답을 반환할 수 있습니다.
+        // 내숙소 조회 결과가 비어 있는 경우 빈 응답을 반환할 수 있습니다.
         if (myAccommodations.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         
         // 내숙소 조회 결과가 비어 있지 않은 경우 OK 응답과 함께 조회 결과를 반환합니다.
@@ -214,7 +225,6 @@ public class AccommodationController {
 
             // AccommodationDto 객체를 생성하여 숙소 정보 업데이트
             
-            dto.setId(request.getId());
             dto.setAccomName(request.getAccomName());
             dto.setAccomAddress(request.getAccomAddress());
             dto.setTeleNumber(request.getTeleNumber());
@@ -223,7 +233,6 @@ public class AccommodationController {
             dto.setCheckIn(request.getCheckIn());
             dto.setCheckOut(request.getCheckOut());
             dto.setBusinessNumber(request.getBusinessNumber());
-            dto.setZipCode(request.getZipCode());
 
             // 파일을 업로드한 경우에만 이미지 경로 설정
             if (file != null && !file.isEmpty()) {
@@ -305,7 +314,7 @@ public class AccommodationController {
         
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
         if (accommodationList == null || accommodationList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
@@ -345,7 +354,7 @@ public class AccommodationController {
         if (approvalAccomList != null && !approvalAccomList.isEmpty()) {
             return ResponseEntity.ok(approvalAccomList); // 성공한 경우 숙소 목록 반환
         } else {
-            return ResponseEntity.noContent().build(); // 숙소 목록이 없는 경우 No Content(204) 반환
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 숙소 목록이 없는 경우 No Content(204) 반환
         }
     }
     @PostMapping("accom/score")
@@ -354,11 +363,57 @@ public class AccommodationController {
         List<AccommodationDto> accommodationDtoList = service.accomScore();
         
         if (accommodationDtoList.isEmpty()) {
-            // 숙소 목록이 비어있는 경우, NOT_FOUND 상태 코드와 함께 빈 목록을 반환합니다.
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         
         // 숙소 목록이 비어있지 않은 경우, OK 상태 코드와 함께 숙소 목록을 반환합니다.
         return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
     }
+    @PostMapping("accom/20/date")
+    public ResponseEntity<List<AccommodationDto>> newAccom20() {
+        System.out.println("전체 숙소 리스트 날짜순 20개 보기");
+        List<AccommodationDto> accommodationList = service.newAccom20();
+        
+        // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
+        if (accommodationList == null || accommodationList.isEmpty()) {
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(accommodationList, HttpStatus.OK);
+    }
+    @PostMapping("accom/20/score")
+    public ResponseEntity<List<AccommodationDto>> accomScore20(){
+        System.out.println("평점 높은 순으로 숙소 20개 보기");
+        List<AccommodationDto> accommodationDtoList = service.accomScore20();
+        
+        if (accommodationDtoList.isEmpty()) {
+            // 숙소 목록이 비어있는 경우, NO_CONTENT 상태 코드와 함께 빈 목록을 반환합니다.
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        
+        // 숙소 목록이 비어있지 않은 경우, OK 상태 코드와 함께 숙소 목록을 반환합니다.
+        return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
+    }
+    private String getTokenFromRequest(HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
+
+		if (token != null && token.startsWith("Bearer ")) {
+			return token.substring(7);
+		}
+
+		return null;
+	}
+    
+    private String getUserIdFromToken(String token) {
+		try {
+			Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
+					.parseClaimsJws(token).getBody();
+			return claims.get("id", String.class); // "id" 클레임 추출
+		} catch (Exception e) {
+			// 토큰 파싱 실패
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

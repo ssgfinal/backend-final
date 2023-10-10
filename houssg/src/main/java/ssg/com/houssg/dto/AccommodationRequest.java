@@ -6,7 +6,6 @@ import java.util.List;
 public class AccommodationRequest {
 
 	private int accomNumber;
-	private String id;
     private String accomName;
     private String accomAddress;
     private String teleNumber;
@@ -15,19 +14,12 @@ public class AccommodationRequest {
     private String checkIn;
     private String checkOut;
     private String businessNumber;
-    private String zipCode;
     private FacilityDto facilityDto;
 	public int getAccomNumber() {
 		return accomNumber;
 	}
 	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
-	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
 	}
 	public String getAccomName() {
 		return accomName;
@@ -77,12 +69,6 @@ public class AccommodationRequest {
 	public void setBusinessNumber(String businessNumber) {
 		this.businessNumber = businessNumber;
 	}
-	public String getZipCode() {
-		return zipCode;
-	}
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
 	public FacilityDto getFacilityDto() {
         return facilityDto;
     }
@@ -95,18 +81,17 @@ public class AccommodationRequest {
 	
 	@Override
 	public String toString() {
-		return "AccommodationRequest [accomNumber=" + accomNumber + ", id=" + id + ", accomName=" + accomName
+		return "AccommodationRequest [accomNumber=" + accomNumber + ", accomName=" + accomName
 				+ ", accomAddress=" + accomAddress + ", teleNumber=" + teleNumber + ", accomCategory=" + accomCategory
 				+ ", accomDetails=" + accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut
-				+ ", businessNumber=" + businessNumber + ", zipCode=" + zipCode + ", facilityDto=" + facilityDto + "]";
+				+ ", businessNumber=" + businessNumber + ", facilityDto=" + facilityDto + "]";
 	}
 	
-	public AccommodationRequest(int accomNumber, String id, String accomName, String accomAddress, String teleNumber,
+	public AccommodationRequest(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber,
-			String zipCode, FacilityDto facilityDto) {
+			FacilityDto facilityDto) {
 		super();
 		this.accomNumber = accomNumber;
-		this.id = id;
 		this.accomName = accomName;
 		this.accomAddress = accomAddress;
 		this.teleNumber = teleNumber;
@@ -115,7 +100,6 @@ public class AccommodationRequest {
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
 		this.businessNumber = businessNumber;
-		this.zipCode = zipCode;
 		this.facilityDto = facilityDto;
 	}
 }

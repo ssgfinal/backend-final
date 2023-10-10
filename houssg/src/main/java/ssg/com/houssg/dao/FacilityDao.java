@@ -16,4 +16,6 @@ public interface FacilityDao  {
 	 void insertFacility(FacilityDto dto);
 	 
 	 void updateFacility(FacilityDto facilityDto);
+	 
+	 FacilityDto getAccomNumber();
 }

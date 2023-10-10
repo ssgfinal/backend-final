@@ -1,14 +1,15 @@
 package ssg.com.houssg.dto;
 
-public class RoomDto {
-	
+public class RoomRequest {
+
 	private int roomNumber;
 	private String roomCategory;
 	private String roomDetails;
 	private int roomPrice;
 	private int roomAvailability;
 	private int accomNumber;
-	private int[] service;
+	private int roomUse;
+	private RoomServiceDto roomServiceDto;
 	public int getRoomNumber() {
 		return roomNumber;
 	}
@@ -45,17 +46,23 @@ public class RoomDto {
 	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
 	}
-	public int[] getService() {
-		return service;
+	public int getRoomUse() {
+		return roomUse;
 	}
-	public void setService(int[] service) {
-		this.service = service;
+	public void setRoomUse(int roomUse) {
+		this.roomUse = roomUse;
 	}
-	public RoomDto() {
+	public RoomServiceDto getRoomServiceDto() {
+		return roomServiceDto;
+	}
+	public void setRoomServiceDto(RoomServiceDto roomServiceDto) {
+		this.roomServiceDto = roomServiceDto;
+	}
+	public RoomRequest() {
 		super();
 	}
-	public RoomDto(int roomNumber, String roomCategory, String roomDetails, int roomPrice, int roomAvailability,
-			int accomNumber, int[] service) {
+	public RoomRequest(int roomNumber, String roomCategory, String roomDetails, int roomPrice, int roomAvailability,
+			int accomNumber, int roomUse, RoomServiceDto roomServiceDto) {
 		super();
 		this.roomNumber = roomNumber;
 		this.roomCategory = roomCategory;
@@ -63,6 +70,8 @@ public class RoomDto {
 		this.roomPrice = roomPrice;
 		this.roomAvailability = roomAvailability;
 		this.accomNumber = accomNumber;
-		this.service = service;
-	}	
+		this.roomUse = roomUse;
+		this.roomServiceDto = roomServiceDto;
+	}
+	
 }
