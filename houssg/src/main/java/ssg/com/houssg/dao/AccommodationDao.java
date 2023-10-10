@@ -26,15 +26,11 @@ public interface AccommodationDao {
 	
 	AccommodationDto getAccom(int accomNumber);
 	
-	AccommodationDto getAccomid(int accomNumber, String id);
-	
 	int updateRequest(int accomNumber);
 	
 	int deleteRequest();
 	
 	List<AccommodationDto> getAllAccom();
-	
-	List<AccommodationDto> getAllAccomid(String id);
 	
 	int accomApproval(int accomNumber);
 	
@@ -44,13 +40,8 @@ public interface AccommodationDao {
 	
 	List<AccommodationDto> accomScore();
 	
-	List<AccommodationDto> accomScoreid(String id);
-	
 	List<AccommodationDto> accomScore20();
 	
-	List<AccommodationDto> accomScore20id(String id);
-	
 	List<AccommodationDto> newAccom20();
-	
-	List<AccommodationDto> newAccom20id(String id);
+
 }

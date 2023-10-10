@@ -23,7 +23,6 @@ public class AccommodationDto implements Serializable {
 	private double avgRating;
 	private int minPrice;
 	private int reviewCount;
-	private int isFavorite;
 	private String owerId;
 	public int getAccomNumber() {
 		return accomNumber;
@@ -127,19 +126,13 @@ public class AccommodationDto implements Serializable {
 	public void setReviewCount(int reviewCount) {
 		this.reviewCount = reviewCount;
 	}
-	public int getIsFavorite() {
-		return isFavorite;
-	}
-	public void setIsFavorite(int isFavorite) {
-		this.isFavorite = isFavorite;
-	}
 	public AccommodationDto() {
 		super();
 	}
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber,
 			String id, int auth, int deletionRequest, String img, int addRequest, int[] service,
-			double avgRating, int minPrice, int reviewCount, int isFavorite) {
+			double avgRating, int minPrice, int reviewCount) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -159,7 +152,6 @@ public class AccommodationDto implements Serializable {
 		this.avgRating = avgRating;
 		this.minPrice = minPrice;
 		this.reviewCount = reviewCount;
-		this.isFavorite = isFavorite;
 	}
 	@Override
 	public String toString() {
@@ -168,8 +160,7 @@ public class AccommodationDto implements Serializable {
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
 				+ businessNumber + ", id=" + id + ", auth=" + auth + ", deletionRequest=" + deletionRequest + ", img="
 				+ img + ", addRequest=" + addRequest + ", service=" + Arrays.toString(service) + ", avgRating="
-				+ avgRating + ", minPrice=" + minPrice + ", reviewCount=" + reviewCount + ", isFavorite=" + isFavorite
-				+ "]";
+				+ avgRating + ", minPrice=" + minPrice + ", reviewCount=" + reviewCount + "]";
 	}
 
 }

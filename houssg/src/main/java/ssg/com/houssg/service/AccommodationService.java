@@ -98,27 +98,7 @@ public class AccommodationService {
     	//accommodationDto.setFacilityDto(facilityDto);
     	return accommodationDto;
     }
-    public AccommodationDto getAccomid(int accomNumber, String id){
-    	AccommodationDto accommodationDto = dao.getAccomid(accomNumber,id);
-    	FacilityDto facilityDto = facdao.getFacility(accomNumber);
-    	if (facilityDto != null) {
-	    	int[] serviceList = {
-	    			facilityDto.getNearbySea(),
-	                facilityDto.getParkingAvailable(),
-	                facilityDto.getPool(),
-	                facilityDto.getSpa(),
-	                facilityDto.getWifi(),
-	                facilityDto.getTwinBed(),
-	                facilityDto.getBarbecue(),
-	                facilityDto.getNoSmoking(),
-	                facilityDto.getLuggageStorage(),
-	                facilityDto.getFreeMovieOtt()
-	    	};
-    	accommodationDto.setService(serviceList);
-    	}
-    	//accommodationDto.setFacilityDto(facilityDto);
-    	return accommodationDto;
-    }
+    
     
     public int updateRequest(int accomNumber) {
     	return dao.updateRequest(accomNumber);
@@ -136,55 +116,11 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
-    public List<AccommodationDto> getAllAccomid(String id){
-    	List<AccommodationDto> accommodationDtoList = dao.getAllAccomid(id);
-
-        // 각 숙소에 대한 시설 정보 설정
-    	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            setFacilityData(accommodationDto);
-        }
-
-        return accommodationDtoList;
-    }
-    public int accomApproval(int accomNumber) {
-    	return dao.accomApproval(accomNumber);
-    }
-    public int accomApprovalX(int accomNumber) {
-    	return dao.accomApprovalX(accomNumber);
-    }
-    public List<AccommodationDto> getApprovalAccom(){
-    	List<AccommodationDto> accommodationDtoList = dao.getApprovalAccom();
-
-        // 각 승인된 숙소에 대한 시설 정보 설정
-    	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            setFacilityData(accommodationDto);
-        }
-
-        return accommodationDtoList;
-    }
+ 
     public List<AccommodationDto> accomScore(){
     	List<AccommodationDto> accommodationDtoList =  dao.accomScore();
     	 // 각 승인된 숙소에 대한 시설 정보 설정
     	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            setFacilityData(accommodationDto);
-        }
-
-        return accommodationDtoList;
-    }
-    public List<AccommodationDto> accomScoreid(String id){
-    	List<AccommodationDto> accommodationDtoList =  dao.accomScoreid(id);
-    	 // 각 승인된 숙소에 대한 시설 정보 설정
-    	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            setFacilityData(accommodationDto);
-        }
-
-        return accommodationDtoList;
-    }
-    public List<AccommodationDto> newAccom20id(String id) {
-        List<AccommodationDto> accommodationDtoList = dao.newAccom20id(id);
-
-        // 각 숙소에 대한 시설 정보 설정
-        for (AccommodationDto accommodationDto : accommodationDtoList) {
             setFacilityData(accommodationDto);
         }
 
@@ -210,15 +146,7 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
-    public List<AccommodationDto> accomScore20id(String id){
-    	List<AccommodationDto> accommodationDtoList =  dao.accomScore20id(id);
-    	 // 각 승인된 숙소에 대한 시설 정보 설정
-    	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            setFacilityData(accommodationDto);
-        }
-
-        return accommodationDtoList;
-    }
+    
     private void setFacilityData(AccommodationDto accommodationDto) {
         FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
 
