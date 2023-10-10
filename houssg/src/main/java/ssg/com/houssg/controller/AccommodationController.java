@@ -184,7 +184,7 @@ public class AccommodationController {
         }
         
     }
-    @PostMapping("mypage/accom")
+    @GetMapping("mypage/accom")
     public ResponseEntity<List<AccommodationDto>> getMyAccom(HttpServletRequest httpRequest) {
         System.out.println("내 숙소 조회");
         String token = getTokenFromRequest(httpRequest);
@@ -231,7 +231,7 @@ public class AccommodationController {
                 String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
                 saveFileName = UUID.randomUUID().toString() + extension;
 
-                filePath = root + "\\" + saveFileName;
+                filePath = root + File.separator + saveFileName;
                 file.transferTo(new File(filePath));
                 
             } else {

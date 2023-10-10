@@ -8,16 +8,16 @@
 	</insert>
 
 	<select id="getMyReview" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.ReviewDto">
-		SELECT r.review_number, r.review_content, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, ro.room_category, ro.room_number, a.accom_name, u.nickname
+		SELECT r.review_number, r.review_content, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name, u.nickname
 		FROM review r
 		JOIN user u ON r.id = u.id
 		JOIN rooms ro ON r.room_number = ro.room_number
 		JOIN accommodation a ON r.accom_number = a.accom_number
-		WHERE u.nickname = #{nickname} AND r.report_status=0
+		WHERE u.id = #{id} AND r.report_status=0
 	</select>
 	
 	<select id="getAllReview" parameterType="java.lang.Integer" resultType="ssg.com.houssg.dto.ReviewDto">
-	    SELECT r.*, ro.room_category
+	    SELECT r.review_number, r.review_content, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name, u.nickname
 	    FROM review r 
 	    JOIN rooms ro ON r.room_number = ro.room_number
 	    WHERE r.room_number = #{roomNumber} AND r.accom_number = #{accomNumber} AND r.report_status=0
@@ -62,6 +62,5 @@
 	      AND r.accom_number = a.accom_number
 	      AND r.manager_id = a.id
 </update>
-
 
 </mapper>
