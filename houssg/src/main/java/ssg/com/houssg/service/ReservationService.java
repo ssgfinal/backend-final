@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dto.AccommodationDto;
-import ssg.com.houssg.dto.ReservationBasicInfoDto;
+import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -42,6 +42,11 @@ public class ReservationService {
 		return dao.getReservationStatus(roomNumber);
 	}
 
+	// 연월 받아서 객실별 예약현황 조회
+	public List<ReservationRoomDto> getReservationStatusForYearMonth(int roomNumber, String yearMonth) {
+		return dao.getReservationStatusForYearMonth(roomNumber, yearMonth);
+	}
+
 	// 보유 포인트 조회
 	public int getUserPoints(String Id) {
 		Integer points = dao.getUserPoints(Id);
@@ -54,13 +59,13 @@ public class ReservationService {
 	}
 
 	// 예약 페이지 기본 정보 조회
-	public ReservationBasicInfoDto getReservationBasicInfo(int roomNumber, String userId) {
-		ReservationBasicInfoDto basicInfo = new ReservationBasicInfoDto();
-		
-		// 예약된 객실 정보
+	public ReservationInfoDto getReservationBasicInfo(int roomNumber, String userId) {
+		ReservationInfoDto basicInfo = new ReservationInfoDto();
+
+		// 예약가능한 객실 정보
 		List<ReservationRoomDto> bookableRoomList = getReservationStatus(roomNumber);
 		basicInfo.setBookableRoomList(bookableRoomList);
-		
+
 		// 쿠폰 정보 설정
 		List<UserCouponDto> couponList = getCouponInfo(userId);
 		basicInfo.setCouponList(couponList);
@@ -69,8 +74,19 @@ public class ReservationService {
 		int userPoints = getUserPoints(userId);
 		basicInfo.setUserPoint(userPoints);
 
-		
 		return basicInfo;
+	}
+	
+	// 예약 페이지 - 월별 예약가능한 객실 정보 조회
+	public ReservationInfoDto getAvailableRoom(int roomNumber, String yearMonth) {
+		ReservationInfoDto Info = new ReservationInfoDto();
+
+		// 예약가능한 객실 정보
+		List<ReservationRoomDto> bookableRoomList = getReservationStatusForYearMonth(roomNumber, yearMonth);
+		Info.setBookableRoomList(bookableRoomList);
+
+
+		return Info;
 	}
 
 	public void enrollReservation(ReservationDto reservationDto) {

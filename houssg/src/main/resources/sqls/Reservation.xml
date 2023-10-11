@@ -3,23 +3,55 @@
 
 <mapper namespace="ssg.com.houssg.dao.ReservationDao">
 
-	<!-- 객실 별 예약현황 조회 -->
+	<!-- 현재 월 기준 객실 별 예약현황 조회 -->
 	<select id="getReservationStatus"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
 		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
-		reservation.start_date &lt;= date_range.Date AND reservation.end_date >
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date
+		>
 		date_range.Date THEN 1 ELSE 0 END), 0) AS availableRooms
 		FROM (
-		SELECT DATE_ADD(CURDATE(), INTERVAL n DAY) AS Date
+		SELECT
+		DATE_ADD(CURDATE(), INTERVAL n DAY) AS Date
 		FROM for_count
-		WHERE DATE_ADD(CURDATE(), INTERVAL n DAY) &lt;= LAST_DAY(CURDATE())
-		) AS date_range
+		WHERE
+		DATE_ADD(CURDATE(), INTERVAL n DAY) &lt;= LAST_DAY(CURDATE())
+		) AS
+		date_range
 		LEFT JOIN rooms ON rooms.room_number = #{roomNumber}
-		LEFT JOIN reservation ON reservation.room_number = rooms.room_number
-		GROUP BY date_range.Date
+		LEFT
+		JOIN reservation ON reservation.room_number = rooms.room_number
+		GROUP
+		BY date_range.Date
 		ORDER BY date_range.Date;
 	</select>
+
+	<!-- 연도 + 월 입력받아서 객실 별 예약현황 조회 -->
+	<select id="getReservationStatusForYearMonth"
+		resultType="ssg.com.houssg.dto.ReservationRoomDto">
+		SELECT date_range.Date AS date,
+		rooms.room_number AS roomNumber,
+		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date > date_range.Date THEN
+		1 ELSE 0 END), 0) AS availableRooms
+		FROM (
+		SELECT DATE_FORMAT(CONCAT(#{yearMonth}, '-01'), '%Y-%m-%d') + INTERVAL n DAY
+		AS Date
+		FROM for_count
+		WHERE DATE_FORMAT(DATE_FORMAT(CONCAT(#{yearMonth}, '-01'), '%Y-%m-%d') +
+		INTERVAL n DAY, '%Y-%m') = #{yearMonth}
+		) AS date_range
+		CROSS JOIN rooms
+		LEFT JOIN reservation ON reservation.room_number = rooms.room_number AND
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date >
+		date_range.Date
+		GROUP BY date_range.Date, rooms.room_number
+		ORDER BY date_range.Date, rooms.room_number;
+	</select>
+
+
+
 
 	<!-- 숙소 정보 조회 -->
 	<select id="getAccommodationInfo"

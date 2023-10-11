@@ -20,7 +20,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import ssg.com.houssg.dto.ReservationBasicInfoDto;
+import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -48,7 +48,7 @@ public class ReservationController {
 			String userId = getUserIdFromToken(token);
 
 			// 사용자 ID를 파라미터로 전달하여 예약 기본 정보 조회
-			ReservationBasicInfoDto basicInfo = reservationService.getReservationBasicInfo(roomNumber, userId);
+			ReservationInfoDto basicInfo = reservationService.getReservationBasicInfo(roomNumber, userId);
 
 			// 필요한 필드만 선택하여 JSON 문자열로 변환
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -89,7 +89,7 @@ public class ReservationController {
 			// JSON 문자열 반환
 			System.out.println(responseJson.toString());
 			return ResponseEntity.ok(responseJson.toString());
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(400).build();
@@ -135,7 +135,46 @@ public class ReservationController {
 			return ResponseEntity.status(400).body("예약실패");
 		}
 	}
+	
+	
+	// 연도 + 월 기준 객실 별 예약 현황 조회
+	@GetMapping("/available-room")
+	public ResponseEntity<String> getAvailableRoom(int roomNumber, String yearMonth) {
+			try {
+				
+				// 사용자 ID를 파라미터로 전달하여 예약 기본 정보 조회
+				ReservationInfoDto info = reservationService.getAvailableRoom(roomNumber, yearMonth);
 
+				// 필요한 필드만 선택하여 JSON 문자열로 변환
+				ObjectMapper objectMapper = new ObjectMapper();
+				ObjectNode responseJson = objectMapper.createObjectNode();
+
+				// 예약된 객실 정보
+				if (info.getBookableRoomList() != null) {
+					ArrayNode bookableRoomArray = objectMapper.createArrayNode();
+					for (ReservationRoomDto bookableRoom : info.getBookableRoomList()) {
+						ObjectNode bookableRoomJson = objectMapper.createObjectNode();
+						bookableRoomJson.put("date", bookableRoom.getDate());
+						bookableRoomJson.put("availableRooms", bookableRoom.getAvailableRooms());
+						bookableRoomArray.add(bookableRoomJson);
+					}
+					responseJson.set("bookalbeRoomList", bookableRoomArray);
+				} else {
+					responseJson.set("bookalbeRoomList", null);
+				}
+
+				// JSON 문자열 반환
+				System.out.println(responseJson.toString());
+				return ResponseEntity.ok(responseJson.toString());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(400).build();
+			}
+		}
+	
+	
+	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");
 

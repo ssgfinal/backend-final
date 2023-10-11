@@ -2,7 +2,7 @@ package ssg.com.houssg.dto;
 
 import java.util.List;
 
-public class ReservationBasicInfoDto {
+public class ReservationInfoDto {
 	
 	private List<ReservationRoomDto> bookableRoomList;
     private List<UserCouponDto> couponList;
