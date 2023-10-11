@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ssg.com.houssg.dao.RoomServiceDao">
     <insert id="insertRoomService" parameterType="ssg.com.houssg.dto.RoomServiceDto">
-        INSERT INTO room_service (room_number, city_view, ocean_view, pc, no_smoking, double_bed, queen_bed, king_bed)
-        VALUES (#{roomNumber}, #{cityView}, #{oceanView}, #{pc}, #{noSmoking}, #{doubleBed}, #{queenBed}, #{kingBed})
+        INSERT INTO room_service (room_number, ocean_view, pc, no_smoking, double_bed, queen_bed, king_bed)
+        VALUES (#{roomNumber}, #{oceanView}, #{pc}, #{noSmoking}, #{doubleBed}, #{queenBed}, #{kingBed})
     </insert>
     
     <update id="updateRoomService" parameterType="ssg.com.houssg.dto.RoomServiceDto">
 	    UPDATE room_service
-	    SET city_view = #{cityView}, ocean_view = #{oceanView}, pc = #{pc}, no_smoking = #{noSmoking}, double_bed = #{doubleBed}, queen_bed = #{queenBed}, king_bed = #{kingBed}
+	    SET ocean_view = #{oceanView}, pc = #{pc}, no_smoking = #{noSmoking}, double_bed = #{doubleBed}, queen_bed = #{queenBed}, king_bed = #{kingBed}
 	    WHERE room_number = #{roomNumber}
 	</update>
 	

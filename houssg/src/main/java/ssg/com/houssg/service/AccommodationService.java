@@ -54,7 +54,22 @@ public class AccommodationService {
     public int deleteAccommodationById(int accommodationId) {
         return dao.deleteAccommodationById(accommodationId);
     }
-    
+    public int accomApproval(int accomNumber) {
+    	return dao.accomApproval(accomNumber);
+    }
+    public int accomApprovalX(int accomNumber) {
+    	return dao.accomApprovalX(accomNumber);
+    }
+    public List<AccommodationDto> getApprovalAccom(){
+    	List<AccommodationDto> accommodationDtoList = dao.getApprovalAccom();
+
+        // 각 승인된 숙소에 대한 시설 정보 설정
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            setFacilityData(accommodationDto);
+        }
+
+        return accommodationDtoList;
+    }
     @Transactional
     public int addAccommodationAndFacility(AccommodationDto dto, FacilityDto facilityDto) {
         // AccommodationDto를 accommodation 테이블에 삽입
@@ -99,6 +114,7 @@ public class AccommodationService {
     	return accommodationDto;
     }
     
+    
     public int updateRequest(int accomNumber) {
     	return dao.updateRequest(accomNumber);
     }
@@ -110,106 +126,28 @@ public class AccommodationService {
 
         // 각 숙소에 대한 시설 정보 설정
     	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
-            
-            // facilityDto가 null이 아닌 경우에만 시설 정보 설정
-            if (facilityDto != null) {
-                int[] serviceList = {
-                		facilityDto.getNearbySea(),
-                        facilityDto.getParkingAvailable(),
-                        facilityDto.getPool(),
-                        facilityDto.getSpa(),
-                        facilityDto.getWifi(),
-                        facilityDto.getTwinBed(),
-                        facilityDto.getBarbecue(),
-                        facilityDto.getNoSmoking(),
-                        facilityDto.getLuggageStorage(),
-                        facilityDto.getFreeMovieOtt()
-                };
-                accommodationDto.setService(serviceList);
-            }
+            setFacilityData(accommodationDto);
         }
 
         return accommodationDtoList;
     }
-    public int accomApproval(int accomNumber) {
-    	return dao.accomApproval(accomNumber);
-    }
-    public int accomApprovalX(int accomNumber) {
-    	return dao.accomApprovalX(accomNumber);
-    }
-    public List<AccommodationDto> getApprovalAccom(){
-    	List<AccommodationDto> accommodationDtoList = dao.getApprovalAccom();
-
-        // 각 승인된 숙소에 대한 시설 정보 설정
-        for (AccommodationDto accommodationDto : accommodationDtoList) {
-            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
-            int[] serviceList = {
-            		facilityDto.getNearbySea(),
-                    facilityDto.getParkingAvailable(),
-                    facilityDto.getPool(),
-                    facilityDto.getSpa(),
-                    facilityDto.getWifi(),
-                    facilityDto.getTwinBed(),
-                    facilityDto.getBarbecue(),
-                    facilityDto.getNoSmoking(),
-                    facilityDto.getLuggageStorage(),
-                    facilityDto.getFreeMovieOtt()
-            };
-            accommodationDto.setService(serviceList);
-        }
-
-        return accommodationDtoList;
-    }
+ 
     public List<AccommodationDto> accomScore(){
     	List<AccommodationDto> accommodationDtoList =  dao.accomScore();
     	 // 각 승인된 숙소에 대한 시설 정보 설정
     	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
-
-            // facilityDto가 null이 아닌 경우에만 시설 정보를 설정합니다.
-            if (facilityDto != null) {
-                int[] serviceList = {
-                		facilityDto.getNearbySea(),
-                        facilityDto.getParkingAvailable(),
-                        facilityDto.getPool(),
-                        facilityDto.getSpa(),
-                        facilityDto.getWifi(),
-                        facilityDto.getTwinBed(),
-                        facilityDto.getBarbecue(),
-                        facilityDto.getNoSmoking(),
-                        facilityDto.getLuggageStorage(),
-                        facilityDto.getFreeMovieOtt()
-                };
-                accommodationDto.setService(serviceList);
-            }
+            setFacilityData(accommodationDto);
         }
 
         return accommodationDtoList;
     }
-    public List<AccommodationDto> newAccom20(){
-    	List<AccommodationDto> accommodationDtoList = dao.newAccom20();
+
+    public List<AccommodationDto> newAccom20() {
+        List<AccommodationDto> accommodationDtoList = dao.newAccom20();
 
         // 각 숙소에 대한 시설 정보 설정
-    	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
-            
-            // facilityDto가 null이 아닌 경우에만 시설 정보 설정
-            if (facilityDto != null) {
-                int[] serviceList = {
-                		facilityDto.getNearbySea(),
-                        facilityDto.getParkingAvailable(),
-                        facilityDto.getPool(),
-                        facilityDto.getSpa(),
-                        facilityDto.getWifi(),
-                        facilityDto.getTwinBed(),
-                        facilityDto.getBarbecue(),
-                        facilityDto.getNoSmoking(),
-                        facilityDto.getLuggageStorage(),
-                        facilityDto.getFreeMovieOtt()
-                };
-                accommodationDto.setService(serviceList);
-            }
+        for (AccommodationDto accommodationDto : accommodationDtoList) {
+            setFacilityData(accommodationDto);
         }
 
         return accommodationDtoList;
@@ -218,26 +156,30 @@ public class AccommodationService {
     	List<AccommodationDto> accommodationDtoList =  dao.accomScore20();
     	 // 각 승인된 숙소에 대한 시설 정보 설정
     	for (AccommodationDto accommodationDto : accommodationDtoList) {
-            FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
-
-            // facilityDto가 null이 아닌 경우에만 시설 정보를 설정합니다.
-            if (facilityDto != null) {
-                int[] serviceList = {
-                		facilityDto.getNearbySea(),
-                        facilityDto.getParkingAvailable(),
-                        facilityDto.getPool(),
-                        facilityDto.getSpa(),
-                        facilityDto.getWifi(),
-                        facilityDto.getTwinBed(),
-                        facilityDto.getBarbecue(),
-                        facilityDto.getNoSmoking(),
-                        facilityDto.getLuggageStorage(),
-                        facilityDto.getFreeMovieOtt()
-                };
-                accommodationDto.setService(serviceList);
-            }
+            setFacilityData(accommodationDto);
         }
 
         return accommodationDtoList;
+    }
+    
+    private void setFacilityData(AccommodationDto accommodationDto) {
+        FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
+
+        // facilityDto가 null이 아닌 경우에만 시설 정보 설정
+        if (facilityDto != null) {
+            int[] serviceList = {
+                facilityDto.getNearbySea(),
+                facilityDto.getParkingAvailable(),
+                facilityDto.getPool(),
+                facilityDto.getSpa(),
+                facilityDto.getWifi(),
+                facilityDto.getTwinBed(),
+                facilityDto.getBarbecue(),
+                facilityDto.getNoSmoking(),
+                facilityDto.getLuggageStorage(),
+                facilityDto.getFreeMovieOtt()
+            };
+            accommodationDto.setService(serviceList);
+        }
     }
 }
