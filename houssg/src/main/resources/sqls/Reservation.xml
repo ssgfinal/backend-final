@@ -65,7 +65,7 @@
 		reservation_time,
 		id,
 		start_date,
-		period,
+		end_date,
 		status,
 		nickname,
 		phone_number,
@@ -83,7 +83,7 @@
 		accom_name,
 		room_number)
 		values (#{reservationNumber},
-		#{reservationTime}, #{id}, #{startDate},#{period}, 0,
+		#{reservationTime}, #{id}, #{startDate},#{endDate}, 0,
 		#{nickname},#{phoneNumber},
 		#{roomCategory},#{roomPrice},#{couponNumber},#{couponName},#{discount},
 		#{usePoint},#{totalPrice},#{paymentAmount},#{gusetName},#{gusetPhone},
@@ -93,10 +93,10 @@
 	<!-- 예약완료 시 쿠폰 사용 여부 변경 -->
 	<update id="usedCoupon"
 		parameterType="ssg.com.houssg.dto.UserCouponDto">
-		UPDATE user
-		SET point = point - #{usePoint}
-		WHERE id =
-		#{Id}
+		UPDATE user_coupon
+		SET is_used = 1
+		WHERE coupon_number =
+		#{couponNumber}
 	</update>
 
 

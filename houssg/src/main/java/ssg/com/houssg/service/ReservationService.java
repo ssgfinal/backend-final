@@ -80,11 +80,13 @@ public class ReservationService {
 	@Transactional
 	public void usedCoupon(String couponNumber) {
 		dao.usedCoupon(couponNumber);
+		System.out.println("쿠폰 사용 여부 체크함");
 	}
 
 	@Transactional
 	public void usedPoint(String Id, int usePoint) {
 		dao.usedPoint(Id, usePoint);
+		System.out.println(usePoint + "포인트 차감함");
 	}
 
 	@Transactional

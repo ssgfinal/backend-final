@@ -114,16 +114,14 @@ public class ReservationController {
 
 			reservationDto.setReservationNumber(reservationNumber);
 			reservationDto.setReservationTime(reservationTime);
-			System.out.println(reservationTime);
-
-
+			System.out.println("예약번호" + reservationNumber + "  예약시간" + reservationTime);
 			reservationDto.setId(userId);
 
 			// 예약 정보를 서비스로 전달하여 등록
 			reservationService.enrollReservation(reservationDto);
 
 			// 쿠폰 사용여부 컬럼 변경
-			// reservationService.usedCoupon(couponNumber);
+			reservationService.usedCoupon(reservationDto.couponNumber);
 
 			// 포인트 차감
 			int usePoint = reservationDto.getUsePoint();
