@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cloudinary.Cloudinary;
+
 import ssg.com.houssg.dao.AccommodationDao;
 import ssg.com.houssg.dao.FacilityDao;
 import ssg.com.houssg.dto.AccommodationDto;
