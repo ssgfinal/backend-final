@@ -1,10 +1,10 @@
 package ssg.com.houssg.dto;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
-public class AccommodationDto implements Serializable {
+import java.util.Arrays;
+
+
+public class AccommodationDto {
 	private int accomNumber;
 	private String accomName;
 	private String accomAddress;
@@ -23,7 +23,7 @@ public class AccommodationDto implements Serializable {
 	private double avgRating;
 	private int minPrice;
 	private int reviewCount;
-	private String owerId;
+	private String ownerId;
 	public int getAccomNumber() {
 		return accomNumber;
 	}
@@ -102,11 +102,11 @@ public class AccommodationDto implements Serializable {
 	public void setService(int[] service) {
 		this.service = service;
 	}
-	public String getOwerId() {
-		return owerId;
+	public String getOwnerId() {
+		return ownerId;
 	}
-	public void setOwerId(String owerId) {
-		this.owerId = owerId;
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
 	}
 	public double getAvgRating() {
 		return avgRating;

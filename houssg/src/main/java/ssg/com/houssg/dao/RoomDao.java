@@ -15,7 +15,7 @@ import ssg.com.houssg.dto.RoomServiceDto;
 public interface RoomDao {
 
 	
-	int addRoom (RoomDto dto);
+	void addRoom (RoomDto dto);
 	
 	List<RoomDto> choiceAccom(int roomNumber);
 	

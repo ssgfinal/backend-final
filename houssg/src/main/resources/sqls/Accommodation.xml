@@ -58,7 +58,7 @@
     </update>
 
 	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating
@@ -86,7 +86,7 @@
 	</update>
 	
 	<select id="getAllAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating
@@ -123,7 +123,7 @@
 	</select>
 	
 	<select id="accomScore" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating
@@ -141,7 +141,7 @@
 	</select>
 	
 	<select id="accomScore20" resultType="ssg.com.houssg.dto.AccommodationDto">
-	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
+	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating
@@ -160,13 +160,13 @@
 	</select>
 	
 	<select id="newAccom20" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS ower_id, a.img,
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
         MIN(ro.room_price) AS min_price, 
         IFNULL(r.review_count, 0) AS review_count,
-        IFNULL(r.avg_rating, 0.0) AS avg_rating,
+        IFNULL(r.avg_rating, 0.0) AS avg_rating
         FROM accommodation a
         JOIN rooms ro ON a.accom_number = ro.accom_number
-        LEFT JOIN favorite f ON a.accom_number = f.accom_number AND f.id = #{id}
+        LEFT JOIN favorite f ON a.accom_number = f.accom_number
         LEFT JOIN (
             SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
             FROM review
