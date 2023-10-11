@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -114,7 +115,6 @@ public class AccommodationController {
             if (file != null && !file.isEmpty()) {
                 // Cloudinary를 사용하여 파일 업로드
                 String cloudinaryImageUrl = uploadImage(file);
-                System.out.println(cloudinaryImageUrl);
                 // AccommodationDto 객체를 생성하여 숙소 정보 저장
                 dto.setImg(cloudinaryImageUrl);
 
@@ -193,35 +193,27 @@ public class AccommodationController {
                                                       HttpServletRequest httpRequest) {
         System.out.println("숙소 업데이트");
         System.out.println(request.toString());
-        String path = httpRequest.getSession().getServletContext().getRealPath("/upload");
-        String root = path + File.separator + "uploadFiles";
-        String saveFileName = "";
-
-        File fileCheck = new File(root);
-
-        if (!fileCheck.exists()) fileCheck.mkdirs();
-
-        String filePath = "";
+    
+        System.out.println(file.equals(""));
         AccommodationDto dto = new AccommodationDto();
         try {
             // 이전 파일의 경로를 가져옵니다.
-            AccommodationDto previousAccommodation = service.getAccom(request.getAccomNumber());
+            AccommodationDto previousAccommodation = service.choiceAccom(request.getAccomNumber());
+            System.out.println(previousAccommodation);
             String previousFilePath = "";
-
             if (previousAccommodation != null) {
                 previousFilePath = previousAccommodation.getImg();
+                System.out.println(previousFilePath);
             }
 
             if (file != null && !file.isEmpty()) {
-                String originalFileName = file.getOriginalFilename();
-                String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                saveFileName = UUID.randomUUID().toString() + extension;
-
-                filePath = root + File.separator + saveFileName;
-                file.transferTo(new File(filePath));
+            	// Cloudinary를 사용하여 파일 업로드
+                String cloudinaryImageUrl = uploadImage(file);
+                // AccommodationDto 객체를 생성하여 숙소 정보 저장
+                dto.setImg(cloudinaryImageUrl);
             } else {
                 // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
-                filePath = previousFilePath;
+                dto.setImg(previousFilePath);
             }
 
             // AccommodationDto 객체를 생성하여 숙소 정보 업데이트
@@ -230,14 +222,6 @@ public class AccommodationController {
             dto.setAccomDetails(request.getAccomDetails());
             dto.setCheckIn(request.getCheckIn());
             dto.setCheckOut(request.getCheckOut());
-
-            // 파일을 업로드한 경우에만 이미지 경로 설정
-            if (file != null && !file.isEmpty()) {
-                dto.setImg(filePath);
-            } else {
-                // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
-                dto.setImg(previousFilePath);
-            }
 
             // FacilityDto 객체를 생성하여 시설 정보 업데이트
             FacilityDto facilityDto = new FacilityDto();
@@ -264,11 +248,6 @@ public class AccommodationController {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("파일 업로드 실패");
-
-            // 업로드 실패 시 파일 삭제
-            if (!saveFileName.isEmpty()) {
-                new File(root + File.separator + saveFileName).delete();
-            }
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("숙소 업데이트 실패");
         }
