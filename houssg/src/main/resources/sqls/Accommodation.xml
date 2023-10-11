@@ -54,7 +54,7 @@
             check_out = #{checkOut},
             img = #{img}
         WHERE
-            accom_number = #{accomNumber} and add_request = 0
+            accom_number = #{accomNumber}
     </update>
 
 	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
@@ -178,5 +178,10 @@
         LIMIT 20
 	</select>
     
+    <select id="choiceAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
+    	SELECT *
+		FROM accommodation
+		WHERE accom_number = #{accom_number}    
+    </select>
 </mapper>
 

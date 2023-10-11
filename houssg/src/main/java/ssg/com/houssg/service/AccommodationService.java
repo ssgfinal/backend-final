@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cloudinary.Cloudinary;
-
 import ssg.com.houssg.dao.AccommodationDao;
 import ssg.com.houssg.dao.FacilityDao;
 import ssg.com.houssg.dto.AccommodationDto;
@@ -163,7 +161,26 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
-    
+    public AccommodationDto choiceAccom(int accomNumber){
+    	AccommodationDto accommodationDto = dao.choiceAccom(accomNumber);
+    	FacilityDto facilityDto = facdao.getFacility(accomNumber);
+    	if (facilityDto != null) {
+	    	int[] serviceList = {
+	    			facilityDto.getNearbySea(),
+	                facilityDto.getParkingAvailable(),
+	                facilityDto.getPool(),
+	                facilityDto.getSpa(),
+	                facilityDto.getWifi(),
+	                facilityDto.getTwinBed(),
+	                facilityDto.getBarbecue(),
+	                facilityDto.getNoSmoking(),
+	                facilityDto.getLuggageStorage(),
+	                facilityDto.getFreeMovieOtt()
+	    	};
+    	accommodationDto.setService(serviceList);
+    	}
+    	return accommodationDto;
+    }
     private void setFacilityData(AccommodationDto accommodationDto) {
         FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
 
