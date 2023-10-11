@@ -3,7 +3,6 @@ package ssg.com.houssg.dto;
 public class RoomServiceDto {
 	
     public int roomNumber;
-    public int cityView;
     public int oceanView;
     public int pc;
     public int noSmoking;
@@ -15,12 +14,6 @@ public class RoomServiceDto {
 	}
 	public void setRoomNumber(int roomNumber) {
 		this.roomNumber = roomNumber;
-	}
-	public int getCityView() {
-		return cityView;
-	}
-	public void setCityView(int cityView) {
-		this.cityView = cityView;
 	}
 	public int getOceanView() {
 		return oceanView;
@@ -61,11 +54,10 @@ public class RoomServiceDto {
 	public RoomServiceDto() {
 		super();
 	}
-	public RoomServiceDto(int roomNumber, int cityView, int oceanView, int pc, int noSmoking, int doubleBed,
+	public RoomServiceDto(int roomNumber, int oceanView, int pc, int noSmoking, int doubleBed,
 			int queenBed, int kingBed) {
 		super();
 		this.roomNumber = roomNumber;
-		this.cityView = cityView;
 		this.oceanView = oceanView;
 		this.pc = pc;
 		this.noSmoking = noSmoking;
@@ -75,8 +67,8 @@ public class RoomServiceDto {
 	}
 	@Override
 	public String toString() {
-		return "RoomServiceDto [roomNumber=" + roomNumber + ", cityView=" + cityView + ", oceanView=" + oceanView
-				+ ", pc=" + pc + ", noSmoking=" + noSmoking + ", doubleBed=" + doubleBed + ", queenBed=" + queenBed
+		return "RoomServiceDto [roomNumber=" + roomNumber +  ", oceanView=" + oceanView + ", pc=" + pc + 
+				", noSmoking=" + noSmoking + ", doubleBed=" + doubleBed + ", queenBed=" + queenBed
 				+ ", kingBed=" + kingBed + "]";
 	}
 	

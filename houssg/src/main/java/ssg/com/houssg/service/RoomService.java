@@ -47,7 +47,6 @@ public class RoomService {
 	        if (roomServiceDto != null) {
 	            System.out.println(roomDto.getRoomNumber());
 	            int[] serviceList = {
-	                roomServiceDto.getCityView(),
 	                roomServiceDto.getOceanView(),
 	                roomServiceDto.getPc(),
 	                roomServiceDto.getNoSmoking(),
