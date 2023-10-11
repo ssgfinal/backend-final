@@ -49,6 +49,9 @@ jobs:
                 -e REDIS_HOST=redis \
                 -e NCS_ACCESSKEY=${{ secrets.NCS_ACCESSKEY }} \
                 -e NCS_SECRETKEY=${{ secrets.NCS_SECRETKEY }} \
+                -e CLOUD_NAME=${{ secrets.CLOUD_NAME }} \
+                -e CLOUD_API_KEY=${{ secrets.CLOUD_API_KEY }} \
+                -e CLOUD_API_SECRET=${{ secrets.CLOUD_API_SECRET }} \
                 --link mariadb:db \
                 --link redis:redis \
                 ${{ secrets.DOCKERHUB_USERNAME }}/houssg-backend:latest
