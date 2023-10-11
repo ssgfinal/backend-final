@@ -12,7 +12,8 @@ public class ReservationDto{
 	private String id; // 유저 id
 	
 	private String startDate; // 숙박시작날짜 O
-	private int period; // 숙박 이용 기간 O
+	private String endDate; // 숙박시작날짜 O
+	
 	private int status; // 예약상태 0:예약완료 / 1: 유저취소 / 2: 업주취소 /3:이용완료 O
 
 	private String nickname; // 예약자 닉네임 
@@ -28,7 +29,7 @@ public class ReservationDto{
 	private String roomCategory; // 객실종류 O
 	private int roomPrice; // 1박당 객실가격 O
 	
-	private String couponNumber; // 쿠폰 번호 O
+	public String couponNumber; // 쿠폰 번호 O
 	private String couponName; // 쿠폰 이름 O
 	private int discount; // 쿠폰할인가 O
 	
@@ -61,11 +62,11 @@ public class ReservationDto{
 	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
-	public int getPeriod() {
-		return period;
+	public String getEndDate() {
+		return endDate;
 	}
-	public void setPeriod(int period) {
-		this.period = period;
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 	public int getStatus() {
 		return status;
@@ -166,7 +167,7 @@ public class ReservationDto{
 	@Override
 	public String toString() {
 		return "ReservationDto [reservationNumber=" + reservationNumber + ", reservationTime=" + reservationTime
-				+ ", id=" + id + ", startDate=" + startDate + ", period=" + period + ", status=" + status
+				+ ", id=" + id + ", startDate=" + startDate + ", endDate=" + endDate + ", status=" + status
 				+ ", nickname=" + nickname + ", phoneNumber=" + phoneNumber + ", gusetName=" + gusetName
 				+ ", gusetPhone=" + gusetPhone + ", accomNumber=" + accomNumber + ", accomName=" + accomName
 				+ ", roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomPrice=" + roomPrice
