@@ -10,8 +10,10 @@ import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.ReservationBasicInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
+import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
+import ssg.com.houssg.dto.UserDto;
 
 @Service
 @Transactional
@@ -35,6 +37,11 @@ public class ReservationService {
 		return dao.getCouponInfo(Id);
 	}
 
+	// 객실별 예약현황 조회
+	public List<ReservationRoomDto> getReservationStatus(int roomNumber) {
+		return dao.getReservationStatus(roomNumber);
+	}
+
 	// 보유 포인트 조회
 	public int getUserPoints(String Id) {
 		Integer points = dao.getUserPoints(Id);
@@ -47,33 +54,44 @@ public class ReservationService {
 	}
 
 	// 예약 페이지 기본 정보 조회
-	public ReservationBasicInfoDto getReservationBasicInfo(int accomNumber, int roomNumber, String userId) {
+	public ReservationBasicInfoDto getReservationBasicInfo(int roomNumber, String userId) {
 		ReservationBasicInfoDto basicInfo = new ReservationBasicInfoDto();
-
-		// 숙소 정보 설정
-		List<AccommodationDto> accommodationInfoList = getAccommodationInfo(accomNumber);
-		basicInfo.setAccommodationInfoList(accommodationInfoList);
-
-		// 객실 정보 설정
-		List<RoomDto> roomInfoList = getRoomInfo(roomNumber);
-		basicInfo.setRoomInfoList(roomInfoList);
-
+		
+		// 예약된 객실 정보
+		List<ReservationRoomDto> bookableRoomList = getReservationStatus(roomNumber);
+		basicInfo.setBookableRoomList(bookableRoomList);
+		
 		// 쿠폰 정보 설정
-		List<UserCouponDto> couponInfoList = getCouponInfo(userId);
-		basicInfo.setCouponInfoList(couponInfoList);
+		List<UserCouponDto> couponList = getCouponInfo(userId);
+		basicInfo.setCouponList(couponList);
 
 		// 보유 포인트 조회 (사용자 ID를 파라미터로 전달)
 		int userPoints = getUserPoints(userId);
-		basicInfo.setUserPoints(userPoints);
+		basicInfo.setUserPoint(userPoints);
 
-		// 유저 id 설정
-		basicInfo.setUserId(userId);
 		
 		return basicInfo;
 	}
 
 	public void enrollReservation(ReservationDto reservationDto) {
 		dao.enrollReservation(reservationDto);
+	}
+
+	@Transactional
+	public void usedCoupon(String couponNumber) {
+		dao.usedCoupon(couponNumber);
+		System.out.println("쿠폰 사용 여부 체크함");
+	}
+
+	@Transactional
+	public void usedPoint(String Id, int usePoint) {
+		dao.usedPoint(Id, usePoint);
+		System.out.println(usePoint + "포인트 차감함");
+	}
+
+	@Transactional
+	public void accumulatePoints(UserDto userDto, double paymentAmount) {
+		dao.accumulatePoints(userDto);
 	}
 
 }

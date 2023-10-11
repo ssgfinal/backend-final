@@ -3,6 +3,24 @@
 
 <mapper namespace="ssg.com.houssg.dao.ReservationDao">
 
+	<!-- 객실 별 예약현황 조회 -->
+	<select id="getReservationStatus"
+		resultType="ssg.com.houssg.dto.ReservationRoomDto">
+		SELECT date_range.Date AS date,
+		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date >
+		date_range.Date THEN 1 ELSE 0 END), 0) AS availableRooms
+		FROM (
+		SELECT DATE_ADD(CURDATE(), INTERVAL n DAY) AS Date
+		FROM for_count
+		WHERE DATE_ADD(CURDATE(), INTERVAL n DAY) &lt;= LAST_DAY(CURDATE())
+		) AS date_range
+		LEFT JOIN rooms ON rooms.room_number = #{roomNumber}
+		LEFT JOIN reservation ON reservation.room_number = rooms.room_number
+		GROUP BY date_range.Date
+		ORDER BY date_range.Date;
+	</select>
+
 	<!-- 숙소 정보 조회 -->
 	<select id="getAccommodationInfo"
 		resultType="ssg.com.houssg.dto.AccommodationDto">
@@ -47,7 +65,7 @@
 		reservation_time,
 		id,
 		start_date,
-		period,
+		end_date,
 		status,
 		nickname,
 		phone_number,
@@ -65,7 +83,7 @@
 		accom_name,
 		room_number)
 		values (#{reservationNumber},
-		#{reservationTime}, #{id}, #{startDate},#{period}, 0,
+		#{reservationTime}, #{id}, #{startDate},#{endDate}, 0,
 		#{nickname},#{phoneNumber},
 		#{roomCategory},#{roomPrice},#{couponNumber},#{couponName},#{discount},
 		#{usePoint},#{totalPrice},#{paymentAmount},#{gusetName},#{gusetPhone},
@@ -75,10 +93,10 @@
 	<!-- 예약완료 시 쿠폰 사용 여부 변경 -->
 	<update id="usedCoupon"
 		parameterType="ssg.com.houssg.dto.UserCouponDto">
-		UPDATE user
-		SET point = point - #{usePoint}
-		WHERE id =
-		#{Id}
+		UPDATE user_coupon
+		SET is_used = 1
+		WHERE coupon_number =
+		#{couponNumber}
 	</update>
 
 

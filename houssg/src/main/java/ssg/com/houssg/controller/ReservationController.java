@@ -4,17 +4,16 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.jsonwebtoken.Claims;
@@ -23,6 +22,8 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.ReservationBasicInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
+import ssg.com.houssg.dto.ReservationRoomDto;
+import ssg.com.houssg.dto.UserCouponDto;
 import ssg.com.houssg.service.ReservationService;
 import ssg.com.houssg.util.ReservationUtil;
 
@@ -36,13 +37,9 @@ public class ReservationController {
 	@Autowired
 	private ReservationService reservationService;
 
-	@Autowired
-	private RestTemplate restTemplate;
-
 	// 예약 페이지 기본 정보 조회
 	@GetMapping("/basic-info")
-	public ResponseEntity<String> getReservationBasicInfo(HttpServletRequest request,
-			@RequestParam(name = "roomNumber") int roomNumber) {
+	public ResponseEntity<String> getReservationBasicInfo(int roomNumber, HttpServletRequest request) {
 		try {
 			// HTTP 요청 헤더에서 토큰 추출
 			String token = getTokenFromRequest(request);
@@ -50,46 +47,49 @@ public class ReservationController {
 			// 토큰에서 사용자 ID 추출
 			String userId = getUserIdFromToken(token);
 
-			// roomNumber를 사용하여 accomNumber를 조회
-			int accomNumber = reservationService.getAccomNumberByRoomNumber(roomNumber);
-
 			// 사용자 ID를 파라미터로 전달하여 예약 기본 정보 조회
-			ReservationBasicInfoDto basicInfo = reservationService.getReservationBasicInfo(accomNumber, roomNumber,
-					userId);
+			ReservationBasicInfoDto basicInfo = reservationService.getReservationBasicInfo(roomNumber, userId);
 
 			// 필요한 필드만 선택하여 JSON 문자열로 변환
 			ObjectMapper objectMapper = new ObjectMapper();
 			ObjectNode responseJson = objectMapper.createObjectNode();
 
-			// Accommodation 정보 선택
-			ObjectNode accommodationJson = objectMapper.createObjectNode();
-			accommodationJson.put("accomNumber", basicInfo.getAccommodationInfoList().get(0).getAccomNumber());
-			accommodationJson.put("accomName", basicInfo.getAccommodationInfoList().get(0).getAccomName());
-			responseJson.set("accommodationInfoList", accommodationJson);
+			// 예약된 객실 정보
+			if (basicInfo.getBookableRoomList() != null) {
+				ArrayNode bookableRoomArray = objectMapper.createArrayNode();
+				for (ReservationRoomDto bookableRoom : basicInfo.getBookableRoomList()) {
+					ObjectNode bookableRoomJson = objectMapper.createObjectNode();
+					bookableRoomJson.put("date", bookableRoom.getDate());
+					bookableRoomJson.put("availableRooms", bookableRoom.getAvailableRooms());
+					bookableRoomArray.add(bookableRoomJson);
+				}
+				responseJson.set("bookalbeRoomList", bookableRoomArray);
+			} else {
+				responseJson.set("bookalbeRoomList", null);
+			}
 
-			// Room 정보 선택
-			ObjectNode roomJson = objectMapper.createObjectNode();
-			roomJson.put("roomNumber", basicInfo.getRoomInfoList().get(0).getRoomNumber());
-			roomJson.put("roomCategory", basicInfo.getRoomInfoList().get(0).getRoomCategory());
-			roomJson.put("roomPrice", basicInfo.getRoomInfoList().get(0).getRoomPrice());
-			responseJson.set("roomInfoList", roomJson);
+			// Coupon 정보
+			if (basicInfo.getCouponList() != null && !basicInfo.getCouponList().isEmpty()) {
+				ArrayNode couponArray = objectMapper.createArrayNode();
+				for (UserCouponDto couponInfo : basicInfo.getCouponList()) {
+					ObjectNode couponJson = objectMapper.createObjectNode();
+					couponJson.put("couponNumber", couponInfo.getCouponNumber());
+					couponJson.put("couponName", couponInfo.getCouponName());
+					couponJson.put("discount", couponInfo.getDiscount());
+					couponArray.add(couponJson);
+				}
+				responseJson.set("couponInfoList", couponArray);
+			} else {
+				responseJson.set("couponInfoList", null);
+			}
 
-			// Coupon 정보 선택
-			ObjectNode couponJson = objectMapper.createObjectNode();
-			couponJson.put("couponNumber", basicInfo.getCouponInfoList().get(0).getCouponNumber());
-			couponJson.put("couponName", basicInfo.getCouponInfoList().get(0).getCouponName());
-			couponJson.put("discount", basicInfo.getCouponInfoList().get(0).getDiscount());
-			responseJson.set("couponInfoList", couponJson);
-
-			// UserPoints와 userId
-			responseJson.put("userPoints", basicInfo.getUserPoints());
-			responseJson.put("userId", basicInfo.getUserId());
-
-			// return ResponseEntity.ok(basicInfo);
+			// 유저 포인트 정보
+			responseJson.put("userPoint", basicInfo.getUserPoint());
 
 			// JSON 문자열 반환
 			System.out.println(responseJson.toString());
 			return ResponseEntity.ok(responseJson.toString());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(400).build();
@@ -98,8 +98,14 @@ public class ReservationController {
 
 	// 예약 등록 API
 	@PostMapping("/enroll")
-	public ResponseEntity<String> enrollReservation(@RequestBody ReservationDto reservationDto) {
+	public ResponseEntity<String> enrollReservation(HttpServletRequest request,
+			@RequestBody ReservationDto reservationDto) {
 		try {
+
+			// HTTP 요청 헤더에서 토큰 추출
+			String token = getTokenFromRequest(request);
+			String userId = getUserIdFromToken(token);
+
 			// 예약번호 생성
 			int reservationNumber = ReservationUtil.generateRandomReservationNumber();
 
@@ -108,41 +114,18 @@ public class ReservationController {
 
 			reservationDto.setReservationNumber(reservationNumber);
 			reservationDto.setReservationTime(reservationTime);
-			System.out.println(reservationTime);
-
-			// /basic-info 엔드포인트로 GET 요청을 보냄
-			ResponseEntity<String> basicInfoResponse = restTemplate
-					.getForEntity("/basic-info?roomNumber=" + reservationDto.getRoomNumber(), String.class);
-			
-			// basicInfoResponse에서 필요한 정보를 추출하고 사용
-			String basicInfoJson = basicInfoResponse.getBody();
-			
-			// JSON 문자열을 ObjectMapper를 사용하여 JSON 객체로 파싱
-			ObjectMapper objectMapper = new ObjectMapper();
-			JsonNode jsonNode = objectMapper.readTree(basicInfoJson);
-
-			// JSON에서 원하는 필드 추출
-			String accomNumber = jsonNode.get("accommodationInfoList").get("accomNumber").asText();
-			String accomName = jsonNode.get("accommodationInfoList").get("accomName").asText();
-			String roomNumber = jsonNode.get("roomInfoList").get("roomNumber").asText();
-			String roomCategory = jsonNode.get("roomInfoList").get("roomCategory").asText();
-			int roomPrice = jsonNode.get("roomInfoList").get("roomPrice").asInt();
-			String couponNumber = jsonNode.get("couponInfoList").get("couponNumber").asText();
-			String couponName = jsonNode.get("couponInfoList").get("couponName").asText();
-			int discount = jsonNode.get("couponInfoList").get("discount").asInt();
-			
-			reservationDto.setAccomNumber(accomNumber);
-			reservationDto.setAccomName(accomName);
-			reservationDto.setRoomNumber(roomNumber);
-			reservationDto.setRoomCategory(roomCategory);
-			reservationDto.setRoomPrice(roomPrice);
-			reservationDto.setCouponNumber(couponNumber);
-			reservationDto.setCouponName(couponName);
-			reservationDto.setDiscount(discount);
-
+			System.out.println("예약번호" + reservationNumber + "  예약시간" + reservationTime);
+			reservationDto.setId(userId);
 
 			// 예약 정보를 서비스로 전달하여 등록
 			reservationService.enrollReservation(reservationDto);
+
+			// 쿠폰 사용여부 컬럼 변경
+			reservationService.usedCoupon(reservationDto.couponNumber);
+
+			// 포인트 차감
+			int usePoint = reservationDto.getUsePoint();
+			reservationService.usedPoint(userId, usePoint);
 
 			// 예약 등록 성공 시 클라이언트에게 성공 응답 반환
 			return ResponseEntity.ok("예약성공");
