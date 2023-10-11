@@ -58,8 +58,8 @@ public class ReservationService {
 		ReservationBasicInfoDto basicInfo = new ReservationBasicInfoDto();
 		
 		// 예약된 객실 정보
-		List<ReservationRoomDto> reservedRoomList = getReservationStatus(roomNumber);
-		basicInfo.setReservedRoomList(reservedRoomList);
+		List<ReservationRoomDto> bookableRoomList = getReservationStatus(roomNumber);
+		basicInfo.setBookableRoomList(bookableRoomList);
 		
 		// 쿠폰 정보 설정
 		List<UserCouponDto> couponList = getCouponInfo(userId);

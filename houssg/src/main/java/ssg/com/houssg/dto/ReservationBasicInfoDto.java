@@ -4,20 +4,16 @@ import java.util.List;
 
 public class ReservationBasicInfoDto {
 	
-	private List<ReservationRoomDto> ReservedRoomList;
+	private List<ReservationRoomDto> bookableRoomList;
     private List<UserCouponDto> couponList;
     private int userPoint;
-
-    
-    
-    
-	public List<ReservationRoomDto> getReservedRoomList() {
-		return ReservedRoomList;
-	}
-	public void setReservedRoomList(List<ReservationRoomDto> reservedRoomList) {
-		ReservedRoomList = reservedRoomList;
-	}
 	
+	public List<ReservationRoomDto> getBookableRoomList() {
+		return bookableRoomList;
+	}
+	public void setBookableRoomList(List<ReservationRoomDto> bookableRoomList) {
+		this.bookableRoomList = bookableRoomList;
+	}
 	public List<UserCouponDto> getCouponList() {
 		return couponList;
 	}
