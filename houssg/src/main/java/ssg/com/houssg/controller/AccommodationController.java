@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -36,6 +36,11 @@ import ssg.com.houssg.dto.FacilityDto;
 
 import ssg.com.houssg.service.AccommodationService;
 import ssg.com.houssg.service.FacilityService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 
 @RestController
@@ -49,8 +54,10 @@ public class AccommodationController {
     
     @Autowired
     private FacilityService facservice;
-    
 
+    @Autowired
+    public Cloudinary  cloudinary;
+    
     
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
@@ -66,7 +73,7 @@ public class AccommodationController {
             System.out.println(search);
             param.setSearch(search);
         }
-
+         
         if (type != null && !type.equals("")) {
         	System.out.println(type);
             param.setType(type);
@@ -98,30 +105,20 @@ public class AccommodationController {
                                                                 HttpServletRequest httpRequest) {
         System.out.println("숙소 추가 신청");
         System.out.println(request.toString());
-        String path = httpRequest.getSession().getServletContext().getRealPath("/upload");
-        String root = path + File.separator + "uploadFiles";
-        String saveFileName = "";
-
-        File fileCheck = new File(root);
-
-        if (!fileCheck.exists()) fileCheck.mkdirs();
+        
         AccommodationDto dto = new AccommodationDto();
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
+        
         try {
             if (file != null && !file.isEmpty()) {
-                String originalFileName = file.getOriginalFilename();
-                String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                saveFileName = UUID.randomUUID().toString() + extension;
-
-                String filePath = root + File.separator + saveFileName;
-                file.transferTo(new File(filePath));
-
+                // Cloudinary를 사용하여 파일 업로드
+                String cloudinaryImageUrl = uploadImage(file);
+                System.out.println(cloudinaryImageUrl);
                 // AccommodationDto 객체를 생성하여 숙소 정보 저장
+                dto.setImg(cloudinaryImageUrl);
 
-                dto.setImg(filePath);
-
-                // DTO에 Request에서 매핑한 값을 설정
+                // 나머지 Request에서 매핑한 값을 설정
                 dto.setId(userId);
                 dto.setAccomName(request.getAccomName());
                 dto.setAccomAddress(request.getAccomAddress());
@@ -131,11 +128,8 @@ public class AccommodationController {
                 dto.setCheckIn(request.getCheckIn());
                 dto.setCheckOut(request.getCheckOut());
                 dto.setBusinessNumber(request.getBusinessNumber());
-                
-                
 
                 // FacilityDto 객체를 생성하여 시설 정보 저장
-                
                 FacilityDto facilityDto = new FacilityDto();
                 int[] facilityDtoList = request.getFacilityDto();
                 facilityDto.setNearbySea(facilityDtoList[0]);
@@ -148,7 +142,7 @@ public class AccommodationController {
                 facilityDto.setNoSmoking(facilityDtoList[7]);
                 facilityDto.setLuggageStorage(facilityDtoList[8]);
                 facilityDto.setFreeMovieOtt(facilityDtoList[9]);
-                
+
                 // AccommodationService를 호출하여 숙소 정보 및 시설 정보 저장
                 int insertedAccomNumber = service.addAccommodationAndFacility(dto, facilityDto);
 
@@ -161,20 +155,13 @@ public class AccommodationController {
                 response.put("accommodationId", String.valueOf(insertedAccomNumber)); // 등록된 숙소 ID
 
                 return ResponseEntity.ok(response);
-                
-
             }
 
             // 파일 업로드 실패 시
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("파일 업로드 실패");
-
-            // 업로드 실패 시 파일 삭제
-            if (!saveFileName.isEmpty()) {
-                new File(root + File.separator + saveFileName).delete();
-            }
+            System.out.println("파일 업로드 및 숙소 등록 실패");
 
             // 실패한 정보를 JSON 형식으로 클라이언트에 반환
             Map<String, String> response = new HashMap<>();
@@ -182,7 +169,6 @@ public class AccommodationController {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        
     }
     @GetMapping("mypage/accom")
     public ResponseEntity<List<AccommodationDto>> getMyAccom(HttpServletRequest httpRequest) {
@@ -445,4 +431,13 @@ public class AccommodationController {
 			return null;
 		}
 	}
+    private String uploadImage(MultipartFile imageFile) throws Exception {
+        try {
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());
+            return uploadResult.get("secure_url").toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }
