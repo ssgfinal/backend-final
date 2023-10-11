@@ -26,4 +26,8 @@ public class FavoriteService {
 	public List<FavoriteDto> getMyFavorite(String id){
 		return dao.getMyFavorite(id);
 	}
+	public int roomGet(int accomNumber, String id) {
+        Integer result = dao.roomGet(accomNumber, id);
+        return (result != null) ? result : 0;
+    }
 }

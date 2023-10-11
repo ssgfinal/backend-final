@@ -18,5 +18,15 @@
 		JOIN accommodation a ON a.accom_number = f.accom_number
 		WHERE f.id = #{id};
 	</select>
+	
+	<select id="roomGet" resultType="java.lang.Integer">
+		SELECT
+	    CASE
+	        WHEN COUNT(*) > 0 THEN 1
+	        ELSE 0
+	    END AS result
+		FROM favorite
+		WHERE accom_number = #{accomNumber} AND id = #{id}
+	</select>
 
 </mapper>
