@@ -1,5 +1,7 @@
 package ssg.com.houssg.dto;
 
+import java.util.Arrays;
+
 public class RoomDto {
 	
 	private int roomNumber;
@@ -64,5 +66,11 @@ public class RoomDto {
 		this.roomAvailability = roomAvailability;
 		this.accomNumber = accomNumber;
 		this.service = service;
+	}
+	@Override
+	public String toString() {
+		return "RoomDto [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomDetails=" + roomDetails
+				+ ", roomPrice=" + roomPrice + ", roomAvailability=" + roomAvailability + ", accomNumber=" + accomNumber
+				+ ", service=" + Arrays.toString(service) + "]";
 	}	
 }

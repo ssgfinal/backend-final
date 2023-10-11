@@ -72,4 +72,10 @@ public class SmsRequestDto {
     public void setMessages(List<MessageDto> messages) {
         this.messages = messages;
     }
+
+	@Override
+	public String toString() {
+		return "SmsRequestDto [type=" + type + ", contentType=" + contentType + ", countryCode=" + countryCode
+				+ ", from=" + from + ", content=" + content + ", messages=" + messages + "]";
+	}
 }

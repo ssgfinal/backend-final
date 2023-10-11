@@ -1,5 +1,7 @@
 package ssg.com.houssg.dto;
 
+import java.util.Arrays;
+
 public class RoomRequest {
 
 	private int roomNumber;
@@ -8,8 +10,7 @@ public class RoomRequest {
 	private int roomPrice;
 	private int roomAvailability;
 	private int accomNumber;
-	private int roomUse;
-	private RoomServiceDto roomServiceDto;
+	private int roomServiceDto[];
 	public int getRoomNumber() {
 		return roomNumber;
 	}
@@ -46,23 +47,17 @@ public class RoomRequest {
 	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
 	}
-	public int getRoomUse() {
-		return roomUse;
-	}
-	public void setRoomUse(int roomUse) {
-		this.roomUse = roomUse;
-	}
-	public RoomServiceDto getRoomServiceDto() {
+	public int[] getRoomServiceDto() {
 		return roomServiceDto;
 	}
-	public void setRoomServiceDto(RoomServiceDto roomServiceDto) {
+	public void setRoomServiceDto(int[] roomServiceDto) {
 		this.roomServiceDto = roomServiceDto;
 	}
 	public RoomRequest() {
 		super();
 	}
 	public RoomRequest(int roomNumber, String roomCategory, String roomDetails, int roomPrice, int roomAvailability,
-			int accomNumber, int roomUse, RoomServiceDto roomServiceDto) {
+			int accomNumber, int[] roomServiceDto) {
 		super();
 		this.roomNumber = roomNumber;
 		this.roomCategory = roomCategory;
@@ -70,8 +65,13 @@ public class RoomRequest {
 		this.roomPrice = roomPrice;
 		this.roomAvailability = roomAvailability;
 		this.accomNumber = accomNumber;
-		this.roomUse = roomUse;
 		this.roomServiceDto = roomServiceDto;
+	}
+	@Override
+	public String toString() {
+		return "RoomRequest [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomDetails="
+				+ roomDetails + ", roomPrice=" + roomPrice + ", roomAvailability=" + roomAvailability + ", accomNumber="
+				+ accomNumber + ", roomServiceDto=" + Arrays.toString(roomServiceDto) + "]";
 	}
 	
 }

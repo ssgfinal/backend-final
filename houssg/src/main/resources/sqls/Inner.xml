@@ -13,5 +13,10 @@
 	    WHERE room_number = #{roomNumber}
 	</update>
 
+	<select id="getImgs" parameterType="int" resultType="ssg.com.houssg.dto.InnerDto">
+        SELECT *
+        FROM innerview
+        WHERE room_number = #{roomNumber}
+    </select>
 
 </mapper>

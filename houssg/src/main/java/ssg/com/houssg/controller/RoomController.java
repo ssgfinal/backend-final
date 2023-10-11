@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +46,7 @@ public class RoomController {
 	
 
 	@PostMapping(value = "room/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> addroom(@RequestPart("multiFile") List<MultipartFile> multiFileList,
+	public ResponseEntity<String> addroom(@RequestPart("multiFile") List<MultipartFile> multiFile,
 							   	          @RequestPart RoomRequest request,
 								          HttpServletRequest httprequest) {
 	    System.out.println("객실 추가");
@@ -58,9 +59,9 @@ public class RoomController {
 	    if (!fileCheck.exists()) fileCheck.mkdirs();
 
 	    List<Map<String, String>> fileList = new ArrayList<>();
-
-	    for (int i = 0; i < multiFileList.size(); i++) {
-	        String originFile = multiFileList.get(i).getOriginalFilename();
+	    System.out.println(request.toString());
+	    for (int i = 0; i < multiFile.size(); i++) {
+	        String originFile = multiFile.get(i).getOriginalFilename();
 	        String ext = originFile.substring(originFile.lastIndexOf("."));
 	        String changeFile = UUID.randomUUID().toString() + ext;
 	        Map<String, String> map = new HashMap<>();
@@ -70,15 +71,15 @@ public class RoomController {
 	    }
 
 	    try {
-	        for (int i = 0; i < multiFileList.size(); i++) {
+	        for (int i = 0; i < multiFile.size(); i++) {
 	            File uploadFile = new File(root + File.separator + fileList.get(i).get("changeFile"));
-	            multiFileList.get(i).transferTo(uploadFile);
+	            multiFile.get(i).transferTo(uploadFile);
 	        }
 	        System.out.println("다중 파일 업로드 성공");
 	    } catch (Exception e) {
 	        System.out.println("다중 파일 업로드 실패");
 	        // 만약 업로드 실패하면 파일 삭제
-	        for (int i = 0; i < multiFileList.size(); i++) {
+	        for (int i = 0; i < multiFile.size(); i++) {
 	            new File(root + File.separator + fileList.get(i).get("changeFile")).delete();
 	        }
 	        e.printStackTrace();
@@ -103,8 +104,16 @@ public class RoomController {
 	    // 방 추가 로직
 	    
 	    
-	    RoomServiceDto roomServiceDto = request.getRoomServiceDto();
-	   
+	    RoomServiceDto roomServiceDto = new RoomServiceDto();
+	    int[] roomServiceDtoList = request.getRoomServiceDto();
+	    roomServiceDto.setCityView(roomServiceDtoList[0]);
+	    roomServiceDto.setOceanView(roomServiceDtoList[1]);
+	    roomServiceDto.setPc(roomServiceDtoList[2]);
+	    roomServiceDto.setNoSmoking(roomServiceDtoList[3]);
+	    roomServiceDto.setDoubleBed(roomServiceDtoList[4]);
+	    roomServiceDto.setQueenBed(roomServiceDtoList[5]);
+	    roomServiceDto.setKingBed(roomServiceDtoList[6]);
+	    System.out.println(roomServiceDto.toString());
 	    // 'rooms' 테이블에 방 정보 추가
 	    int roomCount = service.addRoom(roomDto, roomServiceDto);
 	    if (roomCount == 0) {
@@ -114,8 +123,8 @@ public class RoomController {
 	    // 'innerview' 테이블에 이미지 정보 추가
 	    InnerDto innerDto = new InnerDto();
 	    innerDto.setRoomNumber(roomDto.getRoomNumber());
-	    System.out.println(innerDto.toString());
-	    if (multiFileList != null && !multiFileList.isEmpty()) {
+	    
+	    if (multiFile != null && !multiFile.isEmpty()) {
 		    for (int i = 0; i < changeFileList.size(); i++) {
 		        if (i < 10) { // 최대 10개까지 이미지 정보 저장
 		            switch (i) {
@@ -153,6 +162,7 @@ public class RoomController {
 		        }
 		    }
 	    }
+	    System.out.println(innerDto.toString());
 	    innerService.insertInnerView(innerDto);
 	    
 	    return new ResponseEntity<>("방 추가 성공", HttpStatus.OK);
@@ -175,7 +185,7 @@ public class RoomController {
 	        }
 	    }
 	 
-	 @PatchMapping(value = "room/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	 @PatchMapping(value = "room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	    public ResponseEntity<String> updateRoom(@RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFileList,
 	            								 @RequestPart RoomRequest request,
 	            								 HttpServletRequest httprequest) {
@@ -216,13 +226,23 @@ public class RoomController {
 
 	            // 'RoomDto' 객체 생성
 	            RoomDto roomDto = new RoomDto();
+	            roomDto.setRoomNumber(request.getRoomNumber());
 	    	    roomDto.setRoomCategory(request.getRoomCategory());
 	    	    roomDto.setRoomDetails(request.getRoomDetails());
 	    	    roomDto.setRoomPrice(request.getRoomPrice());
 	    	    roomDto.setRoomAvailability(request.getRoomAvailability());
 	    	    roomDto.setAccomNumber(request.getAccomNumber());
-	            
-	            RoomServiceDto roomServiceDto = request.getRoomServiceDto();
+	            System.out.println(roomDto.toString());
+	    	    RoomServiceDto roomServiceDto = new RoomServiceDto();
+	    	    roomServiceDto.setRoomNumber(request.getRoomNumber());
+	    	    int[] roomServiceDtoList = request.getRoomServiceDto();
+	    	    roomServiceDto.setCityView(roomServiceDtoList[0]);
+	    	    roomServiceDto.setOceanView(roomServiceDtoList[1]);
+	    	    roomServiceDto.setPc(roomServiceDtoList[2]);
+	    	    roomServiceDto.setNoSmoking(roomServiceDtoList[3]);
+	    	    roomServiceDto.setDoubleBed(roomServiceDtoList[4]);
+	    	    roomServiceDto.setQueenBed(roomServiceDtoList[5]);
+	    	    roomServiceDto.setKingBed(roomServiceDtoList[6]);
 	    	    
 	    	    System.out.println(roomServiceDto.toString());
 	    	    
@@ -267,6 +287,7 @@ public class RoomController {
 	            	                break;
 	            	        }
 	            	    }
+	            	    System.out.println(innerDto.toString());
 	            	    innerService.updateInnerView(innerDto);
 	            	}
 	            System.out.println("객실 업데이트 완료");
