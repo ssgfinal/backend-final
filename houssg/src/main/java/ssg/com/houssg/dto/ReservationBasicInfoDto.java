@@ -4,42 +4,31 @@ import java.util.List;
 
 public class ReservationBasicInfoDto {
 	
-	private List<AccommodationDto> accommodationInfoList;
-    private List<RoomDto> roomInfoList;
-    private List<UserCouponDto> couponInfoList;
-    private int userPoints;
-    private String userId;
+	private List<ReservationRoomDto> ReservedRoomList;
+    private List<UserCouponDto> couponList;
+    private int userPoint;
+
     
     
-	public String getUserId() {
-		return userId;
+    
+	public List<ReservationRoomDto> getReservedRoomList() {
+		return ReservedRoomList;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setReservedRoomList(List<ReservationRoomDto> reservedRoomList) {
+		ReservedRoomList = reservedRoomList;
 	}
-	public List<AccommodationDto> getAccommodationInfoList() {
-		return accommodationInfoList;
+	
+	public List<UserCouponDto> getCouponList() {
+		return couponList;
 	}
-	public void setAccommodationInfoList(List<AccommodationDto> accommodationInfoList) {
-		this.accommodationInfoList = accommodationInfoList;
+	public void setCouponList(List<UserCouponDto> couponList) {
+		this.couponList = couponList;
 	}
-	public List<RoomDto> getRoomInfoList() {
-		return roomInfoList;
+	public int getUserPoint() {
+		return userPoint;
 	}
-	public void setRoomInfoList(List<RoomDto> roomInfoList) {
-		this.roomInfoList = roomInfoList;
-	}
-	public List<UserCouponDto> getCouponInfoList() {
-		return couponInfoList;
-	}
-	public void setCouponInfoList(List<UserCouponDto> couponInfoList) {
-		this.couponInfoList = couponInfoList;
-	}
-	public int getUserPoints() {
-		return userPoints;
-	}
-	public void setUserPoints(int userPoints) {
-		this.userPoints = userPoints;
+	public void setUserPoint(int userPoint) {
+		this.userPoint = userPoint;
 	}
     
     
