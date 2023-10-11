@@ -27,6 +27,9 @@ public interface ReservationDao {
 
 	// room_number를 받아 객실 별 예약 현황 불러옴
 	List<ReservationRoomDto> getReservationStatus(int roomNumber);
+	
+	// 연도+월 받아와 해당 연,월에 해당하는 객실 별 예약 현황 불러옴
+	List<ReservationRoomDto> getReservationStatusForYearMonth(int roomNumber, String yearMonth);
 
 	// 보유 포인트 조회
 	int getUserPoints(String Id);
