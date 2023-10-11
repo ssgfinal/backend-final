@@ -202,8 +202,8 @@ public class AccommodationController {
     
 
     @PatchMapping(value = "accom", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateAccommodation(@RequestParam("file") MultipartFile file,
-    												  @RequestPart AccommodationRequest request,
+    public ResponseEntity<String> updateAccommodation(@RequestParam(value = "file", required = false) MultipartFile file,
+                                                      @RequestPart AccommodationRequest request,
                                                       HttpServletRequest httpRequest) {
         System.out.println("숙소 업데이트");
         System.out.println(request.toString());
@@ -233,7 +233,6 @@ public class AccommodationController {
 
                 filePath = root + File.separator + saveFileName;
                 file.transferTo(new File(filePath));
-                
             } else {
                 // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
                 filePath = previousFilePath;
@@ -245,7 +244,6 @@ public class AccommodationController {
             dto.setAccomDetails(request.getAccomDetails());
             dto.setCheckIn(request.getCheckIn());
             dto.setCheckOut(request.getCheckOut());
-
 
             // 파일을 업로드한 경우에만 이미지 경로 설정
             if (file != null && !file.isEmpty()) {
@@ -289,6 +287,7 @@ public class AccommodationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("숙소 업데이트 실패");
         }
     }
+
     @PatchMapping("accom/del/request")
     public ResponseEntity<String> updateRequest(@RequestParam int accomNumber) {
         System.out.println("삭제요청합니다");
