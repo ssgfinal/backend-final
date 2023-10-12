@@ -19,8 +19,8 @@ public class ReservationDto{
 	private String nickname; // 예약자 닉네임 
 	private String phoneNumber; //예약자 전화번호  
 	
-	private String gusetName; // 이용자 명 O
-	private String gusetPhone; // 이용자 전화번호 O
+	private String guestName; // 이용자 명 O
+	private String guestPhone; // 이용자 전화번호 O
 	
 	private String accomNumber; // 숙소번호
 	private String accomName; // 숙소이름 O
@@ -38,6 +38,16 @@ public class ReservationDto{
 	private int totalPrice; // 총 금액 O
 	private int paymentAmount; // 실제 결제금액 O
 	
+	private int reviewStatus;
+	
+	
+	
+	public int getReviewStatus() {
+		return reviewStatus;
+	}
+	public void setReviewStatus(int reviewStatus) {
+		this.reviewStatus = reviewStatus;
+	}
 	public int getReservationNumber() {
 		return reservationNumber;
 	}
@@ -86,17 +96,17 @@ public class ReservationDto{
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	public String getGusetName() {
-		return gusetName;
+	public String getGuestName() {
+		return guestName;
 	}
-	public void setGusetName(String gusetName) {
-		this.gusetName = gusetName;
+	public void setGuestName(String guestName) {
+		this.guestName = guestName;
 	}
-	public String getGusetPhone() {
-		return gusetPhone;
+	public String getGuestPhone() {
+		return guestPhone;
 	}
-	public void setGusetPhone(String gusetPhone) {
-		this.gusetPhone = gusetPhone;
+	public void setGuestPhone(String guestPhone) {
+		this.guestPhone = guestPhone;
 	}
 	public String getAccomNumber() {
 		return accomNumber;
@@ -168,12 +178,14 @@ public class ReservationDto{
 	public String toString() {
 		return "ReservationDto [reservationNumber=" + reservationNumber + ", reservationTime=" + reservationTime
 				+ ", id=" + id + ", startDate=" + startDate + ", endDate=" + endDate + ", status=" + status
-				+ ", nickname=" + nickname + ", phoneNumber=" + phoneNumber + ", gusetName=" + gusetName
-				+ ", gusetPhone=" + gusetPhone + ", accomNumber=" + accomNumber + ", accomName=" + accomName
+				+ ", nickname=" + nickname + ", phoneNumber=" + phoneNumber + ", guestName=" + guestName
+				+ ", guestPhone=" + guestPhone + ", accomNumber=" + accomNumber + ", accomName=" + accomName
 				+ ", roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomPrice=" + roomPrice
 				+ ", couponNumber=" + couponNumber + ", couponName=" + couponName + ", discount=" + discount
-				+ ", usePoint=" + usePoint + ", totalPrice=" + totalPrice + ", paymentAmount=" + paymentAmount + "]";
+				+ ", usePoint=" + usePoint + ", totalPrice=" + totalPrice + ", paymentAmount=" + paymentAmount
+				+ ", reviewStatus=" + reviewStatus + "]";
 	}
+	
 	
 	
 	 
