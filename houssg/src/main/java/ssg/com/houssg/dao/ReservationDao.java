@@ -3,9 +3,11 @@ package ssg.com.houssg.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -54,5 +56,8 @@ public interface ReservationDao {
 
 	// 포인트 적립
 	void accumulatePoints(UserDto userDto);
+	
+	// 유저 -ID로 예약내역정보 조회
+	List<ReservationDto> findRerservationById(String Id);
 
 }
