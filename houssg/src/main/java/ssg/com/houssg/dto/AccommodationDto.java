@@ -24,114 +24,159 @@ public class AccommodationDto {
 	private int minPrice;
 	private int reviewCount;
 	private String ownerId;
+	
 	public int getAccomNumber() {
 		return accomNumber;
 	}
+
 	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
 	}
+
 	public String getAccomName() {
 		return accomName;
 	}
+
 	public void setAccomName(String accomName) {
 		this.accomName = accomName;
 	}
+
 	public String getAccomAddress() {
 		return accomAddress;
 	}
+
 	public void setAccomAddress(String accomAddress) {
 		this.accomAddress = accomAddress;
 	}
+
 	public String getTeleNumber() {
 		return teleNumber;
 	}
+
 	public void setTeleNumber(String teleNumber) {
 		this.teleNumber = teleNumber;
 	}
+
 	public String getAccomCategory() {
 		return accomCategory;
 	}
+
 	public void setAccomCategory(String accomCategory) {
 		this.accomCategory = accomCategory;
 	}
+
 	public String getAccomDetails() {
 		return accomDetails;
 	}
+
 	public void setAccomDetails(String accomDetails) {
 		this.accomDetails = accomDetails;
 	}
+
 	public String getCheckIn() {
 		return checkIn;
 	}
+
 	public void setCheckIn(String checkIn) {
 		this.checkIn = checkIn;
 	}
+
 	public String getCheckOut() {
 		return checkOut;
 	}
+
 	public void setCheckOut(String checkOut) {
 		this.checkOut = checkOut;
 	}
+
 	public String getBusinessNumber() {
 		return businessNumber;
 	}
+
 	public void setBusinessNumber(String businessNumber) {
 		this.businessNumber = businessNumber;
 	}
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	public int getAuth() {
+		return auth;
+	}
+
 	public void setAuth(int auth) {
 		this.auth = auth;
 	}
+
 	public int getDeletionRequest() {
 		return deletionRequest;
 	}
+
 	public void setDeletionRequest(int deletionRequest) {
 		this.deletionRequest = deletionRequest;
 	}
+
 	public String getImg() {
 		return img;
 	}
+
 	public void setImg(String img) {
 		this.img = img;
 	}
+
+	public int getAddRequest() {
+		return addRequest;
+	}
+
 	public void setAddRequest(int addRequest) {
 		this.addRequest = addRequest;
 	}
+
 	public int[] getService() {
 		return service;
 	}
+
 	public void setService(int[] service) {
 		this.service = service;
 	}
-	public String getOwnerId() {
-		return ownerId;
-	}
-	public void setOwnerId(String ownerId) {
-		this.ownerId = ownerId;
-	}
+
 	public double getAvgRating() {
 		return avgRating;
 	}
+
 	public void setAvgRating(double avgRating) {
 		this.avgRating = avgRating;
 	}
+
 	public int getMinPrice() {
 		return minPrice;
 	}
+
 	public void setMinPrice(int minPrice) {
 		this.minPrice = minPrice;
 	}
+
 	public int getReviewCount() {
 		return reviewCount;
 	}
+
 	public void setReviewCount(int reviewCount) {
 		this.reviewCount = reviewCount;
 	}
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
 	public AccommodationDto() {
 		super();
 	}
