@@ -78,11 +78,17 @@ public class AccommodationDto {
 	public void setBusinessNumber(String businessNumber) {
 		this.businessNumber = businessNumber;
 	}
+	public String getId() {
+		return id;
+	}
 	public void setId(String id) {
 		this.id = id;
 	}
 	public void setAuth(int auth) {
 		this.auth = auth;
+	}
+	public int getDeletionRequest() {
+		return deletionRequest;
 	}
 	public void setDeletionRequest(int deletionRequest) {
 		this.deletionRequest = deletionRequest;
@@ -129,10 +135,11 @@ public class AccommodationDto {
 	public AccommodationDto() {
 		super();
 	}
+	
 	public AccommodationDto(int accomNumber, String accomName, String accomAddress, String teleNumber,
 			String accomCategory, String accomDetails, String checkIn, String checkOut, String businessNumber,
-			String id, int auth, int deletionRequest, String img, int addRequest, int[] service,
-			double avgRating, int minPrice, int reviewCount) {
+			String id, int auth, int deletionRequest, String img, int addRequest, int[] service, double avgRating,
+			int minPrice, int reviewCount, String ownerId) {
 		super();
 		this.accomNumber = accomNumber;
 		this.accomName = accomName;
@@ -152,6 +159,7 @@ public class AccommodationDto {
 		this.avgRating = avgRating;
 		this.minPrice = minPrice;
 		this.reviewCount = reviewCount;
+		this.ownerId = ownerId;
 	}
 	@Override
 	public String toString() {
@@ -160,7 +168,7 @@ public class AccommodationDto {
 				+ accomDetails + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", businessNumber="
 				+ businessNumber + ", id=" + id + ", auth=" + auth + ", deletionRequest=" + deletionRequest + ", img="
 				+ img + ", addRequest=" + addRequest + ", service=" + Arrays.toString(service) + ", avgRating="
-				+ avgRating + ", minPrice=" + minPrice + ", reviewCount=" + reviewCount + "]";
+				+ avgRating + ", minPrice=" + minPrice + ", reviewCount=" + reviewCount + ", ownerId=" + ownerId + "]";
 	}
-
+	
 }
