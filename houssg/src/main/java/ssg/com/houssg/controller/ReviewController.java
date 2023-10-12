@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -38,6 +42,9 @@ public class ReviewController {
 	@Autowired
 	ReviewService service;
 	
+	@Autowired
+	Cloudinary cloudinary;
+	
 	// 리뷰 추가
 	@PostMapping(value = "review/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addReview(@RequestPart(value = "file", required = false) MultipartFile file,
@@ -45,25 +52,21 @@ public class ReviewController {
 	                                        HttpServletRequest httpRequest) {
 	    System.out.println("리뷰 추가");
 
-	    String path = httpRequest.getSession().getServletContext().getRealPath("/upload");
-	    String root = path + File.separator + "uploadFiles";
-	    String saveFileName = "";
-
-	    File fileCheck = new File(root);
+	    
 	    String token = getTokenFromRequest(httpRequest);
 	    String userId = getUserIdFromToken(token);
-	    if (!fileCheck.exists()) fileCheck.mkdirs();
 
+	    ReviewDto dto = new ReviewDto();
 	    try {
 	        // 파일 업로드 여부 확인
 	        if (file != null && !file.isEmpty()) {
-	            // 파일 업로드된 경우 처리
-	            saveFileName = saveUploadedFile(file, root);
+	        	// Cloudinary를 사용하여 파일 업로드
+                String cloudinaryImageUrl = uploadImage(file);
+                // AccommodationDto 객체를 생성하여 숙소 정보 저장
+                dto.setImg(cloudinaryImageUrl);   
 	        }
-
 	        // 리뷰 등록 로직 추가
-	        ReviewDto dto = new ReviewDto();
-	        dto.setImg(saveFileName); // 파일 경로 설정
+	        
 	        dto.setReviewContent(reviewDto.getReviewContent());
 	        dto.setReviewRating(reviewDto.getReviewRating());
 	        dto.setReservationNumber(reviewDto.getReservationNumber());
@@ -76,13 +79,6 @@ public class ReviewController {
 	        // 리뷰 등록 성공 시
 	        return ResponseEntity.ok("리뷰 등록 성공");
 	    } catch (Exception e) {
-	        e.printStackTrace();
-	        System.out.println("파일 업로드 실패");
-
-	        // 업로드 실패 시 파일 삭제
-	        if (!saveFileName.isEmpty()) {
-	            new File(root + File.separator + saveFileName).delete();
-	        }
 
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 등록 실패"); // 400 에러
 	    }
@@ -239,4 +235,13 @@ public class ReviewController {
 			return null;
 		}
 	}
+    private String uploadImage(MultipartFile imageFile) throws Exception {
+        try {
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());
+            return uploadResult.get("secure_url").toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }
