@@ -13,6 +13,7 @@ import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -344,8 +345,16 @@ public class AccommodationController {
         if (approvalAccomList != null && !approvalAccomList.isEmpty()) {
             return ResponseEntity.ok(approvalAccomList); // 성공한 경우 숙소 목록 반환
         } else {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 숙소 목록이 없는 경우 No Content(204) 반환
+        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+    @PostMapping("auth/accom/del/request")
+    public List<AccommodationDto> getDeletionAccom() {
+        System.out.println("숙소삭제요청목록보기");
+        
+        List<AccommodationDto> deletionAccomList = service.getDeletionAccom();
+        
+        return deletionAccomList;
     }
     
     @PostMapping("accom/score")
