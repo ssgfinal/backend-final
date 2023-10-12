@@ -171,11 +171,9 @@ public class ReviewController {
 		}
 	// 답글 추가
 	@PatchMapping("comment/add")
-	public ResponseEntity<List<ReviewDto>> addComment(
-	        @RequestParam int review_number,
-	        @RequestParam int reservation_number,
-	        @RequestParam String review_comment
-	) {
+	public ResponseEntity<List<ReviewDto>> addComment(@RequestParam int review_number,
+											          @RequestParam int reservation_number,
+											          @RequestParam String review_comment) {
 	    try {
 	        System.out.println("답글 추가");
 	        

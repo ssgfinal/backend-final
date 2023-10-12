@@ -172,19 +172,8 @@ public class RoomController {
 	                                          @RequestPart RoomRequest request,
 	                                          HttpServletRequest httprequest) {
 	     try {
-	         System.out.println("객실 업데이트 시작");
-	         System.out.println(request.toString());
+	    	 System.out.println("객실 업데이트 시작");
 
-	         String path = httprequest.getSession().getServletContext().getRealPath("/upload");
-	         String root = path + File.separator + "uploadFiles";
-	         System.out.println(root);
-
-	         File fileCheck = new File(root);
-	         if (!fileCheck.exists()) {
-	             fileCheck.mkdirs();
-	         }
-
-	         List<Map<String, String>> fileList = new ArrayList<>();
 	         List<String> changeFileList = new ArrayList();
 
 	         if (multiFileList != null && !multiFileList.isEmpty()) {
@@ -197,17 +186,10 @@ public class RoomController {
 	                     continue;
 	                 }
 
-	                 String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-	                 String saveFileName = UUID.randomUUID().toString() + extension;
-	                 Map<String, String> map = new HashMap<>();
-	                 map.put("originalFile", originalFileName);
-	                 map.put("changeFile", saveFileName);
-	                 fileList.add(map);
-
-	                 File uploadFile = new File(root, saveFileName);
-	                 file.transferTo(uploadFile);
-
-	                 changeFileList.add(saveFileName);
+	                 // Cloudinary를 사용하여 파일 업로드
+	                 String cloudinaryImageUrl = uploadImage(file);
+	                 changeFileList.add(cloudinaryImageUrl);
+	                 System.out.println("업로드 성공: " + cloudinaryImageUrl);
 	             }
 	         }
 
