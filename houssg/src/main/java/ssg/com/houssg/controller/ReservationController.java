@@ -1,6 +1,7 @@
 package ssg.com.houssg.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +23,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.ReservationInfoDto;
+import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -135,45 +138,54 @@ public class ReservationController {
 			return ResponseEntity.status(400).body("예약실패");
 		}
 	}
-	
-	
+
 	// 연도 + 월 기준 객실 별 예약 현황 조회
 	@GetMapping("/available-room")
 	public ResponseEntity<String> getAvailableRoom(int roomNumber, String yearMonth) {
-			try {
-				
-				// 사용자 ID를 파라미터로 전달하여 예약 기본 정보 조회
-				ReservationInfoDto info = reservationService.getAvailableRoom(roomNumber, yearMonth);
+		try {
 
-				// 필요한 필드만 선택하여 JSON 문자열로 변환
-				ObjectMapper objectMapper = new ObjectMapper();
-				ObjectNode responseJson = objectMapper.createObjectNode();
+			// 사용자 ID를 파라미터로 전달하여 예약 기본 정보 조회
+			ReservationInfoDto info = reservationService.getAvailableRoom(roomNumber, yearMonth);
 
-				// 예약된 객실 정보
-				if (info.getBookableRoomList() != null) {
-					ArrayNode bookableRoomArray = objectMapper.createArrayNode();
-					for (ReservationRoomDto bookableRoom : info.getBookableRoomList()) {
-						ObjectNode bookableRoomJson = objectMapper.createObjectNode();
-						bookableRoomJson.put("date", bookableRoom.getDate());
-						bookableRoomJson.put("availableRooms", bookableRoom.getAvailableRooms());
-						bookableRoomArray.add(bookableRoomJson);
-					}
-					responseJson.set("bookalbeRoomList", bookableRoomArray);
-				} else {
-					responseJson.set("bookalbeRoomList", null);
+			// 필요한 필드만 선택하여 JSON 문자열로 변환
+			ObjectMapper objectMapper = new ObjectMapper();
+			ObjectNode responseJson = objectMapper.createObjectNode();
+
+			// 예약된 객실 정보
+			if (info.getBookableRoomList() != null) {
+				ArrayNode bookableRoomArray = objectMapper.createArrayNode();
+				for (ReservationRoomDto bookableRoom : info.getBookableRoomList()) {
+					ObjectNode bookableRoomJson = objectMapper.createObjectNode();
+					bookableRoomJson.put("date", bookableRoom.getDate());
+					bookableRoomJson.put("availableRooms", bookableRoom.getAvailableRooms());
+					bookableRoomArray.add(bookableRoomJson);
 				}
-
-				// JSON 문자열 반환
-				System.out.println(responseJson.toString());
-				return ResponseEntity.ok(responseJson.toString());
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(400).build();
+				responseJson.set("bookalbeRoomList", bookableRoomArray);
+			} else {
+				responseJson.set("bookalbeRoomList", null);
 			}
+
+			// JSON 문자열 반환
+			System.out.println(responseJson.toString());
+			return ResponseEntity.ok(responseJson.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(400).build();
 		}
-	
-	
+	}
+
+	// 유저 - Id로 예약내역 정보 조회
+	@GetMapping("/history")
+	public List<ReservationDto> findRerservationById(HttpServletRequest request) {
+
+		// HTTP 요청 헤더에서 토큰 추출
+		String token = getTokenFromRequest(request);
+		String userId = getUserIdFromToken(token);
+		
+		return reservationService.findRerservationById(userId);
+	}
+
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");

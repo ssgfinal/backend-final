@@ -31,27 +31,31 @@
 	<select id="getReservationStatusForYearMonth"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
-		rooms.room_number AS roomNumber,
+		rooms.room_number AS
+		roomNumber,
 		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
-		reservation.start_date &lt;= date_range.Date AND reservation.end_date > date_range.Date THEN
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date
+		> date_range.Date THEN
 		1 ELSE 0 END), 0) AS availableRooms
 		FROM (
-		SELECT DATE_FORMAT(CONCAT(#{yearMonth}, '-01'), '%Y-%m-%d') + INTERVAL n DAY
+		SELECT
+		DATE_FORMAT(CONCAT(#{yearMonth}, '-01'), '%Y-%m-%d') + INTERVAL n DAY
 		AS Date
 		FROM for_count
-		WHERE DATE_FORMAT(DATE_FORMAT(CONCAT(#{yearMonth}, '-01'), '%Y-%m-%d') +
+		WHERE
+		DATE_FORMAT(DATE_FORMAT(CONCAT(#{yearMonth}, '-01'), '%Y-%m-%d') +
 		INTERVAL n DAY, '%Y-%m') = #{yearMonth}
 		) AS date_range
 		CROSS JOIN rooms
-		LEFT JOIN reservation ON reservation.room_number = rooms.room_number AND
-		reservation.start_date &lt;= date_range.Date AND reservation.end_date >
+		LEFT JOIN reservation ON reservation.room_number = rooms.room_number
+		AND
+		reservation.start_date &lt;= date_range.Date AND
+		reservation.end_date >
 		date_range.Date
-		GROUP BY date_range.Date, rooms.room_number
+		GROUP BY date_range.Date,
+		rooms.room_number
 		ORDER BY date_range.Date, rooms.room_number;
 	</select>
-
-
-
 
 	<!-- 숙소 정보 조회 -->
 	<select id="getAccommodationInfo"
@@ -113,13 +117,13 @@
 		guest_phone,
 		accom_number,
 		accom_name,
-		room_number)
+		room_number,review_status)
 		values (#{reservationNumber},
 		#{reservationTime}, #{id}, #{startDate},#{endDate}, 0,
 		#{nickname},#{phoneNumber},
 		#{roomCategory},#{roomPrice},#{couponNumber},#{couponName},#{discount},
 		#{usePoint},#{totalPrice},#{paymentAmount},#{gusetName},#{gusetPhone},
-		#{accomNumber},#{accomName},#{roomNumber})
+		#{accomNumber},#{accomName},#{roomNumber},0)
 	</insert>
 
 	<!-- 예약완료 시 쿠폰 사용 여부 변경 -->
@@ -149,6 +153,18 @@
 		WHERE id = #{Id}
 	</update>
 
+	<!-- 유저 - 예약내역 조회 -->
+	<select id="findRerservationById"
+		resultType="ssg.com.houssg.dto.ReservationDto">
+		SELECT reservation_number, reservation_time, status,
+		accom_number, accom_name, room_number, room_category,
+		start_date,
+		end_date, room_price, coupon_name, coupon_number, discount, use_point,
+		total_price, payment_amount,
+		guest_name, guest_phone, review_status
+		FROM reservation
+		WHERE id = #{Id}
+	</select>
 
 
 </mapper>

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
@@ -76,7 +77,7 @@ public class ReservationService {
 
 		return basicInfo;
 	}
-	
+
 	// 예약 페이지 - 월별 예약가능한 객실 정보 조회
 	public ReservationInfoDto getAvailableRoom(int roomNumber, String yearMonth) {
 		ReservationInfoDto Info = new ReservationInfoDto();
@@ -84,7 +85,6 @@ public class ReservationService {
 		// 예약가능한 객실 정보
 		List<ReservationRoomDto> bookableRoomList = getReservationStatusForYearMonth(roomNumber, yearMonth);
 		Info.setBookableRoomList(bookableRoomList);
-
 
 		return Info;
 	}
@@ -108,6 +108,11 @@ public class ReservationService {
 	@Transactional
 	public void accumulatePoints(UserDto userDto, double paymentAmount) {
 		dao.accumulatePoints(userDto);
+	}
+
+	// 유저 - Id로 예약내역 조회
+	public List<ReservationDto> findRerservationById(String Id) {
+		return dao.findRerservationById(Id);
 	}
 
 }
