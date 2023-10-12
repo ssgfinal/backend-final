@@ -111,7 +111,7 @@ public class ReviewController {
 	    }
 	}
 	// 숙소에 관한 리뷰
-	@PostMapping("review/get/all")
+	@GetMapping("review/all/accom")
 		public ResponseEntity<List<ReviewDto>> getAllReview(@RequestParam int roomNumber, @RequestParam int accomNumber) {
 		    System.out.println("숙소에 관한 리뷰 보기");
 		     
@@ -143,7 +143,7 @@ public class ReviewController {
 		    
 		    return ResponseEntity.ok("YES");
 		}
-	@DeleteMapping("review/delete")
+	@DeleteMapping("review")
 	public ResponseEntity<String> deleteReview(@RequestParam int reviewNumber) {
 		    System.out.println("리뷰 삭제하기");
 		    
@@ -170,7 +170,7 @@ public class ReviewController {
 		    }
 		}
 	// 답글 추가
-	@PatchMapping("comment/add")
+	@PatchMapping("review/comment/add")
 	public ResponseEntity<List<ReviewDto>> addComment(@RequestParam int review_number,
 											          @RequestParam int reservation_number,
 											          @RequestParam String review_comment) {
@@ -196,7 +196,7 @@ public class ReviewController {
 	    }
 	}
 
-	@PatchMapping("comment/update")
+	@PatchMapping("review/comment")
 	public ResponseEntity<String> updateComment(
 			@RequestParam int review_number,
 	        @RequestParam int reservation_number,

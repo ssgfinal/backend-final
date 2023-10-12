@@ -70,6 +70,13 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
+    public List<AccommodationDto> getDeletionAccom(){
+    	List<AccommodationDto> accommodationDtoList = dao.getDeletionAccom();
+    	
+    
+    	return accommodationDtoList;
+    }
+    
     @Transactional
     public int addAccommodationAndFacility(AccommodationDto dto, FacilityDto facilityDto) {
         // AccommodationDto를 accommodation 테이블에 삽입

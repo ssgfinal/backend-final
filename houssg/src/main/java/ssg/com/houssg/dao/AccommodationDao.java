@@ -38,6 +38,8 @@ public interface AccommodationDao {
 	
 	List<AccommodationDto> getApprovalAccom();
 	
+	List<AccommodationDto> getDeletionAccom();
+	
 	List<AccommodationDto> accomScore();
 	
 	List<AccommodationDto> accomScore20();
