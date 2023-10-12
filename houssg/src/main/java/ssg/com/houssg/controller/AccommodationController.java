@@ -57,7 +57,7 @@ public class AccommodationController {
     private FacilityService facservice;
 
     @Autowired
-    public Cloudinary  cloudinary;
+    private Cloudinary  cloudinary;
     
     
     @GetMapping("search")

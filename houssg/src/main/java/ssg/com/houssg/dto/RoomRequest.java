@@ -6,7 +6,6 @@ public class RoomRequest {
 
 	private int roomNumber;
 	private String roomCategory;
-	private String roomDetails;
 	private int roomPrice;
 	private int roomAvailability;
 	private int accomNumber;
@@ -22,12 +21,6 @@ public class RoomRequest {
 	}
 	public void setRoomCategory(String roomCategory) {
 		this.roomCategory = roomCategory;
-	}
-	public String getRoomDetails() {
-		return roomDetails;
-	}
-	public void setRoomDetails(String roomDetails) {
-		this.roomDetails = roomDetails;
 	}
 	public int getRoomPrice() {
 		return roomPrice;
@@ -56,12 +49,11 @@ public class RoomRequest {
 	public RoomRequest() {
 		super();
 	}
-	public RoomRequest(int roomNumber, String roomCategory, String roomDetails, int roomPrice, int roomAvailability,
+	public RoomRequest(int roomNumber, String roomCategory, int roomPrice, int roomAvailability,
 			int accomNumber, int[] roomServiceDto) {
 		super();
 		this.roomNumber = roomNumber;
 		this.roomCategory = roomCategory;
-		this.roomDetails = roomDetails;
 		this.roomPrice = roomPrice;
 		this.roomAvailability = roomAvailability;
 		this.accomNumber = accomNumber;
@@ -69,8 +61,8 @@ public class RoomRequest {
 	}
 	@Override
 	public String toString() {
-		return "RoomRequest [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomDetails="
-				+ roomDetails + ", roomPrice=" + roomPrice + ", roomAvailability=" + roomAvailability + ", accomNumber="
+		return "RoomRequest [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory
+				 + ", roomPrice=" + roomPrice + ", roomAvailability=" + roomAvailability + ", accomNumber="
 				+ accomNumber + ", roomServiceDto=" + Arrays.toString(roomServiceDto) + "]";
 	}
 	
