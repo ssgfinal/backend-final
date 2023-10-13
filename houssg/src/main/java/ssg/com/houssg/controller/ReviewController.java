@@ -30,6 +30,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.ReviewDto;
 import ssg.com.houssg.service.ReviewService;
 
@@ -104,7 +105,7 @@ public class ReviewController {
 
 	    if (reviews.isEmpty()) {
 	        // 리뷰가 없는 경우
-	        return ResponseEntity.noContent().build(); // 204 No Content 반환
+	    	return new ResponseEntity<>(new ArrayList<ReviewDto>(),HttpStatus.OK);
 	    } else {
 	        // 리뷰를 찾은 경우
 	        return ResponseEntity.ok(reviews); // 리뷰 목록 반환
@@ -112,19 +113,19 @@ public class ReviewController {
 	}
 	// 숙소에 관한 리뷰
 	@GetMapping("review/all/accom")
-		public ResponseEntity<List<ReviewDto>> getAllReview(@RequestParam int accomNumber) {
-		    System.out.println("숙소에 관한 리뷰 보기");
-		     
-		    List<ReviewDto> reviews = service.getAllReview(accomNumber);
-		     
-		    if (reviews.isEmpty()) {
-		        // 리뷰가 없는 경우
-		        return ResponseEntity.noContent().build(); // HTTP 상태 코드 204 No Content 반환
-		    } else {
-		        // 리뷰를 찾은 경우
-		        return ResponseEntity.ok(reviews); // 리뷰 목록 반환
-		    }
-		}
+	public ResponseEntity<List<ReviewDto>> getAllReview(@RequestParam int accomNumber) {
+	    System.out.println("숙소에 관한 리뷰 보기");
+	     
+	    List<ReviewDto> reviews = service.getAllReview(accomNumber);
+	     
+	    if (reviews.isEmpty()) {
+	        // 리뷰가 없는 경우
+	    	return new ResponseEntity<>(new ArrayList<ReviewDto>(),HttpStatus.OK);
+	    } else {
+	        // 리뷰를 찾은 경우
+	        return ResponseEntity.ok(reviews); // 리뷰 목록 반환
+	    }
+	}
 	@PatchMapping("review/report")
 	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber, @RequestParam int roomNumber, @RequestParam int accomNumber) {
 		    System.out.println("리뷰 신고하기");
@@ -165,8 +166,7 @@ public class ReviewController {
 		        // 리뷰 목록이 비어 있지 않으면 200 OK 응답과 함께 목록을 반환
 		        return ResponseEntity.ok(reviews);
 		    } else {
-		        // 리뷰 목록이 비어 있으면 404 Not Found 응답 반환
-		        return ResponseEntity.notFound().build();
+		    	return new ResponseEntity<>(new ArrayList<ReviewDto>(),HttpStatus.OK);
 		    }
 		}
 	// 답글 추가
