@@ -81,7 +81,8 @@ public class ReservationController {
 				}
 				responseJson.set("couponInfoList", couponArray);
 			} else {
-				responseJson.set("couponInfoList", null);
+				ArrayNode emptyArray = objectMapper.createArrayNode();
+			    responseJson.set("couponInfoList", emptyArray);
 			}
 
 			// JSON 문자열 반환
