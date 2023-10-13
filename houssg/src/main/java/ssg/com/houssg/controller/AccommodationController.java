@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,12 +33,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.AccommodationOcrDto;
 import ssg.com.houssg.dto.AccommodationParam;
 import ssg.com.houssg.dto.AccommodationRequest;
 import ssg.com.houssg.dto.FacilityDto;
 
 import ssg.com.houssg.service.AccommodationService;
 import ssg.com.houssg.service.FacilityService;
+import ssg.com.houssg.util.NaverOcrService;
+
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.context.annotation.Bean;
@@ -47,10 +51,13 @@ import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 public class AccommodationController {
-	
+
 	@Value("${jwt.secret}")
 	private String secretKey;
 
+	@Autowired
+    private NaverOcrService naverOcrService;
+	
     @Autowired
     private AccommodationService service;
     
@@ -60,7 +67,18 @@ public class AccommodationController {
     @Autowired
     private Cloudinary  cloudinary;
     
-    
+
+    @PostMapping(value="naverOcr",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AccommodationOcrDto> ocr(@RequestPart MultipartFile file) {
+     
+        	AccommodationOcrDto result = naverOcrService.callNaverCloudOcr(file);
+            if (result != null) {
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+    }
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
     		@RequestParam(value = "search", required = false) String search,
@@ -111,7 +129,6 @@ public class AccommodationController {
         AccommodationDto dto = new AccommodationDto();
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
-        
         try {
             if (file != null && !file.isEmpty()) {
                 // Cloudinary를 사용하여 파일 업로드
