@@ -67,6 +67,18 @@ public class AccommodationController {
     @Autowired
     private Cloudinary  cloudinary;
     
+
+    @PostMapping(value="naverOcr",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AccommodationOcrDto> ocr(@RequestPart MultipartFile file) {
+     
+        	AccommodationOcrDto result = naverOcrService.callNaverCloudOcr(file);
+            if (result != null) {
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+    }
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
     		@RequestParam(value = "search", required = false) String search,
@@ -109,7 +121,6 @@ public class AccommodationController {
 
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart("file") MultipartFile file,
-    															@RequestPart("businessImg") MultipartFile businessImg,
                                                                 @RequestPart AccommodationRequest request,
                                                                 HttpServletRequest httpRequest) {
         System.out.println("숙소 추가 신청");
@@ -118,9 +129,6 @@ public class AccommodationController {
         AccommodationDto dto = new AccommodationDto();
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
-        AccommodationOcrDto result = naverOcrService.callNaverCloudOcr(businessImg);
-        System.out.println(result.getBusinessNumber());
-        System.out.println(result.getAccomName());
         try {
             if (file != null && !file.isEmpty()) {
                 // Cloudinary를 사용하여 파일 업로드
@@ -130,14 +138,14 @@ public class AccommodationController {
 
                 // 나머지 Request에서 매핑한 값을 설정
                 dto.setId(userId);
-                dto.setAccomName(result.getAccomName());
+                dto.setAccomName(request.getAccomName());
                 dto.setAccomAddress(request.getAccomAddress());
                 dto.setTeleNumber(request.getTeleNumber());
                 dto.setAccomCategory(request.getAccomCategory());
                 dto.setAccomDetails(request.getAccomDetails());
                 dto.setCheckIn(request.getCheckIn());
                 dto.setCheckOut(request.getCheckOut());
-                dto.setBusinessNumber(result.getBusinessNumber());
+                dto.setBusinessNumber(request.getBusinessNumber());
 
                 // FacilityDto 객체를 생성하여 시설 정보 저장
                 FacilityDto facilityDto = new FacilityDto();
