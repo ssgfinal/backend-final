@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,12 +33,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.AccommodationOcrDto;
 import ssg.com.houssg.dto.AccommodationParam;
 import ssg.com.houssg.dto.AccommodationRequest;
 import ssg.com.houssg.dto.FacilityDto;
 
 import ssg.com.houssg.service.AccommodationService;
 import ssg.com.houssg.service.FacilityService;
+import ssg.com.houssg.util.NaverOcrService;
+
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.context.annotation.Bean;
@@ -47,10 +51,13 @@ import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 public class AccommodationController {
-	
+
 	@Value("${jwt.secret}")
 	private String secretKey;
 
+	@Autowired
+    private NaverOcrService naverOcrService;
+	
     @Autowired
     private AccommodationService service;
     
@@ -59,7 +66,6 @@ public class AccommodationController {
 
     @Autowired
     private Cloudinary  cloudinary;
-    
     
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
@@ -103,6 +109,7 @@ public class AccommodationController {
 
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart("file") MultipartFile file,
+    															@RequestPart("businessImg") MultipartFile businessImg,
                                                                 @RequestPart AccommodationRequest request,
                                                                 HttpServletRequest httpRequest) {
         System.out.println("숙소 추가 신청");
@@ -111,7 +118,9 @@ public class AccommodationController {
         AccommodationDto dto = new AccommodationDto();
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
-        
+        AccommodationOcrDto result = naverOcrService.callNaverCloudOcr(businessImg);
+        System.out.println(result.getBusinessNumber());
+        System.out.println(result.getAccomName());
         try {
             if (file != null && !file.isEmpty()) {
                 // Cloudinary를 사용하여 파일 업로드
@@ -121,14 +130,14 @@ public class AccommodationController {
 
                 // 나머지 Request에서 매핑한 값을 설정
                 dto.setId(userId);
-                dto.setAccomName(request.getAccomName());
+                dto.setAccomName(result.getAccomName());
                 dto.setAccomAddress(request.getAccomAddress());
                 dto.setTeleNumber(request.getTeleNumber());
                 dto.setAccomCategory(request.getAccomCategory());
                 dto.setAccomDetails(request.getAccomDetails());
                 dto.setCheckIn(request.getCheckIn());
                 dto.setCheckOut(request.getCheckOut());
-                dto.setBusinessNumber(request.getBusinessNumber());
+                dto.setBusinessNumber(result.getBusinessNumber());
 
                 // FacilityDto 객체를 생성하여 시설 정보 저장
                 FacilityDto facilityDto = new FacilityDto();
