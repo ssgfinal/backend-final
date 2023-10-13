@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.Provider.Service;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ import ssg.com.houssg.dto.AccommodationOcrDto;
 import ssg.com.houssg.dto.AccommodationParam;
 import ssg.com.houssg.dto.AccommodationRequest;
 import ssg.com.houssg.dto.FacilityDto;
-
+import ssg.com.houssg.dto.ReviewDto;
 import ssg.com.houssg.service.AccommodationService;
 import ssg.com.houssg.service.FacilityService;
 import ssg.com.houssg.util.NaverOcrService;
@@ -197,7 +198,7 @@ public class AccommodationController {
         
         // 내숙소 조회 결과가 비어 있는 경우 빈 응답을 반환할 수 있습니다.
         if (myAccommodations.isEmpty()) {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
         }
         
         // 내숙소 조회 결과가 비어 있지 않은 경우 OK 응답과 함께 조회 결과를 반환합니다.
@@ -309,7 +310,7 @@ public class AccommodationController {
 
         // accommodation이 null인 경우 NOT_FOUND 반환
         if (accommodation == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         return new ResponseEntity<>(accommodation, HttpStatus.OK);
@@ -322,7 +323,7 @@ public class AccommodationController {
         accommodationList = service.getAllAccom();
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
         if (accommodationList == null || accommodationList.isEmpty()) {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
         }
 
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
@@ -362,16 +363,20 @@ public class AccommodationController {
         if (approvalAccomList != null && !approvalAccomList.isEmpty()) {
             return ResponseEntity.ok(approvalAccomList); // 성공한 경우 숙소 목록 반환
         } else {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
         }
     }
     @GetMapping("auth/accom/del/request")
-    public List<AccommodationDto> getDeletionAccom() {
+    public ResponseEntity<?> getDeletionAccom() {
         System.out.println("숙소삭제요청목록보기");
         
         List<AccommodationDto> deletionAccomList = service.getDeletionAccom();
         
-        return deletionAccomList;
+        if(deletionAccomList != null && !deletionAccomList.isEmpty()) {
+        	return ResponseEntity.ok(deletionAccomList);
+        } else {
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
+        }
     }
     
     @GetMapping("accom/score")
