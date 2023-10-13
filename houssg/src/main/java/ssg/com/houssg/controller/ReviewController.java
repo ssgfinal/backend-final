@@ -95,7 +95,7 @@ public class ReviewController {
 
 
 	// my 리뷰 보기
-	@PostMapping("mypage/review")
+	@GetMapping("mypage/review")
 	public ResponseEntity<List<ReviewDto>> getMyReview(HttpServletRequest httpRequest) {
 	    System.out.println("나의 리뷰 보기");
 	    String token = getTokenFromRequest(httpRequest);
@@ -112,10 +112,10 @@ public class ReviewController {
 	}
 	// 숙소에 관한 리뷰
 	@GetMapping("review/all/accom")
-		public ResponseEntity<List<ReviewDto>> getAllReview(@RequestParam int roomNumber, @RequestParam int accomNumber) {
+		public ResponseEntity<List<ReviewDto>> getAllReview(@RequestParam int accomNumber) {
 		    System.out.println("숙소에 관한 리뷰 보기");
 		     
-		    List<ReviewDto> reviews = service.getAllReview(roomNumber, accomNumber);
+		    List<ReviewDto> reviews = service.getAllReview(accomNumber);
 		     
 		    if (reviews.isEmpty()) {
 		        // 리뷰가 없는 경우
@@ -155,7 +155,7 @@ public class ReviewController {
 		    
 		    return ResponseEntity.ok("YES");
 		}
-	@PostMapping("auth/review")
+	@GetMapping("auth/review")
 	public ResponseEntity<List<ReviewDto>> getAuthReview() {
 		    System.out.println("신고받은 리뷰 보기");
 		    
@@ -185,7 +185,7 @@ public class ReviewController {
 	        
 	        int count = service.addComment(review_number, reservation_number, review_comment); // updateComment 메서드를 호출하여 댓글을 추가합니다.
 	        if (count > 0) {
-	            List<ReviewDto> updatedReviews = service.getAllReview(dto.getRoomNumber(), dto.getAccomNumber()); // 업데이트된 리뷰 목록을 가져옵니다.
+	            List<ReviewDto> updatedReviews = service.getAllReview(dto.getAccomNumber()); // 업데이트된 리뷰 목록을 가져옵니다.
 	            return ResponseEntity.ok(updatedReviews); // 성공한 경우 업데이트된 리뷰 목록을 반환합니다.
 	        } else {
 	            return ResponseEntity.badRequest().build(); // 실패한 경우 Bad Request를 반환합니다.

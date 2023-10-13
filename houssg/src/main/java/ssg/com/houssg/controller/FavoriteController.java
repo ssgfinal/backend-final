@@ -64,7 +64,7 @@ public class FavoriteController {
 	    return new ResponseEntity<>("YES", HttpStatus.OK);
 	}
 	
-	 @PostMapping("mypage/favorite")
+	 @GetMapping("mypage/favorite")
 	 public ResponseEntity<List<FavoriteDto>> getMyFavorite(HttpServletRequest httpRequest) {
 	     System.out.println("찜보기");
 	     String token = getTokenFromRequest(httpRequest);
@@ -79,7 +79,7 @@ public class FavoriteController {
 	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
 	     }
 	 }
-	 @GetMapping("/favorite")
+	 @GetMapping("favorite")
 	    public ResponseEntity<Integer> roomGet(@RequestParam int accomNumber, HttpServletRequest httpRequest) {
 	        String token = getTokenFromRequest(httpRequest);
 	        String userId = getUserIdFromToken(token);

@@ -72,8 +72,9 @@ public class AccommodationService {
     }
     public List<AccommodationDto> getDeletionAccom(){
     	List<AccommodationDto> accommodationDtoList = dao.getDeletionAccom();
-    	
-    
+    	for (AccommodationDto accommodationDto : accommodationDtoList) {
+            setFacilityData(accommodationDto);
+        }
     	return accommodationDtoList;
     }
     
