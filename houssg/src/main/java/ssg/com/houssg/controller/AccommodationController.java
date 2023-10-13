@@ -69,16 +69,21 @@ public class AccommodationController {
     private Cloudinary  cloudinary;
     
 
-    @PostMapping(value="naverOcr",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AccommodationOcrDto> ocr(@RequestPart MultipartFile file) {
-     
-        	AccommodationOcrDto result = naverOcrService.callNaverCloudOcr(file);
-            if (result != null) {
+    @PostMapping(value = "naverOcr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> ocr(@RequestPart MultipartFile file) {
+        try {
+            AccommodationOcrDto result = naverOcrService.callNaverCloudOcr(file);
+            if (result.getAccomName() != null && result.getBusinessNumber() != null) {
                 return new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                // 파일 업로드 실패 메시지 반환
+                return new ResponseEntity<>("파일 업로드 실패", HttpStatus.BAD_REQUEST);
             }
-
+        } catch (Exception e) {
+            // 서버에서 예외 발생한 경우
+            e.printStackTrace();
+            return new ResponseEntity<>("서버 오류", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
