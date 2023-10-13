@@ -45,6 +45,10 @@ public class CouponService {
 	    // user_coupon 테이블에 저장
 	    return dao.enrollUserCoupon(userId, dto);
 	}
+	// 유저 - 나의 쿠폰 조회
+	public List<CouponDto> myCoupon(String id){
+		return dao.myCoupon(id);
+	}
 
     
 	public int userCouponNumberCheck(String couponNumber) {	
