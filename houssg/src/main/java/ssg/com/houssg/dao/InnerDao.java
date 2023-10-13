@@ -18,4 +18,6 @@ public interface InnerDao {
 	
 	void updateInnerView(InnerDto innerDto);
 	
+	InnerDto getImgs(int roomNumber);
+	
 }
