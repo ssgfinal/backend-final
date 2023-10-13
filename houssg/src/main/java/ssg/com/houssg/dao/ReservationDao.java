@@ -3,11 +3,9 @@ package ssg.com.houssg.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import ssg.com.houssg.dto.AccommodationDto;
-import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -33,9 +31,6 @@ public interface ReservationDao {
 	// 연도+월 받아와 해당 연,월에 해당하는 객실 별 예약 현황 불러옴
 	List<ReservationRoomDto> getReservationStatusForYearMonth(int roomNumber, String yearMonth);
 
-	// 보유 포인트 조회
-	int getUserPoints(String Id);
-
 	// 객실 번호로 숙소 번호 조회
 	int getAccomNumberByRoomNumber(int roomNumber);
 
@@ -59,5 +54,8 @@ public interface ReservationDao {
 	
 	// 유저 -ID로 예약내역정보 조회
 	List<ReservationDto> findRerservationById(String Id);
-
+	
+	// "lastCheck" 쿼리를 실행하고 결과를 반환
+    List<ReservationRoomDto> lastCheck(ReservationDto reservationDto);
 }
+

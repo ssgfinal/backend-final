@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +22,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.ReservationInfoDto;
-import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -86,9 +84,6 @@ public class ReservationController {
 				responseJson.set("couponInfoList", null);
 			}
 
-			// 유저 포인트 정보
-			responseJson.put("userPoint", basicInfo.getUserPoint());
-
 			// JSON 문자열 반환
 			System.out.println(responseJson.toString());
 			return ResponseEntity.ok(responseJson.toString());
@@ -101,42 +96,54 @@ public class ReservationController {
 
 	// 예약 등록 API
 	@PostMapping("/enroll")
-	public ResponseEntity<String> enrollReservation(HttpServletRequest request,
+	public ResponseEntity<?> enrollReservation(HttpServletRequest request,
 			@RequestBody ReservationDto reservationDto) {
 		try {
 
 			// HTTP 요청 헤더에서 토큰 추출
 			String token = getTokenFromRequest(request);
 			String userId = getUserIdFromToken(token);
+			
+			// 예약 가능 여부 확인
+	        boolean isAvailable = reservationService.isReservationAvailable(reservationDto);
 
-			// 예약번호 생성
-			int reservationNumber = ReservationUtil.generateRandomReservationNumber();
+	        if (isAvailable) {
+	            // 예약번호 생성
+	        	System.out.println("예약 가능 여부 " + isAvailable);
+	            int reservationNumber = ReservationUtil.generateRandomReservationNumber();
 
-			// 현재 날짜와 시각을 얻어옴
-			LocalDateTime reservationTime = LocalDateTime.now();
+	            // 현재 날짜와 시각을 얻어옴
+	            LocalDateTime reservationTime = LocalDateTime.now();
 
-			reservationDto.setReservationNumber(reservationNumber);
-			reservationDto.setReservationTime(reservationTime);
-			System.out.println("예약번호" + reservationNumber + "  예약시간" + reservationTime);
-			reservationDto.setId(userId);
+	            reservationDto.setReservationNumber(reservationNumber);
+	            reservationDto.setReservationTime(reservationTime);
+	            System.out.println("예약번호 " + reservationNumber + "  예약시간 " + reservationTime);
+	            reservationDto.setId(userId);
 
-			// 예약 정보를 서비스로 전달하여 등록
-			reservationService.enrollReservation(reservationDto);
+	            // 예약 정보를 서비스로 전달하여 등록
+	            System.out.println("등록합니다.");
+	            reservationService.enrollReservation(reservationDto);
 
-			// 쿠폰 사용여부 컬럼 변경
-			reservationService.usedCoupon(reservationDto.couponNumber);
+	            // 쿠폰 사용여부 컬럼 변경
+	            System.out.println("쿠폰 변겅합니다");
+	            reservationService.usedCoupon(reservationDto.couponNumber);
 
-			// 포인트 차감
-			int usePoint = reservationDto.getUsePoint();
-			reservationService.usedPoint(userId, usePoint);
+	            // 포인트 차감
+	            int usePoint = reservationDto.getUsePoint();
+	            reservationService.usedPoint(userId, usePoint);
 
-			// 예약 등록 성공 시 클라이언트에게 성공 응답 반환
-			return ResponseEntity.ok("예약성공");
-		} catch (Exception e) {
-			// 예약 등록 중에 예외 발생 시 에러 응답 반환
-			e.printStackTrace();
-			return ResponseEntity.status(400).body("예약실패");
-		}
+	            // 예약 등록 성공 시 클라이언트에게 성공 응답 반환
+	            return ResponseEntity.ok(reservationNumber);
+	        } else {
+	            // 예약 불가능한 경우 에러 응답 반환
+	        	System.out.println("예약가능 방 갯수 초과로 예약 불가능");
+	            return ResponseEntity.status(400).body("예약 불가능");
+	        }
+	    } catch (Exception e) {
+	        // 예약 등록 중에 예외 발생 시 에러 응답 반환
+	        e.printStackTrace();
+	        return ResponseEntity.status(400).body("예약 실패");
+	    }
 	}
 
 	// 연도 + 월 기준 객실 별 예약 현황 조회

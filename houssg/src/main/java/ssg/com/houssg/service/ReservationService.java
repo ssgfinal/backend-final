@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dto.AccommodationDto;
-import ssg.com.houssg.dto.CouponDto;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
@@ -48,11 +47,6 @@ public class ReservationService {
 		return dao.getReservationStatusForYearMonth(roomNumber, yearMonth);
 	}
 
-	// 보유 포인트 조회
-	public int getUserPoints(String Id) {
-		Integer points = dao.getUserPoints(Id);
-		return points != null ? points : 0;
-	}
 
 	// 객실 번호로 숙소 번호 조회
 	public int getAccomNumberByRoomNumber(int roomNumber) {
@@ -70,10 +64,6 @@ public class ReservationService {
 		// 쿠폰 정보 설정
 		List<UserCouponDto> couponList = getCouponInfo(userId);
 		basicInfo.setCouponList(couponList);
-
-		// 보유 포인트 조회 (사용자 ID를 파라미터로 전달)
-		int userPoints = getUserPoints(userId);
-		basicInfo.setUserPoint(userPoints);
 
 		return basicInfo;
 	}
@@ -115,4 +105,16 @@ public class ReservationService {
 		return dao.findRerservationById(Id);
 	}
 
+	// 예약 가능 여부 확인
+	public boolean isReservationAvailable(ReservationDto reservationDto) {
+		List<ReservationRoomDto> availableRooms = dao.lastCheck(reservationDto);
+
+		for (ReservationRoomDto room : availableRooms) {
+			if (room.getAvailableRooms() == 0) {
+				return false; // 하나라도 0인 경우 false 반환
+			}
+		}
+
+		return true; // 모든 방이 예약 가능하면 true 반환
+	}
 }
