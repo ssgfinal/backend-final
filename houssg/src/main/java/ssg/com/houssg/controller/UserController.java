@@ -71,6 +71,7 @@ public class UserController {
 		        responseMap.put("message", "로그인 성공");
 		        responseMap.put("nickname", dto.getNickname()); // 닉네임 추가
 		        responseMap.put("phone", dto.getPhonenumber()); // 휴대폰 번호 추가
+		        responseMap.put("point", dto.getPoint());
 		        
 			HttpHeaders headers = new HttpHeaders();
 	        headers.add("Authorization", "Bearer " + token);

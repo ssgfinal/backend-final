@@ -6,7 +6,6 @@ public class ReservationInfoDto {
 	
 	private List<ReservationRoomDto> bookableRoomList;
     private List<UserCouponDto> couponList;
-    private int userPoint;
 	
 	public List<ReservationRoomDto> getBookableRoomList() {
 		return bookableRoomList;
@@ -19,12 +18,6 @@ public class ReservationInfoDto {
 	}
 	public void setCouponList(List<UserCouponDto> couponList) {
 		this.couponList = couponList;
-	}
-	public int getUserPoint() {
-		return userPoint;
-	}
-	public void setUserPoint(int userPoint) {
-		this.userPoint = userPoint;
 	}
     
     

@@ -3,7 +3,7 @@
 
 <mapper namespace="ssg.com.houssg.dao.ReservationDao">
 
-	<!-- 현재 월 기준 객실 별 예약현황 조회 -->
+	<!-- 현재 날짜 기준 객실 별 예약현황 조회 -->
 	<select id="getReservationStatus"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
@@ -22,17 +22,19 @@
 		LEFT JOIN rooms ON rooms.room_number = #{roomNumber}
 		LEFT
 		JOIN reservation ON reservation.room_number = rooms.room_number
-		GROUP
-		BY date_range.Date
-		ORDER BY date_range.Date;
+		WHERE
+		reservation.status IN (0, 1)
+		GROUP BY date_range.Date
+		ORDER BY
+		date_range.Date;
 	</select>
+
 
 	<!-- 연도 + 월 입력받아서 객실 별 예약현황 조회 -->
 	<select id="getReservationStatusForYearMonth"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
-		rooms.room_number AS
-		roomNumber,
+		rooms.room_number AS roomNumber,
 		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
 		reservation.start_date &lt;= date_range.Date AND reservation.end_date
 		> date_range.Date THEN
@@ -48,14 +50,45 @@
 		) AS date_range
 		CROSS JOIN rooms
 		LEFT JOIN reservation ON reservation.room_number = rooms.room_number
-		AND
-		reservation.start_date &lt;= date_range.Date AND
-		reservation.end_date >
-		date_range.Date
-		GROUP BY date_range.Date,
-		rooms.room_number
+		AND reservation.start_date &lt;= date_range.Date AND
+		reservation.end_date
+		> date_range.Date
+		AND reservation.status IN (0, 1)
+		WHERE rooms.room_number = #{roomNumber} <!-- 변경된 부분 -->
+		GROUP BY date_range.Date, rooms.room_number
+		ORDER BY date_range.Date,
+		rooms.room_number;
+	</select>
+
+
+
+
+	<select id="lastCheck"
+		resultType="ssg.com.houssg.dto.ReservationRoomDto">
+		SELECT date_range.Date AS date,
+		rooms.room_number AS roomNumber,
+		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date > date_range.Date THEN
+		1 ELSE 0 END), 0) AS availableRooms
+		FROM (
+		SELECT DATE_ADD(#{startDate}, INTERVAL n DAY) AS Date
+		FROM for_count
+		WHERE DATE_ADD(#{startDate}, INTERVAL n DAY) BETWEEN #{startDate} AND
+		DATE_SUB(#{endDate}, INTERVAL 1 DAY)
+		) AS date_range
+		CROSS JOIN rooms
+		LEFT JOIN reservation ON reservation.room_number = rooms.room_number
+		AND reservation.start_date &lt;= date_range.Date
+		AND reservation.end_date > date_range.Date
+		AND reservation.status IN (0, 1)
+		WHERE rooms.room_number = #{roomNumber} <!-- 변경된 부분 -->
+		GROUP BY date_range.Date, rooms.room_number
 		ORDER BY date_range.Date, rooms.room_number;
 	</select>
+
+
+
+
 
 	<!-- 숙소 정보 조회 -->
 	<select id="getAccommodationInfo"
@@ -118,11 +151,13 @@
 		accom_number,
 		accom_name,
 		room_number,review_status)
-		values (#{reservationNumber},
-		#{reservationTime}, #{id}, #{startDate},#{endDate}, 0,
+		values
+		(#{reservationNumber},
+		#{reservationTime}, #{id},
+		#{startDate},#{endDate}, 0,
 		#{nickname},#{phoneNumber},
 		#{roomCategory},#{roomPrice},#{couponNumber},#{couponName},#{discount},
-		#{usePoint},#{totalPrice},#{paymentAmount},#{gusetName},#{gusetPhone},
+		#{usePoint},#{totalPrice},#{paymentAmount},#{guestName},#{guestPhone},
 		#{accomNumber},#{accomName},#{roomNumber},0)
 	</insert>
 
