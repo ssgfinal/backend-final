@@ -1,6 +1,7 @@
 package ssg.com.houssg.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -109,6 +110,20 @@ public class CouponController {
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
 	}
+	// 유저 - 나의 쿠폰 조회
+	@GetMapping("/mypage")
+	public ResponseEntity<List<CouponDto>> myCoupon(HttpServletRequest request) {
+		String token = getTokenFromRequest(request);
+		String userId = getUserIdFromToken(token);
+		    
+		List<CouponDto> coupons = service.myCoupon(userId);
+
+		if (coupons != null && !coupons.isEmpty()) {
+		    return new ResponseEntity<>(coupons, HttpStatus.OK);
+		} else {
+		    return new ResponseEntity<>(new ArrayList<CouponDto>(),HttpStatus.OK);
+		}
+	}	
 
 	private String getTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");
