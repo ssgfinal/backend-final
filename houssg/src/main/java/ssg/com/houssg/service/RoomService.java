@@ -1,11 +1,13 @@
 package ssg.com.houssg.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ssg.com.houssg.dao.InnerDao;
 import ssg.com.houssg.dao.RoomDao;
 import ssg.com.houssg.dao.RoomServiceDao;
 import ssg.com.houssg.dto.InnerDto;
@@ -22,7 +24,8 @@ public class RoomService {
 	@Autowired
 	RoomServiceDao serdao;
 	
-
+	@Autowired
+	InnerDao indao;
 	
 	@Transactional
 	public int addRoom(RoomDto dto, RoomServiceDto roomServiceDto) {
@@ -43,7 +46,7 @@ public class RoomService {
 	    
 	    for (RoomDto roomDto : roomDtoList) {
 	        RoomServiceDto roomServiceDto = serdao.getService(roomDto.getRoomNumber());
-	        
+	        InnerDto innerDto = indao.getImgs(roomDto.getRoomNumber());
 	        if (roomServiceDto != null) {
 	            System.out.println(roomDto.getRoomNumber());
 	            int[] serviceList = {
@@ -55,6 +58,29 @@ public class RoomService {
 	                roomServiceDto.getKingBed()
 	            };
 	            roomDto.setService(serviceList);
+	            
+	            String[] imgList = {
+	            	    innerDto.getImg1(),
+	            	    innerDto.getImg2(),
+	            	    innerDto.getImg3(),
+	            	    innerDto.getImg4(),
+	            	    innerDto.getImg5(),
+	            	    innerDto.getImg6(),
+	            	    innerDto.getImg7(),
+	            	    innerDto.getImg8(),
+	            	    innerDto.getImg9(),
+	            	    innerDto.getImg10()
+	            	};
+
+	            	List<String> validImgs = new ArrayList<>();
+
+	            	for (String img : imgList) {
+	            	    if (img != null) {
+	            	        validImgs.add(img);
+	            	    }
+	            	}
+
+	            	roomDto.setImgs(validImgs.toArray(new String[0]));
 	        } else {
 	            // roomServiceDto가 null인 경우, 필드 값을 null로 설정
 	            roomDto.setService(null);

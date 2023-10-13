@@ -15,7 +15,7 @@ public interface ReviewDao {
 	
 	List<ReviewDto> getMyReview(String id);
 	
-	List<ReviewDto> getAllReview(int roomNumber, int accomNumber);
+	List<ReviewDto> getAllReview(int accomNumber);
 	
 	int updateReview(ReviewDto dto);
 	

@@ -28,6 +28,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import ssg.com.houssg.dto.FavoriteDto;
 import ssg.com.houssg.dto.InnerDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.RoomRequest;
@@ -52,7 +53,7 @@ public class RoomController {
 
 	@PostMapping(value = "room/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addroom(@RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFile,
-	        @RequestPart RoomRequest request, HttpServletRequest httprequest) {
+	        							  @RequestPart RoomRequest request, HttpServletRequest httprequest) {
 	    System.out.println("객실 추가");
 	    RoomDto roomDto = new RoomDto();
 	    
@@ -162,8 +163,7 @@ public class RoomController {
 	            // 숙소 정보가 존재할 경우 200 OK 응답과 데이터 반환
 	            return new ResponseEntity<>(list, HttpStatus.OK);
 	        } else {
-	            // 숙소 정보가 없을 경우 404 NO_CONTENT 응답 반환
-	            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	            return new ResponseEntity<>(new ArrayList<RoomDto>(),HttpStatus.OK);
 	        }
 	    }
 	 
@@ -172,19 +172,8 @@ public class RoomController {
 	                                          @RequestPart RoomRequest request,
 	                                          HttpServletRequest httprequest) {
 	     try {
-	         System.out.println("객실 업데이트 시작");
-	         System.out.println(request.toString());
+	    	 System.out.println("객실 업데이트 시작");
 
-	         String path = httprequest.getSession().getServletContext().getRealPath("/upload");
-	         String root = path + File.separator + "uploadFiles";
-	         System.out.println(root);
-
-	         File fileCheck = new File(root);
-	         if (!fileCheck.exists()) {
-	             fileCheck.mkdirs();
-	         }
-
-	         List<Map<String, String>> fileList = new ArrayList<>();
 	         List<String> changeFileList = new ArrayList();
 
 	         if (multiFileList != null && !multiFileList.isEmpty()) {
@@ -197,17 +186,10 @@ public class RoomController {
 	                     continue;
 	                 }
 
-	                 String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-	                 String saveFileName = UUID.randomUUID().toString() + extension;
-	                 Map<String, String> map = new HashMap<>();
-	                 map.put("originalFile", originalFileName);
-	                 map.put("changeFile", saveFileName);
-	                 fileList.add(map);
-
-	                 File uploadFile = new File(root, saveFileName);
-	                 file.transferTo(uploadFile);
-
-	                 changeFileList.add(saveFileName);
+	                 // Cloudinary를 사용하여 파일 업로드
+	                 String cloudinaryImageUrl = uploadImage(file);
+	                 changeFileList.add(cloudinaryImageUrl);
+	                 System.out.println("업로드 성공: " + cloudinaryImageUrl);
 	             }
 	         }
 

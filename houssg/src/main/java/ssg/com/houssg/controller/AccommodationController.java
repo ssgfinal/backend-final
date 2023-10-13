@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.Provider.Service;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,14 @@ import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,12 +34,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.AccommodationOcrDto;
 import ssg.com.houssg.dto.AccommodationParam;
 import ssg.com.houssg.dto.AccommodationRequest;
 import ssg.com.houssg.dto.FacilityDto;
-
+import ssg.com.houssg.dto.ReviewDto;
 import ssg.com.houssg.service.AccommodationService;
 import ssg.com.houssg.service.FacilityService;
+import ssg.com.houssg.util.NaverOcrService;
+
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.context.annotation.Bean;
@@ -46,10 +52,13 @@ import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 public class AccommodationController {
-	
+
 	@Value("${jwt.secret}")
 	private String secretKey;
 
+	@Autowired
+    private NaverOcrService naverOcrService;
+	
     @Autowired
     private AccommodationService service;
     
@@ -59,7 +68,18 @@ public class AccommodationController {
     @Autowired
     private Cloudinary  cloudinary;
     
-    
+
+    @PostMapping(value="naverOcr",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AccommodationOcrDto> ocr(@RequestPart MultipartFile file) {
+     
+        	AccommodationOcrDto result = naverOcrService.callNaverCloudOcr(file);
+            if (result != null) {
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+    }
     @GetMapping("search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(
     		@RequestParam(value = "search", required = false) String search,
@@ -110,7 +130,6 @@ public class AccommodationController {
         AccommodationDto dto = new AccommodationDto();
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
-        
         try {
             if (file != null && !file.isEmpty()) {
                 // Cloudinary를 사용하여 파일 업로드
@@ -179,7 +198,7 @@ public class AccommodationController {
         
         // 내숙소 조회 결과가 비어 있는 경우 빈 응답을 반환할 수 있습니다.
         if (myAccommodations.isEmpty()) {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
         }
         
         // 내숙소 조회 결과가 비어 있지 않은 경우 OK 응답과 함께 조회 결과를 반환합니다.
@@ -283,7 +302,7 @@ public class AccommodationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMessage);
         }
     }
-    @PostMapping("accom/detail")
+    @GetMapping("accom/detail")
     public ResponseEntity<AccommodationDto> getAccom(@RequestParam int accomNumber) {
         System.out.println("리스트에 접근합니다");
         AccommodationDto accommodation;
@@ -291,20 +310,20 @@ public class AccommodationController {
 
         // accommodation이 null인 경우 NOT_FOUND 반환
         if (accommodation == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         return new ResponseEntity<>(accommodation, HttpStatus.OK);
     }
 
-    @PostMapping("accom/all")
+    @GetMapping("accom/all")
     public ResponseEntity<List<AccommodationDto>> getAllAccom() {
         System.out.println("전체 숙소 리스트 보기");
         List<AccommodationDto> accommodationList;
         accommodationList = service.getAllAccom();
         // accommodationList가 null 또는 비어있을 경우 NOT_FOUND 반환
         if (accommodationList == null || accommodationList.isEmpty()) {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
         }
 
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
@@ -335,7 +354,7 @@ public class AccommodationController {
     	}
     }
     
-    @PostMapping("auth/accom/add/request")
+    @GetMapping("auth/accom/add/request")
     public ResponseEntity<List<AccommodationDto>> getApprovalAccom() {
         System.out.println("숙소등록신청목록보기");
         
@@ -344,11 +363,23 @@ public class AccommodationController {
         if (approvalAccomList != null && !approvalAccomList.isEmpty()) {
             return ResponseEntity.ok(approvalAccomList); // 성공한 경우 숙소 목록 반환
         } else {
-        	return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 숙소 목록이 없는 경우 No Content(204) 반환
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
+        }
+    }
+    @GetMapping("auth/accom/del/request")
+    public ResponseEntity<?> getDeletionAccom() {
+        System.out.println("숙소삭제요청목록보기");
+        
+        List<AccommodationDto> deletionAccomList = service.getDeletionAccom();
+        
+        if(deletionAccomList != null && !deletionAccomList.isEmpty()) {
+        	return ResponseEntity.ok(deletionAccomList);
+        } else {
+        	return new ResponseEntity<>(new ArrayList<AccommodationDto>(),HttpStatus.OK);
         }
     }
     
-    @PostMapping("accom/score")
+    @GetMapping("accom/score")
     public ResponseEntity<List<AccommodationDto>> accomScore(){
         System.out.println("평점 높은 순으로 숙소 보기");
         List<AccommodationDto> accommodationDtoList;
@@ -362,7 +393,7 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
     }
     
-    @PostMapping("accom/20/date")
+    @GetMapping("accom/20/date")
     public ResponseEntity<List<AccommodationDto>> newAccom20() {
         System.out.println("전체 숙소 리스트 날짜순 20개 보기");
         List<AccommodationDto> accommodationList;
@@ -375,7 +406,7 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
     }
     
-    @PostMapping("accom/20/score")
+    @GetMapping("accom/20/score")
     public ResponseEntity<List<AccommodationDto>> accomScore20(){
         System.out.println("평점 높은 순으로 숙소 20개 보기");
         List<AccommodationDto> accommodationDtoList;

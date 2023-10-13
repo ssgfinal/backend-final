@@ -10,6 +10,7 @@ public class RoomDto {
 	private int roomAvailability;
 	private int accomNumber;
 	private int[] service;
+	private String[] imgs;
 	public int getRoomNumber() {
 		return roomNumber;
 	}
@@ -45,6 +46,12 @@ public class RoomDto {
 	}
 	public void setService(int[] service) {
 		this.service = service;
+	}
+	public String[] getImgs() {
+		return imgs;
+	}
+	public void setImgs(String[] imgs) {
+		this.imgs = imgs;
 	}
 	public RoomDto() {
 		super();

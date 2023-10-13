@@ -18,6 +18,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.FavoriteDto;
 import ssg.com.houssg.service.FavoriteService;
 
@@ -40,7 +41,7 @@ public class FavoriteController {
 	    // 찜하기 결과에 따라 응답 설정
 	    if (count == 0) {
 	        // 찜하기가 실패하면 404 Not Found 응답 반환
-	        return new ResponseEntity<>("NO", HttpStatus.NOT_FOUND);
+	        return new ResponseEntity<>("NO", HttpStatus.NO_CONTENT);
 	    }
 
 	    // 찜하기가 성공하면 200 OK 응답 반환
@@ -57,14 +58,14 @@ public class FavoriteController {
 	    // 찜해제 결과에 따라 응답 설정
 	    if (count == 0) {
 	        // 찜해제가 실패하면 404 Not Found 응답 반환
-	        return new ResponseEntity<>("NO", HttpStatus.NOT_FOUND);
+	        return new ResponseEntity<>("NO", HttpStatus.NO_CONTENT);
 	    }
 
 	    // 찜해제가 성공하면 200 OK 응답 반환
 	    return new ResponseEntity<>("YES", HttpStatus.OK);
 	}
 	
-	 @PostMapping("mypage/favorite")
+	 @GetMapping("mypage/favorite")
 	 public ResponseEntity<List<FavoriteDto>> getMyFavorite(HttpServletRequest httpRequest) {
 	     System.out.println("찜보기");
 	     String token = getTokenFromRequest(httpRequest);
@@ -75,17 +76,16 @@ public class FavoriteController {
 	         // 찜 목록이 비어 있지 않으면 200 OK 응답과 함께 목록을 반환
 	         return ResponseEntity.ok(favoriteList);
 	     } else {
-	         // 찜 목록이 비어 있으면 404 Not Found와 함께 빈 목록을 반환
-	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
+	         return new ResponseEntity<>(new ArrayList<FavoriteDto>(),HttpStatus.OK);
 	     }
 	 }
-	 @GetMapping("/favorite")
-	    public ResponseEntity<Integer> roomGet(@RequestParam int accomNumber, HttpServletRequest httpRequest) {
-	        String token = getTokenFromRequest(httpRequest);
-	        String userId = getUserIdFromToken(token);
+	 @GetMapping("favorite")
+	 public ResponseEntity<Integer> roomGet(@RequestParam int accomNumber, HttpServletRequest httpRequest) {
+	     String token = getTokenFromRequest(httpRequest);
+	     String userId = getUserIdFromToken(token);
 
-	        int count = service.roomGet(accomNumber, userId);
-	        return ResponseEntity.ok(count);
+	     int count = service.roomGet(accomNumber, userId);
+	     return ResponseEntity.ok(count);
 	    }
 	 
 	    private String getTokenFromRequest(HttpServletRequest request) {
