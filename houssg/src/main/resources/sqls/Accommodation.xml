@@ -121,10 +121,11 @@
 	</select>
 	
 	<select id="getDeletionAccom" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number,a.accom_name, a.accom_address, a.id, a.deletion_request, r.review_status
+		SELECT *
 		FROM accommodation a
+		JOIN facility f ON a.accom_number = f.accom_number
 		LEFT JOIN reservation r ON a.accom_number = r.accom_number
-		WHERE deletion_request=1;
+		WHERE a.deletion_request=1
 	</select>
 	
 	<select id="accomScore" resultType="ssg.com.houssg.dto.AccommodationDto">

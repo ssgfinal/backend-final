@@ -301,7 +301,7 @@ public class AccommodationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMessage);
         }
     }
-    @PostMapping("accom/detail")
+    @GetMapping("accom/detail")
     public ResponseEntity<AccommodationDto> getAccom(@RequestParam int accomNumber) {
         System.out.println("리스트에 접근합니다");
         AccommodationDto accommodation;
@@ -315,7 +315,7 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodation, HttpStatus.OK);
     }
 
-    @PostMapping("accom/all")
+    @GetMapping("accom/all")
     public ResponseEntity<List<AccommodationDto>> getAllAccom() {
         System.out.println("전체 숙소 리스트 보기");
         List<AccommodationDto> accommodationList;
@@ -353,7 +353,7 @@ public class AccommodationController {
     	}
     }
     
-    @PostMapping("auth/accom/add/request")
+    @GetMapping("auth/accom/add/request")
     public ResponseEntity<List<AccommodationDto>> getApprovalAccom() {
         System.out.println("숙소등록신청목록보기");
         
@@ -365,7 +365,7 @@ public class AccommodationController {
         	return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-    @PostMapping("auth/accom/del/request")
+    @GetMapping("auth/accom/del/request")
     public List<AccommodationDto> getDeletionAccom() {
         System.out.println("숙소삭제요청목록보기");
         
@@ -374,7 +374,7 @@ public class AccommodationController {
         return deletionAccomList;
     }
     
-    @PostMapping("accom/score")
+    @GetMapping("accom/score")
     public ResponseEntity<List<AccommodationDto>> accomScore(){
         System.out.println("평점 높은 순으로 숙소 보기");
         List<AccommodationDto> accommodationDtoList;
@@ -388,7 +388,7 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
     }
     
-    @PostMapping("accom/20/date")
+    @GetMapping("accom/20/date")
     public ResponseEntity<List<AccommodationDto>> newAccom20() {
         System.out.println("전체 숙소 리스트 날짜순 20개 보기");
         List<AccommodationDto> accommodationList;
@@ -401,7 +401,7 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationList, HttpStatus.OK);
     }
     
-    @PostMapping("accom/20/score")
+    @GetMapping("accom/20/score")
     public ResponseEntity<List<AccommodationDto>> accomScore20(){
         System.out.println("평점 높은 순으로 숙소 20개 보기");
         List<AccommodationDto> accommodationDtoList;

@@ -23,8 +23,8 @@ public class ReviewService {
 		return dao.getMyReview(id);
 	}
 	
-	public List<ReviewDto> getAllReview(int roomNumber, int accomNumber){
-		return dao.getAllReview(roomNumber, accomNumber);
+	public List<ReviewDto> getAllReview(int accomNumber){
+		return dao.getAllReview(accomNumber);
 	}
 	
 	public int updateReview(ReviewDto dto) {
