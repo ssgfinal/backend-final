@@ -54,15 +54,14 @@
 		reservation.end_date
 		> date_range.Date
 		AND reservation.status IN (0, 1)
-		WHERE rooms.room_number = #{roomNumber} <!-- 변경된 부분 -->
+		WHERE rooms.room_number = #{roomNumber}
 		GROUP BY date_range.Date, rooms.room_number
 		ORDER BY date_range.Date,
 		rooms.room_number;
 	</select>
 
 
-
-
+	<!-- 결제 전 예약 가능 여부 라스트 체크 -->
 	<select id="lastCheck"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
@@ -81,13 +80,10 @@
 		AND reservation.start_date &lt;= date_range.Date
 		AND reservation.end_date > date_range.Date
 		AND reservation.status IN (0, 1)
-		WHERE rooms.room_number = #{roomNumber} <!-- 변경된 부분 -->
+		WHERE rooms.room_number = #{roomNumber}
 		GROUP BY date_range.Date, rooms.room_number
 		ORDER BY date_range.Date, rooms.room_number;
 	</select>
-
-
-
 
 
 	<!-- 숙소 정보 조회 -->

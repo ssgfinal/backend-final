@@ -17,7 +17,8 @@
 	</select>
 	
 	<select id="getAllReview" parameterType="java.lang.Integer" resultType="ssg.com.houssg.dto.ReviewDto">
-	    SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name
+
+	    SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name, u.nickname
 	    FROM review r 
 	    JOIN rooms ro ON r.room_number = ro.room_number
 	    JOIN accommodation a ON r.accom_number = a.accom_number
@@ -63,6 +64,6 @@
 	      AND r.reservation_number = #{reservationNumber}
 	      AND r.accom_number = a.accom_number
 	      AND r.manager_id = a.id
-</update>
+	</update>
 
 </mapper>
