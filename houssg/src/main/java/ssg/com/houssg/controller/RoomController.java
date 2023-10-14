@@ -216,8 +216,8 @@ public class RoomController {
 	         roomServiceDto.setDoubleBed(roomServiceDtoList[3]);
 	         roomServiceDto.setQueenBed(roomServiceDtoList[4]);
 	         roomServiceDto.setKingBed(roomServiceDtoList[5]);
-
 	         System.out.println(roomServiceDto.toString());
+	         service.addRoom(roomDto, roomServiceDto);
 	         // 이미지를 수정할 때 기존 이미지를 유지하고 새 이미지를 추가
 	         InnerDto innerDto = new InnerDto();
 	         innerDto.setRoomNumber(roomDto.getRoomNumber());
