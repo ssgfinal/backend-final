@@ -30,4 +30,7 @@ public interface CouponDao {
 	
 	// 유저 - 쿠폰번호 중복 조회
 	int userCouponNumberCheck(String couponNumber);
+	
+	// 유저 - 나의 쿠폰 조회
+	List<CouponDto> myCoupon(String id);
 }

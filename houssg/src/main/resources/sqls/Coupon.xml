@@ -52,6 +52,13 @@
 		resultType="ssg.com.houssg.dto.CouponDto">
 		SELECT * FROM coupon WHERE coupon_number = #{couponNumber}
 	</select>
-
+	
+	<!-- 유저 - 나의 쿠폰 조회 -->
+	<select id="myCoupon" parameterType="string"
+		resultType="ssg.com.houssg.dto.CouponDto">
+		SELECT *
+		FROM user_coupon
+		WHERE id = #{id} AND is_used = 0
+	</select>
 
 </mapper>
