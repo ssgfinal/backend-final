@@ -12,7 +12,11 @@ import ssg.com.houssg.dto.AccommodationParam;
 @Repository
 public interface AccommodationDao {
 
-	List<AccommodationDto> getAddressSearch(AccommodationParam param);
+	List<AccommodationDto> getAddressSearch(String search);
+	
+	List<AccommodationDto> typeSearch(String type);
+	
+	List<AccommodationDto> search(AccommodationParam param);
 	
 	List<AccommodationDto> getMyAccom(String id);
 	

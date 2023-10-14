@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.naming.directory.SearchResult;
+
 import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,45 +88,26 @@ public class AccommodationController {
             return new ResponseEntity<>("서버 오류", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("search")
-    public ResponseEntity<List<AccommodationDto>> getAddressSearch(
-    		@RequestParam(value = "search", required = false) String search,
-    	    @RequestParam(value = "type", required = false) String type,
-    	    @RequestParam(value = "startDate", required = false) String startDate,
-    	    @RequestParam(value = "endDate", required = false) String endDate) {
-
-    AccommodationParam param = new AccommodationParam();
-
-        if (search != null && !search.equals("")) {
-            search = "%" + search.replace(" ", "%") + "%";
-            System.out.println(search);
-            param.setSearch(search);
+    @GetMapping("/search")
+    public ResponseEntity<List<AccommodationDto>> getAddressSearch(@RequestParam(name = "search", required = false) String search,
+                                                                 @RequestParam(name = "type", required = false) String type) {
+    	List<AccommodationDto> searchResults;
+    	AccommodationParam param = new AccommodationParam(search, type);
+        if (type != null && search != null) {
+        	System.out.println(param.toString());
+            searchResults = service.search(param);
+        } else if (type != null) {
+        	System.out.println(param.toString());
+            searchResults = service.typeSearch(type);
+        } else if (search != null) {
+        	System.out.println(param.toString());
+            searchResults = service.getAddressSearch(search);
+        } else {
+            return new ResponseEntity<>(new ArrayList<AccommodationDto>(), HttpStatus.OK);
         }
-         
-        if (type != null && !type.equals("")) {
-        	System.out.println(type);
-            param.setType(type);
-        }
-
-        if (startDate != null && !startDate.equals("") && endDate != null && !endDate.equals("")) {
-            // 시작 날짜와 종료 날짜가 모두 제공된 경우에만 설정
-        	System.out.println(startDate+endDate);
-            param.setStartDate(startDate);
-            param.setEndDate(endDate);
-        }
-
-        List<AccommodationDto> accommodations = service.getAddressSearch(param);
-        System.out.println(param.toString());
-        System.out.println(accommodations);
-        // 검색 결과가 비어 있는 경우 NOT_FOUND 응답을 반환할 수 있습니다.
-        if (accommodations.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // 검색 결과가 비어 있지 않은 경우 OK 응답과 함께 검색 결과를 반환합니다.
-        return ResponseEntity.ok(accommodations);
+        return ResponseEntity.ok(searchResults);
     }
-    
+
 
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart("file") MultipartFile file,
