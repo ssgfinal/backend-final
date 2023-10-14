@@ -10,6 +10,7 @@ public class RoomRequest {
 	private int roomAvailability;
 	private int accomNumber;
 	private int roomServiceDto[];
+	private String[] resistImage;
 	public int getRoomNumber() {
 		return roomNumber;
 	}
@@ -46,11 +47,17 @@ public class RoomRequest {
 	public void setRoomServiceDto(int[] roomServiceDto) {
 		this.roomServiceDto = roomServiceDto;
 	}
+	public String[] getResistImage() {
+		return resistImage;
+	}
+	public void setResistImage(String[] resistImage) {
+		this.resistImage = resistImage;
+	}
 	public RoomRequest() {
 		super();
 	}
-	public RoomRequest(int roomNumber, String roomCategory, int roomPrice, int roomAvailability,
-			int accomNumber, int[] roomServiceDto) {
+	public RoomRequest(int roomNumber, String roomCategory, int roomPrice, int roomAvailability, int accomNumber,
+			int[] roomServiceDto, String[] resistImage) {
 		super();
 		this.roomNumber = roomNumber;
 		this.roomCategory = roomCategory;
@@ -58,12 +65,12 @@ public class RoomRequest {
 		this.roomAvailability = roomAvailability;
 		this.accomNumber = accomNumber;
 		this.roomServiceDto = roomServiceDto;
+		this.resistImage = resistImage;
 	}
 	@Override
 	public String toString() {
-		return "RoomRequest [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory
-				 + ", roomPrice=" + roomPrice + ", roomAvailability=" + roomAvailability + ", accomNumber="
-				+ accomNumber + ", roomServiceDto=" + Arrays.toString(roomServiceDto) + "]";
+		return "RoomRequest [roomNumber=" + roomNumber + ", roomCategory=" + roomCategory + ", roomPrice=" + roomPrice
+				+ ", roomAvailability=" + roomAvailability + ", accomNumber=" + accomNumber + ", roomServiceDto="
+				+ Arrays.toString(roomServiceDto) + ", resistImage=" + Arrays.toString(resistImage) + "]";
 	}
-	
 }
