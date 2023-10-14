@@ -217,10 +217,10 @@ public class RoomController {
 	         roomServiceDto.setQueenBed(roomServiceDtoList[4]);
 	         roomServiceDto.setKingBed(roomServiceDtoList[5]);
 	         System.out.println(roomServiceDto.toString());
-	         service.addRoom(roomDto, roomServiceDto);
+	         service.updateRoom(roomDto, roomServiceDto);
 	         // 이미지를 수정할 때 기존 이미지를 유지하고 새 이미지를 추가
 	         InnerDto innerDto = new InnerDto();
-	         innerDto.setRoomNumber(roomDto.getRoomNumber());
+	         innerDto.setRoomNumber(request.getRoomNumber());
 	         List<String> resistFileList = new ArrayList<>(Arrays.asList(request.getResistImage()));
 
 	         if (resistFileList != null && !resistFileList.isEmpty()) {
