@@ -195,7 +195,7 @@
 	</update>
 
 	<!-- 이용완료 시 포인트 적립 -->
-	<update id="accumulatePoints">
+	<update id="paymentRewards">
 		UPDATE user AS u
 		JOIN reservation AS r ON r.id = u.id
 		SET u.point = u.point + (r.payment_amount * 0.05)

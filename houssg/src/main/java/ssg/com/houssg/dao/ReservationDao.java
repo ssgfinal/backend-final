@@ -44,7 +44,7 @@ public interface ReservationDao {
 	void usedCheck();
 	
 	// 포인트 적립
-	void accumulatePoints(UserDto userDto);
+	void paymentRewards(UserDto userDto);
 	
 	// 사용한 쿠폰 is_used 변경
 	void usedCoupon(String couponNumber);
@@ -52,7 +52,6 @@ public interface ReservationDao {
 	// 사용한 포인트 차감
 	void usedPoint(String Id, int usePoint);
 
-	
 	// 유저 -ID로 예약내역정보 조회
 	List<ReservationDto> findRerservationById(String Id);
 	
