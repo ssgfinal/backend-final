@@ -4,29 +4,65 @@
 
 <mapper namespace="ssg.com.houssg.dao.AccommodationDao">
 	
-	<select id="getAddressSearch" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
-	    SELECT DISTINCT a.*
+	<select id="getAddressSearch" parameterType="string" resultType="ssg.com.houssg.dto.AccommodationDto">
+		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating
 	    FROM accommodation a
-	    WHERE
-	    <if test="search != null and search != ''">
-	        a.accom_address LIKE CONCAT('%', #{search}, '%')
-	    </if>
-	    <if test="type != null and type != ''">
-	        AND a.accom_category = #{type}
-	    </if>
-	    AND EXISTS (
-	        SELECT 1
-	        FROM rooms r
-	        WHERE r.accom_number = a.accom_number
-	    )
-	    AND EXISTS (
-	        SELECT 1
-	        FROM reservation re
-	        WHERE re.accom_number = a.accom_number
-	        AND re.start_date &lt;= #{startDate} AND re.end_date &gt;= #{endDate}
-	    )
+	    JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    WHERE report_status = 0
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+	    WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0) 
+	    AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
+		OR (REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%')))
+	    GROUP BY a.accom_number
 	</select>
 
+	<select id="typeSearch" parameterType="string" resultType="ssg.com.houssg.dto.AccommodationDto">
+	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating
+	    FROM accommodation a
+	    JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    WHERE report_status = 0
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
+		AND (a.accom_category = #{type})
+		GROUP BY a.accom_number
+	</select>
+	
+	<select id="search" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
+	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
+		    MIN(ro.room_price) AS min_price, 
+		    IFNULL(r.review_count, 0) AS review_count,
+		    IFNULL(r.avg_rating, 0.0) AS avg_rating
+	    FROM accommodation a
+	    JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    WHERE report_status = 0
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
+		AND (a.accom_category = #{type})
+		AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
+		OR REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
+		GROUP BY a.accom_number
+	</select>
 	
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
 	<insert id="insertAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">
@@ -66,9 +102,10 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
+		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
-		WHERE a.accom_number = #{accomNumber} and (a.deletion_request = 0 OR a.deletion_request = 1)
+		WHERE a.accom_number = #{accomNumber} and (a.deletion_request = 0 OR a.deletion_request = 1) and add_request=0
 	</select>
 	
 	<update id="updateRequest" parameterType="int">
@@ -94,9 +131,10 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
+		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
-		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
+		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0 AND r.report_status = 0 
 		GROUP BY a.accom_number
 		ORDER BY a.accom_number DESC
 	</select>	
@@ -139,6 +177,7 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
+		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
@@ -157,6 +196,7 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
+		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
@@ -176,6 +216,7 @@
         LEFT JOIN (
             SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
             FROM review
+            WHERE report_status = 0
             GROUP BY accom_number
         ) r ON a.accom_number = r.accom_number
         WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
