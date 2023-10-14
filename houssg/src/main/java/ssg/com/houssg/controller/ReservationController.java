@@ -64,9 +64,9 @@ public class ReservationController {
 					bookableRoomJson.put("availableRooms", bookableRoom.getAvailableRooms());
 					bookableRoomArray.add(bookableRoomJson);
 				}
-				responseJson.set("bookalbeRoomList", bookableRoomArray);
+				responseJson.set("bookableRoomList", bookableRoomArray);
 			} else {
-				responseJson.set("bookalbeRoomList", null);
+				responseJson.set("bookableRoomList", null);
 			}
 
 			// Coupon 정보

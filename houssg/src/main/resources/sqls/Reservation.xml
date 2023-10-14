@@ -34,7 +34,8 @@
 	<select id="getReservationStatusForYearMonth"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
-		rooms.room_number AS roomNumber,
+		rooms.room_number AS
+		roomNumber,
 		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
 		reservation.start_date &lt;= date_range.Date AND reservation.end_date
 		> date_range.Date THEN
@@ -55,7 +56,8 @@
 		> date_range.Date
 		AND reservation.status IN (0, 1)
 		WHERE rooms.room_number = #{roomNumber}
-		GROUP BY date_range.Date, rooms.room_number
+		GROUP BY date_range.Date,
+		rooms.room_number
 		ORDER BY date_range.Date,
 		rooms.room_number;
 	</select>
@@ -65,23 +67,29 @@
 	<select id="lastCheck"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
-		rooms.room_number AS roomNumber,
+		rooms.room_number AS
+		roomNumber,
 		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
-		reservation.start_date &lt;= date_range.Date AND reservation.end_date > date_range.Date THEN
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date
+		> date_range.Date THEN
 		1 ELSE 0 END), 0) AS availableRooms
 		FROM (
-		SELECT DATE_ADD(#{startDate}, INTERVAL n DAY) AS Date
+		SELECT
+		DATE_ADD(#{startDate}, INTERVAL n DAY) AS Date
 		FROM for_count
-		WHERE DATE_ADD(#{startDate}, INTERVAL n DAY) BETWEEN #{startDate} AND
+		WHERE
+		DATE_ADD(#{startDate}, INTERVAL n DAY) BETWEEN #{startDate} AND
 		DATE_SUB(#{endDate}, INTERVAL 1 DAY)
 		) AS date_range
 		CROSS JOIN rooms
 		LEFT JOIN reservation ON reservation.room_number = rooms.room_number
 		AND reservation.start_date &lt;= date_range.Date
-		AND reservation.end_date > date_range.Date
+		AND
+		reservation.end_date > date_range.Date
 		AND reservation.status IN (0, 1)
 		WHERE rooms.room_number = #{roomNumber}
-		GROUP BY date_range.Date, rooms.room_number
+		GROUP BY date_range.Date,
+		rooms.room_number
 		ORDER BY date_range.Date, rooms.room_number;
 	</select>
 
@@ -176,12 +184,23 @@
 		#{Id}
 	</update>
 
+	<!-- 예약 상태 변경 (usedCheck) -->
+	<update id="usedCheck">
+		UPDATE reservation AS r
+		JOIN user AS u ON r.id =
+		u.id
+		SET r.status = 2
+		WHERE r.status = 1
+		AND r.end_date = CURDATE();
+	</update>
+
 	<!-- 이용완료 시 포인트 적립 -->
-	<update id="accumulatePoints"
-		parameterType="ssg.com.houssg.dto.UserDto">
-		UPDATE user
-		SET point = point + (#{paymentAmount} * 0.05)
-		WHERE id = #{Id}
+	<update id="accumulatePoints">
+		UPDATE user AS u
+		JOIN reservation AS r ON r.id = u.id
+		SET u.point = u.point + (r.payment_amount * 0.05)
+		WHERE r.status = 2
+		AND r.end_date = CURDATE();
 	</update>
 
 	<!-- 유저 - 예약내역 조회 -->

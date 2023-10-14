@@ -16,7 +16,7 @@ import ssg.com.houssg.dto.RequestDto;
 import ssg.com.houssg.dto.SmsResponseDto;
 import ssg.com.houssg.dto.UserDto;
 import ssg.com.houssg.service.UserService;
-import ssg.com.houssg.service.VerificationCodeCleanupService;
+import ssg.com.houssg.service.AutoProcessService;
 import ssg.com.houssg.util.SmsUtil;
 import ssg.com.houssg.util.VerificationCodeValidator;
 
@@ -35,7 +35,7 @@ public class SmsController {
 	private SmsCodeDao smsCodeDao;
 	
 	@Autowired
-    private VerificationCodeCleanupService verificationCodeCleanupService;
+    private AutoProcessService verificationCodeCleanupService;
 	
 
 	@PostMapping("/sign-up")
