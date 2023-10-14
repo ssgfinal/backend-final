@@ -41,16 +41,17 @@ public interface ReservationDao {
 	void cancelReservation();
 
 	// 이용 완료
-	void completeUsage();
-
+	void usedCheck();
+	
+	// 포인트 적립
+	void accumulatePoints(UserDto userDto);
+	
 	// 사용한 쿠폰 is_used 변경
 	void usedCoupon(String couponNumber);
 
 	// 사용한 포인트 차감
 	void usedPoint(String Id, int usePoint);
 
-	// 포인트 적립
-	void accumulatePoints(UserDto userDto);
 	
 	// 유저 -ID로 예약내역정보 조회
 	List<ReservationDto> findRerservationById(String Id);

@@ -95,10 +95,10 @@ public class ReservationService {
 		System.out.println(usePoint + "포인트 차감함");
 	}
 
-	@Transactional
-	public void accumulatePoints(UserDto userDto, double paymentAmount) {
-		dao.accumulatePoints(userDto);
-	}
+//	@Transactional
+//	public void accumulatePoints(UserDto userDto, double paymentAmount) {
+//		dao.accumulatePoints(userDto);
+//	}
 
 	// 유저 - Id로 예약내역 조회
 	public List<ReservationDto> findRerservationById(String Id) {
