@@ -2,6 +2,7 @@ package ssg.com.houssg.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,42 +169,41 @@ public class RoomController {
 	    }
 	 
 	 @PatchMapping(value = "room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	 public ResponseEntity<String> updateRoom(@RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFileList,
-	                                          @RequestPart RoomRequest request,
-	                                          HttpServletRequest httprequest) {
+	 public ResponseEntity<String> updateRoom(
+	     @RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFileList,
+	     @RequestPart RoomRequest request,
+	     HttpServletRequest httprequest
+	 ) {
 	     try {
-	    	 System.out.println("객실 업데이트 시작");
-
+	         System.out.println("객실 업데이트 시작");
 	         List<String> changeFileList = new ArrayList();
-
+	      // 필수 필드인 roomNumber 검사
+	         Integer roomNumber = request.getRoomNumber();
+	         Integer accomNumber = request.getAccomNumber();
+	         if (roomNumber == null || roomNumber.intValue() == 0) {
+	             return new ResponseEntity<>("roomNumber 필드는 필수입니다.", HttpStatus.BAD_REQUEST);
+	         } else if (accomNumber == null || accomNumber.intValue() == 0) {
+	        	 return new ResponseEntity<>("accomNumber 필드는 필수입니다.",HttpStatus.BAD_REQUEST);
+	         }
 	         if (multiFileList != null && !multiFileList.isEmpty()) {
 	             for (int i = 0; i < multiFileList.size(); i++) {
 	                 MultipartFile file = multiFileList.get(i);
 	                 String originalFileName = file.getOriginalFilename();
-
 	                 // 파일 이름이 null 또는 빈 문자열인 경우 스킵
 	                 if (originalFileName == null || originalFileName.isEmpty()) {
 	                     continue;
 	                 }
-
 	                 // Cloudinary를 사용하여 파일 업로드
 	                 String cloudinaryImageUrl = uploadImage(file);
 	                 changeFileList.add(cloudinaryImageUrl);
 	                 System.out.println("업로드 성공: " + cloudinaryImageUrl);
 	             }
 	         }
-
-	         System.out.println(multiFileList);
-
 	         RoomDto roomDto = new RoomDto();
 	         roomDto.setRoomNumber(request.getRoomNumber());
 	         roomDto.setRoomCategory(request.getRoomCategory());
 	         roomDto.setRoomPrice(request.getRoomPrice());
-
-	         // "roomAvailability:"에서 콜론(예상치 못한 문자) 제거
-	         // 이 부분이 예기치 않은 문자 오류의 원인이었습니다.
-	         roomDto.setRoomAvailability(request.getRoomAvailability()); 
-
+	         roomDto.setRoomAvailability(request.getRoomAvailability());
 	         roomDto.setAccomNumber(request.getAccomNumber());
 	         System.out.println(roomDto.toString());
 
@@ -218,58 +218,40 @@ public class RoomController {
 	         roomServiceDto.setKingBed(roomServiceDtoList[5]);
 
 	         System.out.println(roomServiceDto.toString());
-
-	         service.updateRoom(roomDto, roomServiceDto);
-
+	         // 이미지를 수정할 때 기존 이미지를 유지하고 새 이미지를 추가
 	         InnerDto innerDto = new InnerDto();
 	         innerDto.setRoomNumber(roomDto.getRoomNumber());
+	         List<String> resistFileList = new ArrayList<>(Arrays.asList(request.getResistImage()));
 
-	         // 파일을 업로드한 경우에만 이미지 경로 설정
-	         if (!changeFileList.isEmpty()) {
-	             for (int i = 0; i < changeFileList.size() && i < 10; i++) {
-	                 switch (i) {
-	                     case 0:
-	                         innerDto.setImg1(changeFileList.get(i));
-	                         break;
-	                     case 1:
-	                         innerDto.setImg2(changeFileList.get(i));
-	                         break;
-	                     case 2:
-	                         innerDto.setImg3(changeFileList.get(i));
-	                         break;
-	                     case 3:
-	                         innerDto.setImg4(changeFileList.get(i));
-	                         break;
-	                     case 4:
-	                         innerDto.setImg5(changeFileList.get(i));
-	                         break;
-	                     case 5:
-	                         innerDto.setImg6(changeFileList.get(i));
-	                         break;
-	                     case 6:
-	                         innerDto.setImg7(changeFileList.get(i));
-	                         break;
-	                     case 7:
-	                         innerDto.setImg8(changeFileList.get(i));
-	                         break;
-	                     case 8:
-	                         innerDto.setImg9(changeFileList.get(i));
-	                         break;
-	                     case 9:
-	                         innerDto.setImg10(changeFileList.get(i));
-	                         break;
+	         if (resistFileList != null && !resistFileList.isEmpty()) {
+	             // 기존 이미지 유지
+	             for (int i = 0; i < 10; i++) {
+	                 if (i < resistFileList.size()) {
+	                     innerDto.setImg(i, resistFileList.get(i));                    
 	                 }
 	             }
-	             System.out.println(innerDto.toString());
+	             // 새 이미지 추가
+	             for (int i = resistFileList.size(); i < resistFileList.size() + changeFileList.size() && i < 10; i++) {
+	                 innerDto.setImg(i, changeFileList.get(i - resistFileList.size()));	                
+	             }
+	             // 나머지 이미지 초기화
+	             for (int i = resistFileList.size() + changeFileList.size(); i < 10; i++) {
+	                 innerDto.setImg(i, null);
+	             }	          
 	             innerService.updateInnerView(innerDto);
+	         } else {
+	             // 기존 이미지 유지하지 않고 모든 이미지를 새 이미지로 설정
+	             for (int i = 0; i < changeFileList.size() && i < 10; i++) {
+	                 innerDto.setImg(i, changeFileList.get(i));
+	             }
 	         }
+	         System.out.println(innerDto.toString());
+	         innerService.updateInnerView(innerDto);
 	         System.out.println("객실 업데이트 완료");
-
 	         return new ResponseEntity<>("방 업데이트 성공", HttpStatus.OK);
 	     } catch (Exception e) {
 	         System.out.println("객실 업데이트 실패");
 	         e.printStackTrace();
-
 	         return new ResponseEntity<>("객실 업데이트 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	     }
 	 }
