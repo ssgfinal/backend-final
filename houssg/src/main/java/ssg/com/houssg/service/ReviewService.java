@@ -27,8 +27,8 @@ public class ReviewService {
 		return dao.getAllReview(accomNumber);
 	}
 	
-	public int updateReview(ReviewDto dto) {
-		return dao.updateReview(dto);
+	public int updateReview(int reviewNumber, String reportMessage) {
+		return dao.updateReview(reviewNumber, reportMessage);
 	}
 	public int deleteReview(int reviewNumber) {
 		return dao.deleteReview(reviewNumber);
@@ -37,10 +37,10 @@ public class ReviewService {
 	public List<ReviewDto> getAuthReview(){
 		return dao.getAuthReview();
 	}
-	public int addComment(int reviewNumber, int reservationNumber, String reviewComment) {
-		return dao.addComment(reviewNumber, reservationNumber, reviewComment);
+	public int addComment(int reviewNumber, String reviewComment) {
+		return dao.addComment(reviewNumber, reviewComment);
 	}
-	public int updateComment(int reviewNumber, int reservationNumber, String reviewComment) {
-		return dao.updateComment(reviewNumber, reservationNumber, reviewComment);
+	public int updateComment(int reviewNumber, String reviewComment) {
+		return dao.updateComment(reviewNumber, reviewComment);
 	}
 }

@@ -11,19 +11,20 @@ import ssg.com.houssg.dto.ReviewDto;
 @Repository
 public interface ReviewDao {
 
+	// 리뷰 추가
 	int addReview(ReviewDto dto);
-	
+	// 마이 리뷰 보기
 	List<ReviewDto> getMyReview(String id);
-	
+	// 한 숙소 리뷰 보기
 	List<ReviewDto> getAllReview(int accomNumber);
-	
-	int updateReview(ReviewDto dto);
-	
+	// 리뷰 신고하기
+	int updateReview(int reviewNumber, String reportMessage);
+	// 리뷰 삭제하기
 	int deleteReview(int reviewNumber);
-	
+	// 신고한 리뷰보기
 	List<ReviewDto> getAuthReview();
-	
-	int addComment(int reviewNumber, int reservationNumber, String reviewComment);
-	
-	int updateComment(int reviewNumber, int reservationNumber, String reviewComment);
+	// 답글 추가
+	int addComment(int reviewNumber, String reviewComment);
+	// 답글 수정
+	int updateComment(int reviewNumber, String reviewComment);
 }
