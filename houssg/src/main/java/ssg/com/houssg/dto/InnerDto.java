@@ -13,8 +13,47 @@ public class InnerDto {
 	private String img8;
 	private String img9;
 	private String img10;
+	private String[] img = new String[10];
 	
 
+	public String getImg(int index, String img) {
+        return this.img[index];
+    }
+	public void setImg(int index, String imageUrl) {
+	    // 0부터 9까지의 index에 대한 이미지를 설정합니다.
+	    switch (index) {
+	        case 0:
+	            img1 = imageUrl;
+	            break;
+	        case 1:
+	            img2 = imageUrl;
+	            break;
+	        case 2:
+	        	img3 = imageUrl;
+  				break;
+	        case 3:
+	        	img4 = imageUrl;
+  				break;
+	        case 4:
+	        	img5 = imageUrl;
+  				break;
+	        case 5:
+	        	img6 = imageUrl;
+  				break;
+	        case 6:
+	        	img7 = imageUrl;
+  				break;
+	        case 7:
+	        	img8 = imageUrl;
+  				break;
+	        case 8:
+	        	img9 = imageUrl;
+  				break;
+	        case 9:
+	        	img10 =imageUrl;
+  				break;
+	    }
+	}
 	public int getRoomNumber() {
 		return roomNumber;
 	}
