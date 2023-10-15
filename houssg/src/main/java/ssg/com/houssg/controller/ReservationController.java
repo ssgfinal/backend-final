@@ -1,7 +1,10 @@
 package ssg.com.houssg.controller;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -170,9 +173,9 @@ public class ReservationController {
 					bookableRoomJson.put("availableRooms", bookableRoom.getAvailableRooms());
 					bookableRoomArray.add(bookableRoomJson);
 				}
-				responseJson.set("bookalbeRoomList", bookableRoomArray);
+				responseJson.set("bookableRoomList", bookableRoomArray);
 			} else {
-				responseJson.set("bookalbeRoomList", null);
+				responseJson.set("bookableRoomList", null);
 			}
 
 			// JSON 문자열 반환
@@ -196,31 +199,44 @@ public class ReservationController {
 		return reservationService.findRerservationById(userId);
 	}
 
-//	// 사업자 - 네비바 - 예약확인 버튼
-//	@GetMapping("/owner/check")
-//	public ResponseEntity<String> getOwnerReservation(HttpServletRequest request, @RequestParam String yearMonth) {
-//		
-//		// HTTP 요청 헤더에서 토큰 추출
-//		String token = getTokenFromRequest(request);
-//		String ownerId = getUserIdFromToken(token);
-//
-//		// 해당 사업자가 소유한 숙소 목록을 가져옵니다.
-//		List<AccomListDto> accommodationList = accommodationService.getAccommodationByOwnerId(ownerId);
-//
-//		if (accommodationList != null && !accommodationList.isEmpty()) {
-//			// 첫 번째 숙소의 ID를 가져옵니다.
-//			String accomNumber = accommodationList.get(0).getAccomNumber();
-//
-//			// 예약 내역을 가져옵니다.
-//			List<AccomReservationListDto> reservations = accommodationService.getHistoryForOwner(accomNumber,
-//					yearMonth);
-//
-//			return reservations;
-//		} else {
-//			// 숙소가 없는 경우 빈 리스트를 반환하거나 다른 처리를 수행할 수 있습니다.
-//			return Collections.emptyList();
-//		}
-//	}
+	// 사업자 - 네비바 - 예약확인 버튼
+	@GetMapping("/owner/check")
+	public ResponseEntity<Map<String, Object>> getOwnerReservation(HttpServletRequest request, @RequestParam String yearMonth) {
+	    try {
+	        String token = getTokenFromRequest(request);
+	        String ownerId = getUserIdFromToken(token);
+
+	        List<AccomListDto> accommodationList = reservationService.getAccommodationByOwnerId(ownerId);
+
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("accommodationList", accommodationList);
+
+	        if (accommodationList != null && !accommodationList.isEmpty()) {
+	            int accomNumber = accommodationList.get(1).getAccomNumber();
+	            System.out.println(accomNumber);
+	            List<AccomReservationListDto> reservations = reservationService.getHistoryForOwner(accomNumber, yearMonth);
+	            System.out.println(reservations);
+	            response.put("reservations", reservations);
+	        } else {
+	        	// 예약이 없는 경우에 빈배열 출력
+	            response.put("reservations", Collections.emptyList());
+	        }
+
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(400).build();
+	    }
+	}
+	
+	
+	// 사업자 - 예약확인 - 캘린더 월 이동, 숙소종류변경, 예약내역보기버튼
+	@GetMapping("/owner/check-other")
+	public List<AccomReservationListDto> getOwnerReservationForOther(@RequestParam int accomNumber, @RequestParam String yearMonth) {
+	    List<AccomReservationListDto> reservations = reservationService.getHistoryForOwner(accomNumber, yearMonth);
+	    return reservations;
+	}
+
 
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {

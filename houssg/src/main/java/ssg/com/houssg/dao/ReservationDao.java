@@ -64,6 +64,6 @@ public interface ReservationDao {
     List<AccomListDto> getAccommodationByOwnerId(String id);
     
     // 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
-    List<AccomReservationListDto> getHistoryForOwner(String accomNumber, String yearMonth);
+    List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth);
 }
 
