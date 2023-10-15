@@ -134,7 +134,7 @@
 		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
-		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0 AND r.report_status = 0 
+		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0 
 		GROUP BY a.accom_number
 		ORDER BY a.accom_number DESC
 	</select>	
