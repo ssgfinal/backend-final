@@ -127,10 +127,10 @@ public class ReviewController {
 	    }
 	}
 	@PatchMapping("review/report")
-	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber) {
+	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber,@RequestParam String reportMessage) {
 		    System.out.println("리뷰 신고하기");
   
-		    int count = service.updateReview(reviewNumber);
+		    int count = service.updateReview(reviewNumber,reportMessage);
 		    
 		    if (count == 0) {
 		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO");
@@ -165,42 +165,33 @@ public class ReviewController {
 		}
 	// 답글 추가
 	@PatchMapping("review/comment/add")
-	public ResponseEntity<List<ReviewDto>> addComment(@RequestParam int reviewNumber,
-											          @RequestParam String reportMessage,
-											          @RequestParam String reviewComment) {
+	public ResponseEntity<String> addComment(@RequestParam int reviewNumber, @RequestParam String reviewComment) {
 	    try {
-	        System.out.println("답글 추가");
-	        
-	        // 요청 매개변수를 사용하여 ReviewDto 객체 생성
-	        ReviewDto dto = new ReviewDto();
-	        dto.setReviewNumber(reviewNumber);
-	        dto.setReportMessage(reportMessage);
-	        dto.setReviewComment(reviewComment);
-	        
-	        int count = service.addComment(reviewNumber, reportMessage, reviewComment); // updateComment 메서드를 호출하여 댓글을 추가합니다.
-	        if (count > 0) {
-	            List<ReviewDto> updatedReviews = service.getAllReview(dto.getAccomNumber()); // 업데이트된 리뷰 목록을 가져옵니다.
-	            return ResponseEntity.ok(updatedReviews); // 성공한 경우 업데이트된 리뷰 목록을 반환합니다.
+	        System.out.println("답글 추가 시작");
+
+	        // 댓글을 추가하는 비즈니스 로직 수행
+	        int count = service.addComment(reviewNumber, reviewComment);
+
+	        // 댓글 추가가 성공한 경우
+	        if (count == 1) {
+	            return new ResponseEntity<>("comment 등록 성공", HttpStatus.OK);
 	        } else {
-	            return ResponseEntity.badRequest().build(); // 실패한 경우 Bad Request를 반환합니다.
+	            return new ResponseEntity<>("comment 등록 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	        }
 	    } catch (Exception e) {
-	        // 예외 처리: 예외 발생 시 클라이언트에 오류 응답을 반환합니다.
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	        // 예외 처리: 예외 발생 시 서버 오류 응답을 반환
+	        return new ResponseEntity<>("comment 등록 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 
+
 	@PatchMapping("review/comment")
-	public ResponseEntity<String> updateComment(
-			@RequestParam int reviewNumber,
-	        @RequestParam String reportMessage,
-	        @RequestParam String reviewComment
-	) {
+	public ResponseEntity<String> updateComment(@RequestParam int reviewNumber, @RequestParam String reviewComment) {
 	    System.out.println("답글 수정");
 	    
-	    int result = service.updateComment(reviewNumber, reportMessage, reviewComment);
+	    int count = service.updateComment(reviewNumber, reviewComment);
 	    
-	    if (result == 1) {
+	    if (count == 1) {
 	        return new ResponseEntity<>("Comment updated successfully", HttpStatus.OK);
 	    } else {
 	        return new ResponseEntity<>("Comment update failed", HttpStatus.INTERNAL_SERVER_ERROR);

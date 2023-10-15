@@ -27,9 +27,10 @@
 	    ORDER BY r.review_creation_time DESC
 	</select>
 	<!-- 리뷰 신고하기 -->
-	<update id="updateReview" parameterType="java.lang.Integer">
+	<update id="updateReview" parameterType="ssg.com.houssg.dto.ReviewDto">
 		UPDATE review 
-		SET	report_status=1
+		SET	report_status = 1 AND
+			report_message = #{reportMessage}
 		WHERE review_number=#{reviewNumber}
 	</update>
 	<!-- 리뷰 삭제하기 -->
@@ -49,10 +50,8 @@
 	    INNER JOIN accommodation AS a ON r.accom_number = a.accom_number
 	    SET r.review_comment = #{reviewComment},
 	    	r.review_comment_time = now(),
-	    	r.manager_id = a.id,
-	    	r.report_message = #{reportMessage}
+	    	r.manager_id = a.id
 	    WHERE r.review_number = #{reviewNumber}
-	      AND r.reservation_number = #{reservationNumber}
 	      AND r.accom_number = a.accom_number
 	      AND r.manager_id = a.id
 	</update>
@@ -61,8 +60,7 @@
 	    UPDATE review AS r
 	    INNER JOIN accommodation AS a ON r.accom_number = a.accom_number
 	    SET r.review_comment = #{reviewComment},
-		    r.review_comment_time = now(),
-		    r.report_message = #{reportMessage}
+		    r.review_comment_time = now()
 	    WHERE r.review_number = #{reviewNumber}
 	      AND r.accom_number = a.accom_number
 	      AND r.manager_id = a.id
