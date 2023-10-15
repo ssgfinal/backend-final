@@ -1,6 +1,7 @@
 package ssg.com.houssg.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +29,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
+import ssg.com.houssg.dto.BookableRoomForOwnerDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
+import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
 import ssg.com.houssg.service.ReservationService;
 import ssg.com.houssg.util.ReservationUtil;
@@ -201,42 +204,75 @@ public class ReservationController {
 
 	// 사업자 - 네비바 - 예약확인 버튼
 	@GetMapping("/owner/check")
-	public ResponseEntity<Map<String, Object>> getOwnerReservation(HttpServletRequest request, @RequestParam String yearMonth) {
-	    try {
-	        String token = getTokenFromRequest(request);
-	        String ownerId = getUserIdFromToken(token);
+	public ResponseEntity<Map<String, Object>> getOwnerReservation(HttpServletRequest request,
+			@RequestParam String yearMonth) {
+		try {
+			String token = getTokenFromRequest(request);
+			String ownerId = getUserIdFromToken(token);
 
-	        List<AccomListDto> accommodationList = reservationService.getAccommodationByOwnerId(ownerId);
+			List<AccomListDto> accommodationList = reservationService.getAccommodationByOwnerId(ownerId);
 
-	        Map<String, Object> response = new HashMap<>();
-	        response.put("accommodationList", accommodationList);
+			Map<String, Object> response = new HashMap<>();
+			response.put("accommodationList", accommodationList);
 
-	        if (accommodationList != null && !accommodationList.isEmpty()) {
-	            int accomNumber = accommodationList.get(1).getAccomNumber();
-	            System.out.println(accomNumber);
-	            List<AccomReservationListDto> reservations = reservationService.getHistoryForOwner(accomNumber, yearMonth);
-	            System.out.println(reservations);
-	            response.put("reservations", reservations);
-	        } else {
-	        	// 예약이 없는 경우에 빈배열 출력
-	            response.put("reservations", Collections.emptyList());
-	        }
+			if (accommodationList != null && !accommodationList.isEmpty()) {
+				int accomNumber = accommodationList.get(1).getAccomNumber();
+				System.out.println(accomNumber);
+				List<AccomReservationListDto> reservations = reservationService.getHistoryForOwner(accomNumber,
+						yearMonth);
+				System.out.println(reservations);
+				response.put("reservations", reservations);
+			} else {
+				// 예약이 없는 경우에 빈배열 출력
+				response.put("reservations", Collections.emptyList());
+			}
 
-	        return ResponseEntity.ok(response);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(400).build();
-	    }
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(400).build();
+		}
 	}
-	
-	
+
 	// 사업자 - 예약확인 - 캘린더 월 이동, 숙소종류변경, 예약내역보기버튼
 	@GetMapping("/owner/check-other")
-	public List<AccomReservationListDto> getOwnerReservationForOther(@RequestParam int accomNumber, @RequestParam String yearMonth) {
-	    List<AccomReservationListDto> reservations = reservationService.getHistoryForOwner(accomNumber, yearMonth);
-	    return reservations;
+	public List<AccomReservationListDto> getOwnerReservationForOther(@RequestParam int accomNumber,
+			@RequestParam String yearMonth) {
+		List<AccomReservationListDto> reservations = reservationService.getHistoryForOwner(accomNumber, yearMonth);
+		return reservations;
 	}
 
+	@GetMapping("/owner/available-room")
+	public ResponseEntity<List<BookableRoomForOwnerDto>> getAvailableRooms(@RequestParam int accomNumber, @RequestParam String yearMonth) { 
+		
+		// accomNumber로 해당 숙소의 모든 객실 정보를 가져옴
+		List<RoomDto> rooms = reservationService.getRoomInfoByAccommodationNumber(accomNumber);
+
+		// 사용 가능한 객실 정보를 담을 목록을 생성
+		List<BookableRoomForOwnerDto> roomAvailabilityList = new ArrayList<>();
+
+		
+		for (RoomDto room : rooms) {
+			
+			// 객실 번호와 객실 타입을 가져옴
+			int roomNumber = room.getRoomNumber();
+			String roomCategory = room.getRoomCategory();
+
+			// 날짜와 예약 가능 갯수를 가져와서 AvailabilityInfoDto 목록을 만듦
+			List<ReservationRoomDto> availabilityInfo = reservationService.getReservationStatusForYearMonth(roomNumber, yearMonth);
+
+			// RoomAvailabilityDto 객체를 만들어 결과 목록에 추가
+			BookableRoomForOwnerDto roomAvailability = new BookableRoomForOwnerDto();
+			roomAvailability.setRoomNumber(roomNumber);
+			roomAvailability.setRoomCategory(roomCategory);
+			roomAvailability.setAvailabilityInfo(availabilityInfo);
+
+			roomAvailabilityList.add(roomAvailability);
+		}
+
+		// 사용 가능한 객실 정보 목록을 반환
+		return ResponseEntity.ok(roomAvailabilityList);
+	}
 
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {

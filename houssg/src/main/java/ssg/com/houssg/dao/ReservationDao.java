@@ -18,12 +18,6 @@ import ssg.com.houssg.dto.UserDto;
 @Repository
 public interface ReservationDao {
 
-//	// 숙소 정보 조회
-//	List<AccommodationDto> getAccommodationInfo(int accomNumber);
-//
-//	// 객실 정보 조회
-//	List<RoomDto> getRoomInfo(int roomNumber);
-
 	// 쿠폰 정보 조회
 	List<UserCouponDto> getCouponInfo(String Id);
 
@@ -65,5 +59,8 @@ public interface ReservationDao {
     
     // 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
     List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth);
+    
+    // 숙소번호로 객실정보 조회
+    List<RoomDto> getRoomInfoByAccommodationNumber(int accomNumber);
 }
 
