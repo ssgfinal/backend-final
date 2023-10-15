@@ -50,7 +50,7 @@ public class SmsService {
 		Long time = System.currentTimeMillis();
 
 		// 6자리 난수 생성
-		String verificationCode = generateVerificationCode();
+		// String verificationCode = generateVerificationCode();
 		
 		// DB에서 recipientPhoneNumber로 이미 저장된 인증 번호 레코드를 조회
 	    SmsCodeDto smsCodeDto = smsCodeDao.getCodeByphoneNumber(recipientPhoneNumber);
@@ -88,7 +88,7 @@ public class SmsService {
 	    // DB에 저장된 정보
 	    System.out.println(smsCodeDto);
 
-		String smsContent = "[HOUSS-G] 인증번호 " + "[" + verificationCode + "]" + "를 입력해주세요.";
+		String smsContent = "[HOUSS-G] 인증번호 " + "[" + newVerificationCode + "]" + "를 입력해주세요.";
 
 		// 메시지 생성
 		List<MessageDto> messages = new ArrayList<>();
