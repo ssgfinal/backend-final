@@ -127,16 +127,10 @@ public class ReviewController {
 	    }
 	}
 	@PatchMapping("review/report")
-	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber, @RequestParam int roomNumber, @RequestParam int accomNumber) {
+	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber) {
 		    System.out.println("리뷰 신고하기");
-		    
-		    // ReviewDto 객체 생성 및 필드 설정
-		    ReviewDto dto = new ReviewDto();
-		    dto.setReviewNumber(reviewNumber);
-		    dto.setRoomNumber(roomNumber);
-		    dto.setAccomNumber(accomNumber);
-		    
-		    int count = service.updateReview(dto);
+  
+		    int count = service.updateReview(reviewNumber);
 		    
 		    if (count == 0) {
 		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO");
@@ -171,19 +165,19 @@ public class ReviewController {
 		}
 	// 답글 추가
 	@PatchMapping("review/comment/add")
-	public ResponseEntity<List<ReviewDto>> addComment(@RequestParam int review_number,
-											          @RequestParam int reservation_number,
-											          @RequestParam String review_comment) {
+	public ResponseEntity<List<ReviewDto>> addComment(@RequestParam int reviewNumber,
+											          @RequestParam String reportMessage,
+											          @RequestParam String reviewComment) {
 	    try {
 	        System.out.println("답글 추가");
 	        
 	        // 요청 매개변수를 사용하여 ReviewDto 객체 생성
 	        ReviewDto dto = new ReviewDto();
-	        dto.setReviewNumber(review_number);
-	        dto.setReservationNumber(reservation_number);
-	        dto.setReviewComment(review_comment);
+	        dto.setReviewNumber(reviewNumber);
+	        dto.setReportMessage(reportMessage);
+	        dto.setReviewComment(reviewComment);
 	        
-	        int count = service.addComment(review_number, reservation_number, review_comment); // updateComment 메서드를 호출하여 댓글을 추가합니다.
+	        int count = service.addComment(reviewNumber, reportMessage, reviewComment); // updateComment 메서드를 호출하여 댓글을 추가합니다.
 	        if (count > 0) {
 	            List<ReviewDto> updatedReviews = service.getAllReview(dto.getAccomNumber()); // 업데이트된 리뷰 목록을 가져옵니다.
 	            return ResponseEntity.ok(updatedReviews); // 성공한 경우 업데이트된 리뷰 목록을 반환합니다.
@@ -198,13 +192,13 @@ public class ReviewController {
 
 	@PatchMapping("review/comment")
 	public ResponseEntity<String> updateComment(
-			@RequestParam int review_number,
-	        @RequestParam int reservation_number,
-	        @RequestParam String review_comment
+			@RequestParam int reviewNumber,
+	        @RequestParam String reportMessage,
+	        @RequestParam String reviewComment
 	) {
 	    System.out.println("답글 수정");
 	    
-	    int result = service.updateComment(review_number, reservation_number, review_comment);
+	    int result = service.updateComment(reviewNumber, reportMessage, reviewComment);
 	    
 	    if (result == 1) {
 	        return new ResponseEntity<>("Comment updated successfully", HttpStatus.OK);

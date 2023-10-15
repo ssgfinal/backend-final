@@ -18,6 +18,7 @@ public class ReviewDto {
 	private String roomCategory;
 	private String accomName;
 	private String nickname;
+	private String reportMessage;
 	
 	public int getReviewNumber() {
 		return reviewNumber;
@@ -113,13 +114,19 @@ public class ReviewDto {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
+	public String getReportMessage() {
+		return reportMessage;
+	}
+	public void setReportMessage(String reportMessage) {
+		this.reportMessage = reportMessage;
+	}
 	public ReviewDto() {
 		super();
 	}
 	public ReviewDto(int reviewNumber, String reviewContent, double reviewRating, String reviewCreationTime,
 			String reviewComment, String reviewCommentTime, String managerId, int reportStatus, String id,
 			int reservationNumber, int roomNumber, int accomNumber, String img, String roomCategory, String accomName,
-			String nickname) {
+			String nickname, String reportMessage) {
 		super();
 		this.reviewNumber = reviewNumber;
 		this.reviewContent = reviewContent;
@@ -137,9 +144,8 @@ public class ReviewDto {
 		this.roomCategory = roomCategory;
 		this.accomName = accomName;
 		this.nickname = nickname;
+		this.reportMessage = reportMessage;
 	}
-	
-
 	@Override
 	public String toString() {
 		return "ReviewDto [reviewNumber=" + reviewNumber + ", reviewContent=" + reviewContent + ", reviewRating="
@@ -147,7 +153,8 @@ public class ReviewDto {
 				+ ", reviewCommentTime=" + reviewCommentTime + ", managerId=" + managerId + ", reportStatus="
 				+ reportStatus + ", id=" + id + ", reservationNumber=" + reservationNumber + ", roomNumber="
 				+ roomNumber + ", accomNumber=" + accomNumber + ", img=" + img + ", roomCategory=" + roomCategory
-				+ ", accomName=" + accomName + ", nickname=" + nickname + "]";
+				+ ", accomName=" + accomName + ", nickname=" + nickname + ", reportMessage=" + reportMessage + "]";
 	}
+
 	
 }
