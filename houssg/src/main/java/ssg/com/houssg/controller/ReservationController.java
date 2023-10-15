@@ -216,7 +216,7 @@ public class ReservationController {
 			response.put("accommodationList", accommodationList);
 
 			if (accommodationList != null && !accommodationList.isEmpty()) {
-				int accomNumber = accommodationList.get(1).getAccomNumber();
+				int accomNumber = accommodationList.get(0).getAccomNumber();
 				System.out.println(accomNumber);
 				List<AccomReservationListDto> reservations = reservationService.getHistoryForOwner(accomNumber,
 						yearMonth);
