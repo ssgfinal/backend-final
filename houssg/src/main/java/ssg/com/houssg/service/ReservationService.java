@@ -24,16 +24,6 @@ public class ReservationService {
 	@Autowired
 	private ReservationDao dao;
 
-//	// 숙소 정보 조회
-//	public List<AccommodationDto> getAccommodationInfo(int accomNumber) {
-//		return dao.getAccommodationInfo(accomNumber);
-//	}
-//
-//	// 객실 정보 조회
-//	public List<RoomDto> getRoomInfo(int roomNumber) {
-//		return dao.getRoomInfo(roomNumber);
-//	}
-
 	// 쿠폰 정보 조회
 	public List<UserCouponDto> getCouponInfo(String Id) {
 		return dao.getCouponInfo(Id);
@@ -127,5 +117,10 @@ public class ReservationService {
     // 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
     public List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth) {
         return dao.getHistoryForOwner(accomNumber, yearMonth);
+    }
+    
+    // 숙소번호로 객실 정보 조회
+    public List<RoomDto> getRoomInfoByAccommodationNumber(int accomNumber) {
+        return dao.getRoomInfoByAccommodationNumber(accomNumber);
     }
 }

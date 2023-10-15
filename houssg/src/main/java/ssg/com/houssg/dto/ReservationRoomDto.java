@@ -4,15 +4,7 @@ public class ReservationRoomDto {
 	
 	 	private String date;
 	    private int availableRooms;
-	    private String yearMonth;
-	    
-	    
-		public String getYearMonth() {
-			return yearMonth;
-		}
-		public void setYearMonth(String yearMonth) {
-			this.yearMonth = yearMonth;
-		}
+
 		public String getDate() {
 			return date;
 		}
@@ -25,10 +17,12 @@ public class ReservationRoomDto {
 		public void setAvailableRooms(int availableRooms) {
 			this.availableRooms = availableRooms;
 		}
+		
+		
 		@Override
 		public String toString() {
-			return "ReservationRoomDto [date=" + date + ", availableRooms=" + availableRooms + ", yearMonth="
-					+ yearMonth + "]";
+			return "ReservationRoomDto [date=" + date + ", availableRooms=" + availableRooms + "]";
 		}
-	    
+		
+		
 }
