@@ -8,22 +8,30 @@
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
 		SELECT date_range.Date AS date,
 		CASE
-		WHEN rooms.room_number IS NOT NULL THEN MAX(rooms.room_availability) -
-		COALESCE(SUM(CASE WHEN reservation.start_date &lt;= date_range.Date AND
-		reservation.end_date > date_range.Date THEN 1 ELSE 0 END), 0)
+		WHEN rooms.room_number
+		IS NOT NULL THEN MAX(rooms.room_availability) -
+		COALESCE(SUM(CASE WHEN
+		reservation.start_date &lt;= date_range.Date AND
+		reservation.end_date >
+		date_range.Date THEN 1 ELSE 0 END), 0)
 		ELSE
 		MAX(rooms.room_availability)
 		END AS availableRooms
 		FROM (
-		SELECT DATE_ADD(CURDATE(), INTERVAL n DAY) AS Date
+		SELECT
+		DATE_ADD(CURDATE(), INTERVAL n DAY) AS Date
 		FROM for_count
-		WHERE DATE_ADD(CURDATE(), INTERVAL n DAY) &lt;= LAST_DAY(CURDATE())
-		) AS date_range
+		WHERE
+		DATE_ADD(CURDATE(), INTERVAL n DAY) &lt;= LAST_DAY(CURDATE())
+		) AS
+		date_range
 		LEFT JOIN rooms ON rooms.room_number = #{roomNumber}
-		LEFT JOIN reservation ON reservation.room_number = rooms.room_number AND
+		LEFT
+		JOIN reservation ON reservation.room_number = rooms.room_number AND
 		reservation.status IN (0, 1)
 		GROUP BY date_range.Date
-		ORDER BY date_range.Date;
+		ORDER BY
+		date_range.Date;
 	</select>
 
 
@@ -224,16 +232,22 @@
 	</select>
 
 	<!-- 사업자 - 숙소번호에 해당하는 예약내역 가져오기 -->
-	<select id="gethistoryForOwner"
+	<select id="getHistoryForOwner"
 		resultType="ssg.com.houssg.dto.AccomReservationListDto">
 		SELECT room_category, room_number, start_date, end_date,
 		guest_name, guest_phone
 		FROM reservation
-		WHERE accom_number =
-		#{accomNumber}
-		AND DATE_FORMAT(start_date, '%Y-%m') = #{yearMonth}
+		WHERE accom_number = #{accomNumber}
+		AND (
+		(DATE_FORMAT(start_date, '%Y-%m') &lt;= #{yearMonth} AND DATE_FORMAT(end_date, '%Y-%m') >=
+		#{yearMonth})
+		OR
+		(DATE_FORMAT(start_date, '%Y-%m') &lt; #{yearMonth} AND DATE_FORMAT(end_date, '%Y-%m') =
+		#{yearMonth})
+		)
 		AND status = 2
 	</select>
+
 
 	<!-- 숙소번호에 해당하는 객실 정보 가져오기 -->
 	<select id="getRoomInfoByAccommodationNumber"

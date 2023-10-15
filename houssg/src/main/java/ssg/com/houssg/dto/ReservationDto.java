@@ -22,10 +22,10 @@ public class ReservationDto{
 	private String guestName; // 이용자 명 O
 	private String guestPhone; // 이용자 전화번호 O
 	
-	private String accomNumber; // 숙소번호
+	private int accomNumber; // 숙소번호
 	private String accomName; // 숙소이름 O
 	
-	private String roomNumber; // 객실번호
+	private int roomNumber; // 객실번호
 	private String roomCategory; // 객실종류 O
 	private int roomPrice; // 1박당 객실가격 O
 	
@@ -108,10 +108,10 @@ public class ReservationDto{
 	public void setGuestPhone(String guestPhone) {
 		this.guestPhone = guestPhone;
 	}
-	public String getAccomNumber() {
+	public int getAccomNumber() {
 		return accomNumber;
 	}
-	public void setAccomNumber(String accomNumber) {
+	public void setAccomNumber(int accomNumber) {
 		this.accomNumber = accomNumber;
 	}
 	public String getAccomName() {
@@ -120,10 +120,10 @@ public class ReservationDto{
 	public void setAccomName(String accomName) {
 		this.accomName = accomName;
 	}
-	public String getRoomNumber() {
+	public int getRoomNumber() {
 		return roomNumber;
 	}
-	public void setRoomNumber(String roomNumber) {
+	public void setRoomNumber(int roomNumber) {
 		this.roomNumber = roomNumber;
 	}
 	public String getRoomCategory() {
