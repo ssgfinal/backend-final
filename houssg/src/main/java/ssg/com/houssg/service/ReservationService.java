@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ssg.com.houssg.dao.ReservationDao;
+import ssg.com.houssg.dto.AccomListDto;
+import ssg.com.houssg.dto.AccomReservationListDto;
 import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
@@ -22,15 +24,15 @@ public class ReservationService {
 	@Autowired
 	private ReservationDao dao;
 
-	// 숙소 정보 조회
-	public List<AccommodationDto> getAccommodationInfo(int accomNumber) {
-		return dao.getAccommodationInfo(accomNumber);
-	}
-
-	// 객실 정보 조회
-	public List<RoomDto> getRoomInfo(int roomNumber) {
-		return dao.getRoomInfo(roomNumber);
-	}
+//	// 숙소 정보 조회
+//	public List<AccommodationDto> getAccommodationInfo(int accomNumber) {
+//		return dao.getAccommodationInfo(accomNumber);
+//	}
+//
+//	// 객실 정보 조회
+//	public List<RoomDto> getRoomInfo(int roomNumber) {
+//		return dao.getRoomInfo(roomNumber);
+//	}
 
 	// 쿠폰 정보 조회
 	public List<UserCouponDto> getCouponInfo(String Id) {
@@ -78,17 +80,20 @@ public class ReservationService {
 
 		return Info;
 	}
-
+	
+	// 예약등록
 	public void enrollReservation(ReservationDto reservationDto) {
 		dao.enrollReservation(reservationDto);
 	}
-
+	
+	// 쿠폰사용 여부 체크
 	@Transactional
 	public void usedCoupon(String couponNumber) {
 		dao.usedCoupon(couponNumber);
 		System.out.println("쿠폰 사용 여부 체크함");
 	}
-
+	
+	// 사용한 포인트 차감
 	@Transactional
 	public void usedPoint(String Id, int usePoint) {
 		dao.usedPoint(Id, usePoint);
@@ -113,4 +118,14 @@ public class ReservationService {
 
 		return true; // 모든 방이 예약 가능하면 true 반환
 	}
+	
+    // 사업자 ID로 가지고있는 숙소번호, 이름 가져옴
+	public List<AccomListDto> getAccommodationByOwnerId(String id) {
+        return dao.getAccommodationByOwnerId(id);
+    }
+
+    // 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
+    public List<AccomReservationListDto> getHistoryForOwner(String accomNumber, String yearMonth) {
+        return dao.getHistoryForOwner(accomNumber, yearMonth);
+    }
 }
