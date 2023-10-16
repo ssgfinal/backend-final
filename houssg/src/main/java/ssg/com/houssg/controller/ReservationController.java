@@ -273,6 +273,31 @@ public class ReservationController {
 		// 사용 가능한 객실 정보 목록을 반환
 		return ResponseEntity.ok(roomAvailabilityList);
 	}
+	
+	// 사업자 - 예약 취소, 사용한 포인트, 쿠폰 반환, 취소리워드 지급
+    @PostMapping("/owner-cancel")
+    public ResponseEntity<String> cancelAndProcessRewards(@RequestParam("reservationNumber") int reservationNumber) {
+        // 1. 예약 정보 조회: reservationNumber를 사용하여 필요한 데이터 가져오기
+        ReservationDto reservation = reservationService.getReservationDetails(reservationNumber);
+        String id = reservation.getId();
+        int usePoint = reservation.getUsePoint();
+        String couponNumber = reservation.getCouponNumber();
+        int paymentAmount = reservation.getPaymentAmount();
+        
+        // 2. 사업자 - 예약 취소
+        reservationService.cancelReservationByOwner(reservationNumber);
+        
+        // 3. 사업자 - 예약 취소 - 포인트 반환
+        reservationService.returnUsePoint(id, usePoint);
+
+        // 4. 사업자 - 예약 취소 - 쿠폰 반환
+        reservationService.returnUseCoupon(couponNumber);
+
+        // 5. 사업자 - 예약 취소 - 취소 리워드 계산
+        reservationService.pointRewardsForCancel(reservationNumber, paymentAmount);
+
+        return ResponseEntity.ok("Reservation canceled and rewards processed.");
+    }
 
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {

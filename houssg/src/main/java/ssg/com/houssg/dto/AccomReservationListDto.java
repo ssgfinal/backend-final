@@ -2,6 +2,7 @@ package ssg.com.houssg.dto;
 
 public class AccomReservationListDto {
 	
+	private int reservationNumber; // 숙소번호
 	private int roomNumber; // 객실번호
 	private String roomCategory; // 객실종류 
 	private String startDate; // 숙박시작날짜 
@@ -10,6 +11,13 @@ public class AccomReservationListDto {
 	private String guestPhone; // 이용자 전화번호 
 	
 	
+	
+	public int getReservationNumber() {
+		return reservationNumber;
+	}
+	public void setReservationNumber(int reservationNumber) {
+		this.reservationNumber = reservationNumber;
+	}
 	public int getRoomNumber() {
 		return roomNumber;
 	}

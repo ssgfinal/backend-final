@@ -98,6 +98,7 @@ public class TokenFilter extends OncePerRequestFilter {
 				System.out.println("리프레시도 만료 or 유효x");
 			    response.getWriter().write("Relogin");
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.getWriter().write("토큰만료");
 			}
 		}
 

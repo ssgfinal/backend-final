@@ -33,7 +33,7 @@ public interface ReservationDao {
 	// 예약 등록(생성)
 	void enrollReservation(ReservationDto reservationDto);
 
-	// 예약 취소
+	// 유저 - 예약 취소
 	void cancelReservation();
 
 	// 이용 완료
@@ -55,12 +55,27 @@ public interface ReservationDao {
     List<ReservationRoomDto> lastCheck(ReservationDto reservationDto);
     
     // 사업자 ID로 가지고있는 숙소번호, 이름 가져옴
-    List<AccomListDto> getAccommodationByOwnerId(String id);
+    List<AccomListDto> getAccommodationByOwnerId(String Id);
     
     // 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
     List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth);
     
     // 숙소번호로 객실정보 조회
     List<RoomDto> getRoomInfoByAccommodationNumber(int accomNumber);
+    
+    // 0. 사업자 - 예약번호로 취소에 필요한 정보 조회
+    ReservationDto getReservationDetails(int reservationNumber);
+    
+    // 1. 사업자 - 예약취소
+    void cancelReservationByOwner(int reservationNumber);
+    
+    // 2. 사업자 - 예약취소 - 포인트 반환
+    void returnUsePoint(String Id, int usePoint);
+    
+    // 3. 사업자 - 예약취소 - 쿠폰 반환
+    void returnUseCoupon(String couponNumber);
+    
+    // 4. 사업자 - 예약취소 - 취소 포인트 리워드 지급
+    void pointRewardsForCancel(int reservationNumber, int paymentAmount);
 }
 
