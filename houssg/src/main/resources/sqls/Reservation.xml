@@ -201,6 +201,7 @@
 		guest_name, guest_phone, review_status
 		FROM reservation
 		WHERE id = #{Id}
+		ORDER BY reservation_time DESC;
 	</select>
 
 	<!-- 사업자 id로 소유한 숙소 번호, 명 찾기 -->
@@ -301,5 +302,69 @@
 		WHERE status = 0
 		AND TIMESTAMPDIFF(SECOND, reservation_time, NOW()) >= 600;
 	</delete>
+	
+	<!-- 오프라인 예약 추가(오너) -->
+	<insert id="offLineEnrollByOwner"
+		parameterType="ssg.com.houssg.dto.ReservationDto">
+		insert into reservation(reservation_number,
+		reservation_time,
+		id,
+		start_date,
+		end_date,
+		status,
+		nickname,
+		phone_number,
+		room_category,
+		room_price,
+		coupon_number,
+		coupon_name,
+		discount,
+		use_point,
+		total_price,
+		payment_amount,
+		guest_name,
+		guest_phone,
+		accom_number,
+		accom_name,
+		room_number,review_status)
+		values
+		(#{reservationNumber},
+		#{reservationTime}, #{id},
+		#{startDate},#{endDate}, 1,
+		#{nickname},#{phoneNumber},
+		#{roomCategory},#{roomPrice},#{couponNumber},#{couponName},#{discount},
+		#{usePoint},#{totalPrice},#{paymentAmount},#{guestName},#{guestPhone},
+		#{accomNumber},#{accomName},#{roomNumber},0)
+	</insert>
+	
+	<!-- 오프라인 예약등록 전 예약가능 체크 -->
+	<select id="lastCheckForOffLine"
+		resultType="ssg.com.houssg.dto.ReservationRoomDto">
+		SELECT date_range.Date AS date,
+		rooms.room_number AS
+		roomNumber,
+		MAX(rooms.room_availability) - COALESCE(SUM(CASE WHEN
+		reservation.start_date &lt;= date_range.Date AND reservation.end_date
+		> date_range.Date THEN
+		1 ELSE 0 END), 0) AS availableRooms
+		FROM (
+		SELECT
+		DATE_ADD(#{startDate}, INTERVAL n DAY) AS Date
+		FROM for_count
+		WHERE
+		DATE_ADD(#{startDate}, INTERVAL n DAY) BETWEEN #{startDate} AND
+		DATE_SUB(#{endDate}, INTERVAL 1 DAY)
+		) AS date_range
+		CROSS JOIN rooms
+		LEFT JOIN reservation ON reservation.room_number = rooms.room_number
+		AND reservation.start_date &lt;= date_range.Date
+		AND
+		reservation.end_date > date_range.Date
+		AND reservation.status IN (0, 1)
+		WHERE rooms.room_number = #{roomNumber}
+		GROUP BY date_range.Date,
+		rooms.room_number
+		ORDER BY date_range.Date, rooms.room_number;
+	</select>
 
 </mapper>

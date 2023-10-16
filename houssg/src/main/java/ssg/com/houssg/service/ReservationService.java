@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
+import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
@@ -100,12 +101,23 @@ public class ReservationService {
 	// 예약 가능 여부 확인
 	public boolean isReservationAvailable(ReservationDto reservationDto) {
 		List<ReservationRoomDto> availableRooms = dao.lastCheck(reservationDto);
+		System.out.println(availableRooms);
 
-		for (ReservationRoomDto room : availableRooms) {
-			if (room.getAvailableRooms() == 0) {
-				return false; // 하나라도 0인 경우 false 반환
-			}
-		}
+		if (availableRooms.stream().anyMatch(reservedRoom -> reservedRoom.getAvailableRooms() == 0)) {
+	        return false; // 하나라도 0인 경우 false 반환
+	    }
+
+		return true; // 모든 방이 예약 가능하면 true 반환
+	}
+	
+	// 예약 가능 여부 확인 for offline
+	public boolean isReservationAvailableForOffLine(OffLineReservationDto offLineReservationDto) {
+		List<ReservationRoomDto> availableRooms = dao.lastCheckForOffLine(offLineReservationDto);
+		System.out.println(availableRooms);
+		
+		if (availableRooms.stream().anyMatch(reservedRoom -> reservedRoom.getAvailableRooms() == 0)) {
+	        return false; // 하나라도 0인 경우 false 반환
+	    }
 
 		return true; // 모든 방이 예약 가능하면 true 반환
 	}
@@ -149,5 +161,11 @@ public class ReservationService {
 	public void pointRewardsForCancel(int reservationNumber, int paymentAmount) {
 		dao.pointRewardsForCancel(reservationNumber, paymentAmount);
 	}
-	
+
+	// 사업자 - 오프라인 예약추가
+	public void offLineEnrollByOwner(ReservationDto reservationDto) {
+		dao.offLineEnrollByOwner(reservationDto);
+	}
+
+
 }
