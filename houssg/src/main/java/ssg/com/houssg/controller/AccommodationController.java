@@ -90,18 +90,27 @@ public class AccommodationController {
     }
     @GetMapping("/search")
     public ResponseEntity<List<AccommodationDto>> getAddressSearch(@RequestParam(name = "search", required = false) String search,
-                                                                 @RequestParam(name = "type", required = false) String type) {
+                                                                   @RequestParam(name = "type", required = false) String type,
+                                                                   @RequestParam(name = "select", required = false) String select,
+                                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
+                                                                   @RequestParam(name = "page", required = false, defaultValue = "1") int page) {
     	List<AccommodationDto> searchResults;
-    	AccommodationParam param = new AccommodationParam(search, type);
-        if (type != null && search != null) {
+    	AccommodationParam param = new AccommodationParam(search, type, select, pageSize, page);
+    	
+    	 // 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
+        int start = (page - 1) * pageSize;
+        int end = page * pageSize;
+        
+        if (type != null && search != null && select != null) {
         	System.out.println(param.toString());
             searchResults = service.search(param);
-        } else if (type != null) {
+        } else if (type != null && select != null) {
         	System.out.println(param.toString());
-            searchResults = service.typeSearch(type);
-        } else if (search != null) {
+            searchResults = service.typeSearch(param);
+            System.out.println(page);
+        } else if (search != null && select != null) {
         	System.out.println(param.toString());
-            searchResults = service.getAddressSearch(search);
+            searchResults = service.getAddressSearch(param);
         } else {
             return new ResponseEntity<>(new ArrayList<AccommodationDto>(), HttpStatus.OK);
         }
