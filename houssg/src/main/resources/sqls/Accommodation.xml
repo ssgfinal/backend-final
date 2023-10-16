@@ -22,16 +22,16 @@
 	    AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
 		OR (REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%')))
 	    GROUP BY a.accom_number
-	    <if test="select == 'rating'">
+	    <if test="select == '평점 높은순'">
         	ORDER BY avg_rating DESC
 	    </if>
-	    <if test="select == 'date'">
+	    <if test="select == '최근 등록순'">
 	        ORDER BY a.accom_number DESC
 	    </if>
-	    <if test="select == 'priceUp'">
+	    <if test="select == '금액 높은순'">
 	        ORDER BY min_price DESC
 	    </if>
-	    <if test="select == 'priceDown'">
+	    <if test="select == '금액 낮은순'">
 	        ORDER BY min_price ASC
 	    </if>
 	    LIMIT #{pageSize} OFFSET #{start}
@@ -54,16 +54,16 @@
 		WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
 		AND (a.accom_category = #{type})
 		GROUP BY a.accom_number
-		<if test="select == 'rating'">
+		<if test="select == '평점 높은순'">
         	ORDER BY avg_rating DESC
 	    </if>
-	    <if test="select == 'date'">
+	    <if test="select == '최근 등록순'">
 	        ORDER BY a.accom_number DESC
 	    </if>
-	    <if test="select == 'priceUp'">
+	    <if test="select == '금액 높은순'">
 	        ORDER BY min_price DESC
 	    </if>
-	    <if test="select == 'priceDown'">
+	    <if test="select == '금액 낮은순'">
 	        ORDER BY min_price ASC
 	    </if>
 	    LIMIT #{pageSize} OFFSET #{start}
@@ -88,16 +88,16 @@
 		AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
 		OR REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
 		GROUP BY a.accom_number
-		<if test="select == 'rating'">
+		<if test="select == '평점 높은순'">
         	ORDER BY avg_rating DESC
 	    </if>
-	    <if test="select == 'date'">
+	    <if test="select == '최근 등록순'">
 	        ORDER BY a.accom_number DESC
 	    </if>
-	    <if test="select == 'priceUp'">
+	    <if test="select == '금액 높은순'">
 	        ORDER BY min_price DESC
 	    </if>
-	    <if test="select == 'priceDown'">
+	    <if test="select == '금액 낮은순'">
 	        ORDER BY min_price ASC
 	    </if>
 	    LIMIT #{pageSize} OFFSET #{start}
