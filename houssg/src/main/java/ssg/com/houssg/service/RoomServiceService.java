@@ -21,4 +21,8 @@ public class RoomServiceService {
 	public int updateRoomService(RoomServiceDto roomServiceDto) {
 		return dao.updateRoomService(roomServiceDto);
 	}
+	
+	public int deleteService(int roomNumber) {
+		return dao.deleteService(roomNumber);
+	}
 }

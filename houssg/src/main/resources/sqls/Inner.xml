@@ -18,5 +18,11 @@
         FROM innerview
         WHERE room_number = #{roomNumber}
     </select>
+    
+	<delete id="deleteImg" parameterType="int">
+	    DELETE FROM innerview
+	    WHERE room_number = #{roomNumber}
+	</delete>
+
 
 </mapper>
