@@ -215,13 +215,16 @@
 	<!-- 사업자 - 숙소번호에 해당하는 예약내역 가져오기 -->
 	<select id="getHistoryForOwner"
 		resultType="ssg.com.houssg.dto.AccomReservationListDto">
-		SELECT reservation_number, room_category, room_number, start_date, end_date,
+		SELECT reservation_number, room_category, room_number,
+		start_date, end_date,
 		guest_name, guest_phone
 		FROM reservation
-		WHERE accom_number =
+		WHERE
+		accom_number =
 		#{accomNumber}
 		AND (
-		(DATE_FORMAT(start_date, '%Y-%m') &lt;=
+		(DATE_FORMAT(start_date, '%Y-%m')
+		&lt;=
 		#{yearMonth} AND DATE_FORMAT(end_date, '%Y-%m') >=
 		#{yearMonth})
 		OR
@@ -241,13 +244,14 @@
 		rooms
 		WHERE accom_number = #{accomNumber}
 	</select>
-	
+
 	<!-- reservationNumber를 기반으로 예약 정보 조회 -->
-    <select id="getReservationDetails" resultType="ssg.com.houssg.dto.ReservationDto">
-        SELECT r.id, r.use_point, r.coupon_number, r.payment_amount
-        FROM reservation r
-        WHERE r.reservation_number = #{reservationNumber}
-    </select>
+	<select id="getReservationDetails"
+		resultType="ssg.com.houssg.dto.ReservationDto">
+		SELECT r.id, r.use_point, r.coupon_number, r.payment_amount
+		FROM reservation r
+		WHERE r.reservation_number = #{reservationNumber}
+	</select>
 
 	<!-- 사업자 - 예약취소 -->
 	<update id="cancelReservationByOwner">
@@ -273,12 +277,29 @@
 		#{Id}
 	</update>
 
-	<!-- 사업자 예약취소 - 결제금액의 10% 포인트 리워드 지급 --> 
+	<!-- 사업자 예약취소 - 결제금액의 10% 포인트 리워드 지급 -->
 	<update id="pointRewardsForCancel">
 		UPDATE user AS u
 		JOIN reservation AS r ON r.id = u.id
 		SET u.point = u.point + (r.payment_amount * 0.1)
-		WHERE r.reservation_number = #{reservationNumber}
+		WHERE
+		r.reservation_number = #{reservationNumber}
 	</update>
+
+	<!-- 결제완료 후 예약완료 처리 -->
+	<update id="paymentCheck">
+		UPDATE reservation
+		set status = 1
+		where
+		reservation_number = #{reservationNumber}
+		AND status = 0
+	</update>
+
+	<!-- 예약등록(status 0) 후 20분 이내로 결제되지않은 내역 삭제 -->
+	<delete id="deleteUnpaidReservation">
+		DELETE FROM reservation
+		WHERE status = 0
+		AND TIMESTAMPDIFF(SECOND, reservation_time, NOW()) >= 600;
+	</delete>
 
 </mapper>
