@@ -84,7 +84,7 @@ public class UserController {
 		            .body(responseMap); // 토큰 반환
 		}		
 
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.badRequest().build();
 	}
 
 	// 로그아웃
