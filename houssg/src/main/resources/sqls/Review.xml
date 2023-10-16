@@ -29,7 +29,7 @@
 	<!-- 리뷰 신고하기 -->
 	<update id="updateReview" parameterType="ssg.com.houssg.dto.ReviewDto">
 		UPDATE review 
-		SET	report_status = 1 AND
+		SET	report_status = 1,
 			report_message = #{reportMessage}
 		WHERE review_number=#{reviewNumber}
 	</update>
