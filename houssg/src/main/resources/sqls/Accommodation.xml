@@ -13,7 +13,7 @@
 	    JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
 		LEFT JOIN (
-		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
 		    FROM review
 		    WHERE report_status = 0
 		    GROUP BY accom_number
@@ -22,6 +22,19 @@
 	    AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
 		OR (REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%')))
 	    GROUP BY a.accom_number
+	    <if test="select == 'rating'">
+        	ORDER BY avg_rating DESC
+	    </if>
+	    <if test="select == 'date'">
+	        ORDER BY a.accom_number DESC
+	    </if>
+	    <if test="select == 'priceUp'">
+	        ORDER BY min_price DESC
+	    </if>
+	    <if test="select == 'priceDown'">
+	        ORDER BY min_price ASC
+	    </if>
+	    LIMIT #{pageSize} OFFSET #{start}
 	</select>
 
 	<select id="typeSearch" parameterType="string" resultType="ssg.com.houssg.dto.AccommodationDto">
@@ -33,7 +46,7 @@
 	    JOIN rooms ro ON a.accom_number = ro.accom_number
 		LEFT JOIN favorite f ON a.accom_number = f.accom_number
 		LEFT JOIN (
-		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
+		    SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
 		    FROM review
 		    WHERE report_status = 0
 		    GROUP BY accom_number
@@ -41,6 +54,19 @@
 		WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
 		AND (a.accom_category = #{type})
 		GROUP BY a.accom_number
+		<if test="select == 'rating'">
+        	ORDER BY avg_rating DESC
+	    </if>
+	    <if test="select == 'date'">
+	        ORDER BY a.accom_number DESC
+	    </if>
+	    <if test="select == 'priceUp'">
+	        ORDER BY min_price DESC
+	    </if>
+	    <if test="select == 'priceDown'">
+	        ORDER BY min_price ASC
+	    </if>
+	    LIMIT #{pageSize} OFFSET #{start}
 	</select>
 	
 	<select id="search" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
@@ -62,6 +88,19 @@
 		AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
 		OR REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
 		GROUP BY a.accom_number
+		<if test="select == 'rating'">
+        	ORDER BY avg_rating DESC
+	    </if>
+	    <if test="select == 'date'">
+	        ORDER BY a.accom_number DESC
+	    </if>
+	    <if test="select == 'priceUp'">
+	        ORDER BY min_price DESC
+	    </if>
+	    <if test="select == 'priceDown'">
+	        ORDER BY min_price ASC
+	    </if>
+	    LIMIT #{pageSize} OFFSET #{start}
 	</select>
 	
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->

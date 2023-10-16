@@ -23,12 +23,12 @@ public class AccommodationService {
 	@Autowired
     FacilityDao facdao;
 	
-    public List<AccommodationDto> getAddressSearch(String search) {
-        return dao.getAddressSearch(search);
+    public List<AccommodationDto> getAddressSearch(AccommodationParam param) {
+        return dao.getAddressSearch(param);
     }
     
-    public List<AccommodationDto> typeSearch(String type){
-    	return dao.typeSearch(type);
+    public List<AccommodationDto> typeSearch(AccommodationParam param){
+    	return dao.typeSearch(param);
     }
     
     public List<AccommodationDto> search(AccommodationParam param){
