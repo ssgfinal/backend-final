@@ -20,5 +20,10 @@
 	    SET room_category = #{roomCategory}, room_price = #{roomPrice}, room_availability = #{roomAvailability}
 	    WHERE room_number = #{roomNumber} and accom_number = #{accomNumber}
 	</update>
+	
+	<delete id="deleteRoom" parameterType="int">
+	    DELETE FROM rooms
+	    WHERE room_number = #{roomNumber}
+	</delete>
 
 </mapper>

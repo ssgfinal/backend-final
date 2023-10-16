@@ -14,4 +14,6 @@ public interface RoomServiceDao {
 	int updateRoomService(RoomServiceDto roomServiceDto);
 	
 	RoomServiceDto getService(int roomNumber);
+	
+	int deleteService(int roomNumber);
 }

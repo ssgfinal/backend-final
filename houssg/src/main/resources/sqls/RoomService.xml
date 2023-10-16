@@ -17,4 +17,9 @@
 		FROM room_service
 		WHERE room_number = #{roomNumber}
 	</select>
+	
+	<delete id="deleteService" parameterType="int">
+	    DELETE FROM room_service
+	    WHERE room_number = #{roomNumber}
+	</delete>
 </mapper>

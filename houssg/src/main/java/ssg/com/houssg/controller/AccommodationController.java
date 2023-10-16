@@ -211,7 +211,6 @@ public class AccommodationController {
         System.out.println("숙소 업데이트");
         System.out.println(request.toString());
     
-        System.out.println(file.equals(""));
         AccommodationDto dto = new AccommodationDto();
         try {
             // 이전 파일의 경로를 가져옵니다.
