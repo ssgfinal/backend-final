@@ -31,6 +31,7 @@ import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
 import ssg.com.houssg.dto.BookableRoomForOwnerDto;
 import ssg.com.houssg.dto.CompleteReservationRequestDto;
+import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -52,7 +53,7 @@ public class ReservationController {
 	@GetMapping("/basic-info")
 	public ResponseEntity<String> getReservationBasicInfo(int roomNumber, HttpServletRequest request) {
 		try {
-			
+
 			// HTTP 요청 헤더에서 토큰 추출
 			String token = getTokenFromRequest(request);
 
@@ -156,23 +157,22 @@ public class ReservationController {
 			return ResponseEntity.status(400).body("예약 실패");
 		}
 	}
-	
+
 	// 결제완료 >> 예약완료 체크
 	@PostMapping("/complete")
 	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request) {
-	    int reservationNumber = request.getReservationNumber();
-	    String sign = request.getSign();
+		int reservationNumber = request.getReservationNumber();
+		String sign = request.getSign();
 
-	    if ("success".equals(sign)) {
-	        reservationService.paymentCheck(reservationNumber);
-	        return ResponseEntity.ok("예약완료");
-	    } else if ("fail".equals(sign)) {
-	        return ResponseEntity.badRequest().body("결제실패");
-	    } else {
-	        return ResponseEntity.badRequest().body("잘못된 요청입니다.");
-	    }
+		if ("success".equals(sign)) {
+			reservationService.paymentCheck(reservationNumber);
+			return ResponseEntity.ok("예약완료");
+		} else if ("fail".equals(sign)) {
+			return ResponseEntity.badRequest().body("결제실패");
+		} else {
+			return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+		}
 	}
-
 
 	// 연도 + 월 기준 객실 별 예약 현황 조회
 	@GetMapping("/available-room")
@@ -316,7 +316,67 @@ public class ReservationController {
 		// 5. 사업자 - 예약 취소 - 취소 리워드 계산
 		reservationService.pointRewardsForCancel(reservationNumber, paymentAmount);
 
-		return ResponseEntity.ok("Reservation canceled and rewards processed.");
+		return ResponseEntity.ok("취소완료");
+	}
+
+	// 사업자 - 오프라인 예약 추가
+	@PostMapping("/owner/offline")
+	public ResponseEntity<?> offLineReservation(@RequestBody OffLineReservationDto offLineReservationDto) {
+		try {
+			
+			// 예약 가능 여부 확인
+			boolean isAvailable = reservationService.isReservationAvailableForOffLine(offLineReservationDto);
+
+			if (isAvailable) {
+				// 예약번호 생성
+				System.out.println("예약 가능 여부 " + isAvailable);
+				int reservationNumber = ReservationUtil.generateRandomReservationNumber();
+
+				// 현재 날짜와 시각을 얻어옴
+				LocalDateTime reservationTime = LocalDateTime.now();
+				
+				ReservationDto reservationDto = new ReservationDto();
+	            reservationDto.setReservationNumber(reservationNumber); // 예약번호 설정
+	            reservationDto.setReservationTime(reservationTime); // 예약시간 설정
+	            
+	            // OffLineReservationDto로 안받는 값들은 기본 세팅
+	            reservationDto.setStatus(1);
+	            reservationDto.setNickname("offline");
+	            reservationDto.setPhoneNumber("offline");
+	            reservationDto.setId("offline"); 
+	            reservationDto.setCouponNumber("offline");
+	            reservationDto.setCouponName("offline");
+	            reservationDto.setDiscount(0);
+	            reservationDto.setUsePoint(0);
+	            reservationDto.setTotalPrice(0); 
+	            reservationDto.setPaymentAmount(0); 
+	            reservationDto.setReviewStatus(0); 
+
+	            // 나머지 필드는 OffLineReservationDto에서 가져오기
+	            reservationDto.setStartDate(offLineReservationDto.getStartDate());
+	            reservationDto.setEndDate(offLineReservationDto.getEndDate());
+	            reservationDto.setGuestName(offLineReservationDto.getGuestName());
+	            reservationDto.setGuestPhone(offLineReservationDto.getGuestPhone());
+	            reservationDto.setAccomNumber(offLineReservationDto.getAccomNumber());
+	            reservationDto.setAccomName(offLineReservationDto.getAccomName());
+	            reservationDto.setRoomNumber(offLineReservationDto.getRoomNumber());
+	            reservationDto.setRoomCategory(offLineReservationDto.getRoomCategory());
+	            reservationDto.setRoomPrice(0); // int 필드를 0으로 설정
+	            
+	            reservationService.offLineEnrollByOwner(reservationDto);
+				
+				// 예약 등록 성공 시 클라이언트에게 성공 응답 반환
+				return ResponseEntity.ok(reservationNumber);
+			} else {
+				// 예약 불가능한 경우 에러 응답 반환
+				System.out.println("예약가능 방 갯수 초과로 예약 불가능");
+				return ResponseEntity.status(400).body("예약 불가능");
+			}
+		} catch (Exception e) {
+			// 예약 등록 중에 예외 발생 시 에러 응답 반환
+			e.printStackTrace();
+			return ResponseEntity.status(400).body("예약 실패");
+		}
 	}
 
 	// AccessToken 획득 및 파싱 Part

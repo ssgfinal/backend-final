@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
+import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -56,6 +57,9 @@ public interface ReservationDao {
 	// "lastCheck" 쿼리를 실행하고 결과를 반환
     List<ReservationRoomDto> lastCheck(ReservationDto reservationDto);
     
+    // "lastCheck" 쿼리를 실행하고 결과를 반환
+    List<ReservationRoomDto> lastCheckForOffLine(OffLineReservationDto offLineReservationDto);
+    
     // 사업자 ID로 가지고있는 숙소번호, 이름 가져옴
     List<AccomListDto> getAccommodationByOwnerId(String Id);
     
@@ -82,6 +86,9 @@ public interface ReservationDao {
     
     // 예약등록(status 0 - 예약중) 후 20분 내로 결제되지않은 예약 내역 삭제
     void deleteUnpaidReservation();
+    
+    // 사업자 - 오프라인 예약 추가
+    void offLineEnrollByOwner(ReservationDto reservationDto);
 
 }
 
