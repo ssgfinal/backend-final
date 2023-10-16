@@ -4,6 +4,10 @@ public class AccommodationParam {
 
     private String search;
     private String type;
+    private String select;
+    private int pageSize;
+    private int page;
+    private int start;
 	public String getSearch() {
 		return search;
 	}
@@ -16,19 +20,39 @@ public class AccommodationParam {
 	public void setType(String type) {
 		this.type = type;
 	}
-
+	public String getSelect() {
+		return select;
+	}
+	public void setSelect(String select) {
+		this.select = select;
+	}
+	public int getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	public int getPage() {
+		return page;
+	}
+	public void setPage(int page) {
+		this.page = page;
+	}
+	public int getStart() {
+		return start;
+	}
+	public void setStart(int start) {
+		this.start = start;
+	}
 	public AccommodationParam() {
 		super();
 	}
-	public AccommodationParam(String search, String type) {
+	public AccommodationParam(String search, String type, String select, int pageSize, int page) {
 		super();
 		this.search = search;
 		this.type = type;
-
+		this.select = select;
+		this.pageSize = pageSize;
+		this.page = page;
 	}
-	@Override
-	public String toString() {
-		return "AccommodationParam [search=" + search + ", type=" + type + "]";
-	}
-    
 }
