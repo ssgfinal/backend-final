@@ -26,4 +26,12 @@ public class InnerService {
         System.out.println("객실이미지업데이트");
 		dao.updateInnerView(innerDto);
     }
+	public int deleteImg(int roomNumber) {
+		int imgCount =  dao.deleteImg(roomNumber);
+		if(imgCount == 0) {
+			System.out.println("이미지 삭제 실패");
+			return 0;
+		}
+		return imgCount;
+	}
 }

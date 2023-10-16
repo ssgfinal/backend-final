@@ -20,4 +20,6 @@ public interface InnerDao {
 	
 	InnerDto getImgs(int roomNumber);
 	
+	int deleteImg(int roomNumber);
+	
 }

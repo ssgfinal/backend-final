@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -255,6 +256,23 @@ public class RoomController {
 	         return new ResponseEntity<>("객실 업데이트 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	     }
 	 }
+	 @DeleteMapping("room")
+	    public ResponseEntity<String> deleteRoom(@RequestParam int roomNumber) {
+	        // 이미지 삭제를 시도
+	        int imgCount = innerService.deleteImg(roomNumber);
+	        if (imgCount <= 0) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Images for room " + roomNumber + " not found or couldn't be deleted");
+	        }
+
+	        // 방 삭제를 시도
+	        int roomCount = service.deleteRoom(roomNumber);
+	        if (roomCount <= 0) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room with number " + roomNumber + " not found or couldn't be deleted");
+	        }
+
+	        // 모든 삭제가 성공적으로 완료되면 성공 메시지 반환
+	        return ResponseEntity.ok("Successfully deleted room with number: " + roomNumber);
+	    }
 	 private String uploadImage(MultipartFile imageFile) throws Exception {
 	        try {
 	            Map<?, ?> uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());

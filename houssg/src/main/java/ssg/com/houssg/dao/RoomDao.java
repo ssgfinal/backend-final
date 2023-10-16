@@ -22,4 +22,6 @@ public interface RoomDao {
 	int getRoomNumberFromDatabase();
 	
 	int updateRoom(RoomDto roomDto);
+	
+	int deleteRoom(int roomNumber);
 }
