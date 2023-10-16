@@ -30,6 +30,7 @@ import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
 import ssg.com.houssg.dto.BookableRoomForOwnerDto;
+import ssg.com.houssg.dto.CompleteReservationRequestDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -51,6 +52,7 @@ public class ReservationController {
 	@GetMapping("/basic-info")
 	public ResponseEntity<String> getReservationBasicInfo(int roomNumber, HttpServletRequest request) {
 		try {
+			
 			// HTTP 요청 헤더에서 토큰 추출
 			String token = getTokenFromRequest(request);
 
@@ -154,6 +156,23 @@ public class ReservationController {
 			return ResponseEntity.status(400).body("예약 실패");
 		}
 	}
+	
+	// 결제완료 >> 예약완료 체크
+	@PostMapping("/complete")
+	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request) {
+	    int reservationNumber = request.getReservationNumber();
+	    String sign = request.getSign();
+
+	    if ("success".equals(sign)) {
+	        reservationService.paymentCheck(reservationNumber);
+	        return ResponseEntity.ok("예약완료");
+	    } else if ("fail".equals(sign)) {
+	        return ResponseEntity.badRequest().body("결제실패");
+	    } else {
+	        return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+	    }
+	}
+
 
 	// 연도 + 월 기준 객실 별 예약 현황 조회
 	@GetMapping("/available-room")
@@ -243,23 +262,24 @@ public class ReservationController {
 	}
 
 	@GetMapping("/owner/available-room")
-	public ResponseEntity<List<BookableRoomForOwnerDto>> getAvailableRooms(@RequestParam int accomNumber, @RequestParam String yearMonth) { 
-		
+	public ResponseEntity<List<BookableRoomForOwnerDto>> getAvailableRooms(@RequestParam int accomNumber,
+			@RequestParam String yearMonth) {
+
 		// accomNumber로 해당 숙소의 모든 객실 정보를 가져옴
 		List<RoomDto> rooms = reservationService.getRoomInfoByAccommodationNumber(accomNumber);
 
 		// 사용 가능한 객실 정보를 담을 목록을 생성
 		List<BookableRoomForOwnerDto> roomAvailabilityList = new ArrayList<>();
 
-		
 		for (RoomDto room : rooms) {
-			
+
 			// 객실 번호와 객실 타입을 가져옴
 			int roomNumber = room.getRoomNumber();
 			String roomCategory = room.getRoomCategory();
 
 			// 날짜와 예약 가능 갯수를 가져와서 AvailabilityInfoDto 목록을 만듦
-			List<ReservationRoomDto> availabilityInfo = reservationService.getReservationStatusForYearMonth(roomNumber, yearMonth);
+			List<ReservationRoomDto> availabilityInfo = reservationService.getReservationStatusForYearMonth(roomNumber,
+					yearMonth);
 
 			// RoomAvailabilityDto 객체를 만들어 결과 목록에 추가
 			BookableRoomForOwnerDto roomAvailability = new BookableRoomForOwnerDto();
@@ -273,31 +293,31 @@ public class ReservationController {
 		// 사용 가능한 객실 정보 목록을 반환
 		return ResponseEntity.ok(roomAvailabilityList);
 	}
-	
+
 	// 사업자 - 예약 취소, 사용한 포인트, 쿠폰 반환, 취소리워드 지급
-    @PostMapping("/owner-cancel")
-    public ResponseEntity<String> cancelAndProcessRewards(@RequestParam("reservationNumber") int reservationNumber) {
-        // 1. 예약 정보 조회: reservationNumber를 사용하여 필요한 데이터 가져오기
-        ReservationDto reservation = reservationService.getReservationDetails(reservationNumber);
-        String id = reservation.getId();
-        int usePoint = reservation.getUsePoint();
-        String couponNumber = reservation.getCouponNumber();
-        int paymentAmount = reservation.getPaymentAmount();
-        
-        // 2. 사업자 - 예약 취소
-        reservationService.cancelReservationByOwner(reservationNumber);
-        
-        // 3. 사업자 - 예약 취소 - 포인트 반환
-        reservationService.returnUsePoint(id, usePoint);
+	@PostMapping("/owner-cancel")
+	public ResponseEntity<String> cancelAndProcessRewards(@RequestParam("reservationNumber") int reservationNumber) {
+		// 1. 예약 정보 조회: reservationNumber를 사용하여 필요한 데이터 가져오기
+		ReservationDto reservation = reservationService.getReservationDetails(reservationNumber);
+		String id = reservation.getId();
+		int usePoint = reservation.getUsePoint();
+		String couponNumber = reservation.getCouponNumber();
+		int paymentAmount = reservation.getPaymentAmount();
 
-        // 4. 사업자 - 예약 취소 - 쿠폰 반환
-        reservationService.returnUseCoupon(couponNumber);
+		// 2. 사업자 - 예약 취소
+		reservationService.cancelReservationByOwner(reservationNumber);
 
-        // 5. 사업자 - 예약 취소 - 취소 리워드 계산
-        reservationService.pointRewardsForCancel(reservationNumber, paymentAmount);
+		// 3. 사업자 - 예약 취소 - 포인트 반환
+		reservationService.returnUsePoint(id, usePoint);
 
-        return ResponseEntity.ok("Reservation canceled and rewards processed.");
-    }
+		// 4. 사업자 - 예약 취소 - 쿠폰 반환
+		reservationService.returnUseCoupon(couponNumber);
+
+		// 5. 사업자 - 예약 취소 - 취소 리워드 계산
+		reservationService.pointRewardsForCancel(reservationNumber, paymentAmount);
+
+		return ResponseEntity.ok("Reservation canceled and rewards processed.");
+	}
 
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {

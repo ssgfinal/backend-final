@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
-import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
@@ -32,6 +31,9 @@ public interface ReservationDao {
 
 	// 예약 등록(생성)
 	void enrollReservation(ReservationDto reservationDto);
+	
+	// 결제완료 >> 예약완료
+	void paymentCheck(int reservationNumber);
 
 	// 유저 - 예약 취소
 	void cancelReservation();
@@ -77,5 +79,9 @@ public interface ReservationDao {
     
     // 4. 사업자 - 예약취소 - 취소 포인트 리워드 지급
     void pointRewardsForCancel(int reservationNumber, int paymentAmount);
+    
+    // 예약등록(status 0 - 예약중) 후 20분 내로 결제되지않은 예약 내역 삭제
+    void deleteUnpaidReservation();
+
 }
 

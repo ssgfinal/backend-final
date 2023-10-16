@@ -9,13 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
-import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
-import ssg.com.houssg.dto.UserDto;
 
 @Service
 @Transactional
@@ -23,7 +21,6 @@ public class ReservationService {
 
 	@Autowired
 	private ReservationDao dao;
-	
 
 	// 쿠폰 정보 조회
 	public List<UserCouponDto> getCouponInfo(String Id) {
@@ -39,7 +36,6 @@ public class ReservationService {
 	public List<ReservationRoomDto> getReservationStatusForYearMonth(int roomNumber, String yearMonth) {
 		return dao.getReservationStatusForYearMonth(roomNumber, yearMonth);
 	}
-
 
 	// 객실 번호로 숙소 번호 조회
 	public int getAccomNumberByRoomNumber(int roomNumber) {
@@ -71,26 +67,30 @@ public class ReservationService {
 
 		return Info;
 	}
-	
+
 	// 예약등록
 	public void enrollReservation(ReservationDto reservationDto) {
 		dao.enrollReservation(reservationDto);
 	}
-	
+
+	// 결제완료 >> 예약완료
+	public void paymentCheck(int reservationNumber) {
+		dao.paymentCheck(reservationNumber);
+	}
+
 	// 쿠폰사용 여부 체크
 	@Transactional
 	public void usedCoupon(String couponNumber) {
 		dao.usedCoupon(couponNumber);
 		System.out.println("쿠폰 사용 여부 체크함");
 	}
-	
+
 	// 사용한 포인트 차감
 	@Transactional
 	public void usedPoint(String Id, int usePoint) {
 		dao.usedPoint(Id, usePoint);
 		System.out.println(usePoint + "포인트 차감함");
 	}
-
 
 	// 유저 - Id로 예약내역 조회
 	public List<ReservationDto> findRerservationById(String Id) {
@@ -109,44 +109,45 @@ public class ReservationService {
 
 		return true; // 모든 방이 예약 가능하면 true 반환
 	}
-	
-    // 사업자 ID로 가지고있는 숙소번호, 이름 가져옴
-	public List<AccomListDto> getAccommodationByOwnerId(String Id) {
-        return dao.getAccommodationByOwnerId(Id);
-    }
 
-    // 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
-    public List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth) {
-        return dao.getHistoryForOwner(accomNumber, yearMonth);
-    }
-    
-    // 숙소번호로 객실 정보 조회
-    public List<RoomDto> getRoomInfoByAccommodationNumber(int accomNumber) {
-        return dao.getRoomInfoByAccommodationNumber(accomNumber);
-    }
-    
-    // 0. 사업자 - 예약번호로 취소에 필요한 정보 조회
-    public ReservationDto getReservationDetails(int reservationNumber) {
-        return dao.getReservationDetails(reservationNumber);
-    }
-    
-    // 1. 사업자 - 예약취소
-    public void cancelReservationByOwner(int reservationNumber) {
-    	dao.cancelReservationByOwner(reservationNumber);
-    }
-    
-    // 2. 사업자 - 예약취소 - 포인트 반환
-    public void returnUsePoint(String Id, int usePoint) {
-        dao.returnUsePoint(Id, usePoint);
-    }
-    
-    // 3. 사업자 - 예약취소 - 쿠폰 반환
-    public void returnUseCoupon(String couponNumber) {
-        dao.returnUseCoupon(couponNumber);
-    }
-    
-    // 4. 사업자 - 예약취소 - 취소리워드 계산
-    public void pointRewardsForCancel(int reservationNumber, int paymentAmount) {
-        dao.pointRewardsForCancel(reservationNumber, paymentAmount);
-    }
+	// 사업자 ID로 가지고있는 숙소번호, 이름 가져옴
+	public List<AccomListDto> getAccommodationByOwnerId(String Id) {
+		return dao.getAccommodationByOwnerId(Id);
+	}
+
+	// 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
+	public List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth) {
+		return dao.getHistoryForOwner(accomNumber, yearMonth);
+	}
+
+	// 숙소번호로 객실 정보 조회
+	public List<RoomDto> getRoomInfoByAccommodationNumber(int accomNumber) {
+		return dao.getRoomInfoByAccommodationNumber(accomNumber);
+	}
+
+	// 0. 사업자 - 예약번호로 취소에 필요한 정보 조회
+	public ReservationDto getReservationDetails(int reservationNumber) {
+		return dao.getReservationDetails(reservationNumber);
+	}
+
+	// 1. 사업자 - 예약취소
+	public void cancelReservationByOwner(int reservationNumber) {
+		dao.cancelReservationByOwner(reservationNumber);
+	}
+
+	// 2. 사업자 - 예약취소 - 포인트 반환
+	public void returnUsePoint(String Id, int usePoint) {
+		dao.returnUsePoint(Id, usePoint);
+	}
+
+	// 3. 사업자 - 예약취소 - 쿠폰 반환
+	public void returnUseCoupon(String couponNumber) {
+		dao.returnUseCoupon(couponNumber);
+	}
+
+	// 4. 사업자 - 예약취소 - 취소리워드 계산
+	public void pointRewardsForCancel(int reservationNumber, int paymentAmount) {
+		dao.pointRewardsForCancel(reservationNumber, paymentAmount);
+	}
+	
 }

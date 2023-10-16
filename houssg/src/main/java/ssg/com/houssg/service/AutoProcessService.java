@@ -41,4 +41,13 @@ public class AutoProcessService {
 		reservationDao.paymentRewards(userDto);
 		System.out.println("포인트 적립 완료");
 	}
+	
+
+	// 예약시간으로부터 20분이 지난 예약 내역
+	@Scheduled(fixedRate = 600000)
+	public void deleteUnpaidReservation() {
+		reservationDao.deleteUnpaidReservation();
+		System.out.println("결제안한 애들 캇투");
+	}
+	
 }
