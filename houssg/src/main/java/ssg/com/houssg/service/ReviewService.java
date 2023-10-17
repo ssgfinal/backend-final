@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ssg.com.houssg.dao.ReviewDao;
 import ssg.com.houssg.dto.ReviewDto;
+import ssg.com.houssg.dto.ReviewParam;
 
 @Service
 @Transactional
@@ -20,8 +21,8 @@ public class ReviewService {
 		return dao.addReview(dto);
 	}
 	// 마이 리뷰 보기
-	public List<ReviewDto> getMyReview(String id){
-		return dao.getMyReview(id);
+	public List<ReviewDto> getMyReview(ReviewParam param){
+		return dao.getMyReview(param);
 	}
 	// 한 숙소 리뷰 보기
 	public List<ReviewDto> getAllReview(int accomNumber){

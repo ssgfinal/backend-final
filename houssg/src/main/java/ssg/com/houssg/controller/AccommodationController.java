@@ -97,7 +97,7 @@ public class AccommodationController {
     	List<AccommodationDto> searchResults;
     	
     	
-    	 // 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
+    	// 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
         int start = (page - 1) * pageSize;
         int end = page * pageSize;
         
