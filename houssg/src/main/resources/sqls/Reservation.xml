@@ -366,5 +366,10 @@
 		rooms.room_number
 		ORDER BY date_range.Date, rooms.room_number;
 	</select>
+	
+	<delete id='deleteReservation'>
+		delete from reservation 
+		where reservation_number = #{reservationNumber}
+	</delete>
 
 </mapper>

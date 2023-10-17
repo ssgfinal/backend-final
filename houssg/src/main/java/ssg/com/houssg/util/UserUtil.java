@@ -67,6 +67,15 @@ public class UserUtil {
         // 전화번호 유효성 검사 (숫자만 허용)
         return Pattern.matches("^[0-9]+$", phoneNumber);
     }
+    
+    // 현재 비밀번호 검증
+    public boolean verifyCurrentPassword(String password, String PasswordFromDB) {
+    	String hashedEnteredPassword = hashPassword(password);
+    	System.out.println("입력한 것" + hashedEnteredPassword);
+    	System.out.println(PasswordFromDB);
+        return hashedEnteredPassword.equals(PasswordFromDB);
+    }
+
 
     public String hashPassword(String password) {
         try {

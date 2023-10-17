@@ -66,5 +66,20 @@ public class UserService {
 	public UserDto findByUsername(String username) {
 		return null;
 	}
+	
+	// 마이페이지 비밀번호 찾기
+    public String findPasswordById(String id) {
+        return dao.findPasswordById(id);
+    }
+    
+    // 전화번호 변경
+ 	public void changePhone(String id, String phone_number) {
+ 		 dao.changePhone(id, phone_number);
+ 	}
+ 	
+ 	// 닉네임 변경
+ 	public void changeNickname(String id, String nick_name) {
+ 		dao.changeNickname(id, nick_name);
+ 	}
 
 }

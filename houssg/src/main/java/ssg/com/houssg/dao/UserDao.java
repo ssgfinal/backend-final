@@ -32,4 +32,12 @@ public interface UserDao {
 	// 비밀번호 찾기
 	UserDto findUserByIdPhonNumber(String id, String phone_number);
 	
+	// 마이페이지 비밀번호 찾기
+	String findPasswordById(String id);
+	
+	// 마이페이지 전화번호 변경
+	void changePhone(String id, String phone_number);
+	
+	// 마이페이지 닉네임 변경
+	void changeNickname(String id, String nick_name);
 }
