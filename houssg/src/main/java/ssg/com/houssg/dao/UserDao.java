@@ -14,12 +14,11 @@ public interface UserDao {
 	int nicknameCheck(String nick_name);
 	int signUp(UserDto dto);
 	int idPhoneNumberCheck(String id, String phone_number);
-	
 	UserDto login(UserDto dto);
 	
 	// 유저 조회
 	UserDto findUserById(String id);
-	
+	 
 	// 아이디 찾기
 	UserDto findIdByPhoneNumber(String phone_number);
 	

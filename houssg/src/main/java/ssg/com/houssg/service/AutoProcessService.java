@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import ssg.com.houssg.dao.MonthlySalesDao;
 import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dao.SmsCodeDao;
+import ssg.com.houssg.dto.MonthlySalesDto;
 import ssg.com.houssg.dto.UserDto;
 
 @Service
@@ -16,6 +18,9 @@ public class AutoProcessService {
 
 	@Autowired
 	private ReservationDao reservationDao;
+
+	@Autowired
+	private MonthlySalesDao monthlySalesDao;
 
 	// 3600000 = 1시간
 	@Scheduled(fixedRate = 1800000) // 30분마다 실행 (시간 단위는 밀리초)
@@ -41,7 +46,6 @@ public class AutoProcessService {
 		reservationDao.paymentRewards(userDto);
 		System.out.println("포인트 적립 완료");
 	}
-	
 
 	// 예약시간으로부터 20분이 지난 예약 내역
 	@Scheduled(fixedRate = 600000)
@@ -49,5 +53,17 @@ public class AutoProcessService {
 		reservationDao.deleteUnpaidReservation();
 		System.out.println("결제안한 애들 캇투");
 	}
+
 	
+	@Scheduled(cron = "0 0 1 * * ?") // 매월 1일 0시 0분에 실행
+	public void executeMonthlyTask() {
+		MonthlySalesDto monthlySalesDto = new MonthlySalesDto();
+		monthlySalesDao.makeMonthlySales(monthlySalesDto);
+	}
+
+	@Scheduled(cron = "0 0 10 * * *")
+	public void updateSales() {
+		monthlySalesDao.updateMonthlySales();
+		System.out.println("정산 업데이트");
+	}
 }

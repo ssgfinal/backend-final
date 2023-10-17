@@ -62,7 +62,6 @@ public class ReservationController {
 
 			// 사용자 ID를 파라미터로 전달하여 예약 기본 정보 조회
 			ReservationInfoDto basicInfo = reservationService.getReservationBasicInfo(roomNumber, userId);
-
 			// 필요한 필드만 선택하여 JSON 문자열로 변환
 			ObjectMapper objectMapper = new ObjectMapper();
 			ObjectNode responseJson = objectMapper.createObjectNode();
@@ -96,7 +95,7 @@ public class ReservationController {
 				ArrayNode emptyArray = objectMapper.createArrayNode();
 				responseJson.set("couponInfoList", emptyArray);
 			}
-
+			
 			// JSON 문자열 반환
 			System.out.println(responseJson.toString());
 			return ResponseEntity.ok(responseJson.toString());
