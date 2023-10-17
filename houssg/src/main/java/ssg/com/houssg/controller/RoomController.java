@@ -163,7 +163,7 @@ public class RoomController {
 	    List<RoomDto> list = service.choiceAccom(accomNumber);
 	    
 	    if (list != null && !list.isEmpty()) {
-	            return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
+	        return new ResponseEntity<>(list, HttpStatus.OK);
 	    } else {
 	        return new ResponseEntity<>(new ArrayList<RoomDto>(), HttpStatus.OK);
 	    }
