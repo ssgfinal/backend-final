@@ -26,7 +26,10 @@ public interface ReservationDao {
 	 
 	// 연도+월 받아와 해당 연,월에 해당하는 객실 별 예약 현황 불러옴
 	List<ReservationRoomDto> getReservationStatusForYearMonth(int roomNumber, String yearMonth);
-
+	
+	// 유저포인트 가져옴
+	int getUserPoints(String Id);
+	
 	// 객실 번호로 숙소 번호 조회
 	int getAccomNumberByRoomNumber(int roomNumber);
 
@@ -66,7 +69,7 @@ public interface ReservationDao {
     // 사업자 ID로 가지고있는 숙소번호, 이름 가져옴
     List<AccomListDto> getAccommodationByOwnerId(String Id);
     
-    // 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
+    // 숙소번호, 날짜로 예약상태가 1(예약완료)인 예약정보 가져옴
     List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth);
     
     // 숙소번호로 객실정보 조회
@@ -92,6 +95,6 @@ public interface ReservationDao {
     
     // 사업자 - 오프라인 예약 추가
     void offLineEnrollByOwner(ReservationDto reservationDto);
-
+    
 }
 

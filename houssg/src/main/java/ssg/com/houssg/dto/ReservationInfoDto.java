@@ -6,7 +6,7 @@ public class ReservationInfoDto {
 	
 	private List<ReservationRoomDto> bookableRoomList;
     private List<UserCouponDto> couponList;
-	
+    
 	public List<ReservationRoomDto> getBookableRoomList() {
 		return bookableRoomList;
 	}
@@ -19,6 +19,5 @@ public class ReservationInfoDto {
 	public void setCouponList(List<UserCouponDto> couponList) {
 		this.couponList = couponList;
 	}
-    
     
 }

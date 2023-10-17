@@ -233,7 +233,7 @@
 		DATE_FORMAT(end_date, '%Y-%m') =
 		#{yearMonth})
 		)
-		AND status = 2
+		AND status = 1
 	</select>
 
 

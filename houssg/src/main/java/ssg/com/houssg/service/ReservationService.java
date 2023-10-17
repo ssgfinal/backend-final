@@ -27,7 +27,7 @@ public class ReservationService {
 	public List<UserCouponDto> getCouponInfo(String Id) {
 		return dao.getCouponInfo(Id);
 	}
-
+	
 	// 객실별 예약현황 조회
 	public List<ReservationRoomDto> getReservationStatus(int roomNumber) {
 		return dao.getReservationStatus(roomNumber);
@@ -54,7 +54,7 @@ public class ReservationService {
 		// 쿠폰 정보 설정
 		List<UserCouponDto> couponList = getCouponInfo(userId);
 		basicInfo.setCouponList(couponList);
-
+		
 		return basicInfo;
 	}
 
@@ -127,7 +127,7 @@ public class ReservationService {
 		return dao.getAccommodationByOwnerId(Id);
 	}
 
-	// 숙소번호, 날짜로 예약상태가 2(예약완료)인 예약정보 가져옴
+	// 숙소번호, 날짜로 예약상태가 1(예약완료)인 예약정보 가져옴
 	public List<AccomReservationListDto> getHistoryForOwner(int accomNumber, String yearMonth) {
 		return dao.getHistoryForOwner(accomNumber, yearMonth);
 	}
@@ -172,4 +172,5 @@ public class ReservationService {
         int rowsAffected = dao.deleteReservation(reservationNumber);
         return rowsAffected > 0;
     }
+    
 }
