@@ -5,7 +5,7 @@
 	<!-- 리뷰 추가하기 -->
 	<insert id="addReview" parameterType="ssg.com.houssg.dto.ReviewDto">
 	    INSERT INTO review(review_content,review_rating,review_creation_time,report_status, id, reservation_number,room_number,accom_number,img) 
-	    VALUES (#{reviewContent}, #{reviewRating}, NOW() , 0, #{id},#{reservationNumber}, #{roomNumber}, #{accomNumber},#{img})
+	    VALUES (#{reviewContent}, #{reviewRating}, NOW() , 0, #{id},#{reservationNumber}, #{roomNumber}, #{accomNumber}, #{img})
 	</insert>
 	<!-- 나의 리뷰 보기 -->
 	<select id="getMyReview" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.ReviewDto">
@@ -14,7 +14,7 @@
 		JOIN user u ON r.id = u.id
 		JOIN rooms ro ON r.room_number = ro.room_number
 		JOIN accommodation a ON r.accom_number = a.accom_number
-		WHERE u.id = #{id} AND r.report_status=0
+		WHERE u.id = #{id} AND (r.report_status = 0 OR r.report_status = 1)
 	</select>
 	<!-- 숙소에 관한 리뷰보기 -->
 	<select id="getAllReview" parameterType="java.lang.Integer" resultType="ssg.com.houssg.dto.ReviewDto">
@@ -23,7 +23,7 @@
 	    JOIN rooms ro ON r.room_number = ro.room_number
 	    JOIN accommodation a ON r.accom_number = a.accom_number
 	    JOIN user u ON r.id = u.id
-	    WHERE r.accom_number = #{accomNumber} AND r.report_status=0 AND r.report_status = 0
+	    WHERE r.accom_number = #{accomNumber} AND (r.report_status=0 OR r.report_status = 1)
 	    ORDER BY r.review_creation_time DESC
 	</select>
 	<!-- 리뷰 신고하기 -->
@@ -65,5 +65,4 @@
 	      AND r.accom_number = a.accom_number
 	      AND r.manager_id = a.id
 	</update>
-
 </mapper>
