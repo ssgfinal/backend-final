@@ -12,7 +12,7 @@
 	<select id="choiceAccom" parameterType="java.lang.Integer" resultType="ssg.com.houssg.dto.RoomDto">
 		SELECT *
 		FROM rooms
-		WHERE accom_number=#{accomNumber}
+		WHERE accom_number=#{accomNumber} AND del_request=0
 	</select>
 	
 	<update id="updateRoom" parameterType="ssg.com.houssg.dto.RoomDto">

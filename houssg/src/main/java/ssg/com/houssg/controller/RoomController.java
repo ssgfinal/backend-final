@@ -163,28 +163,10 @@ public class RoomController {
 	    List<RoomDto> list = service.choiceAccom(accomNumber);
 	    
 	    if (list != null && !list.isEmpty()) {
-	        // 숙소 정보가 존재할 경우 200 OK 응답과 데이터 반환
-	        if (roomIsInDeleteRequest(list)) {
-	            // 방이 삭제 요청 중인 경우
 	            return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
-	        } else {
-	            // 방이 삭제 요청 중이 아닌 경우
-	            return new ResponseEntity<>(list, HttpStatus.OK);
-	        }
 	    } else {
 	        return new ResponseEntity<>(new ArrayList<RoomDto>(), HttpStatus.OK);
 	    }
-	}
-
-	private boolean roomIsInDeleteRequest(List<RoomDto> roomList) {
-	    for (RoomDto room : roomList) {
-	        if (room.getDelRequest() == 1) {
-	            // 삭제 요청 중인 방이 발견되면 true를 반환
-	            System.out.println("점주가 삭제요청 중인 방입니다");
-	            return true;
-	        }
-	    }
-	    return false;
 	}
 
 	 @PatchMapping(value = "room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -276,17 +258,18 @@ public class RoomController {
 	 }
 	 @PatchMapping("room/request")
 	 public ResponseEntity<String> deleteRoom(@RequestParam int roomNumber) {
-	     
-		 	// 방 삭제를 요청
-		 
-	      int roomCount = service.deleteRequest(roomNumber);
-	      if (roomCount <= 0) {
-	          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(roomNumber + "방은 예약이 남아 있습니다");
-	      }
+	     System.out.println("방 삭제 요청");
 
-	        // 모든 삭제가 성공적으로 완료되면 성공 메시지 반환
-	      return ResponseEntity.ok(roomNumber+"방은 삭제 요청이 되었습니다.");
-     }
+	     // 방 삭제 요청
+	     int roomCount = service.deleteRequest(roomNumber);
+	     if (roomCount <= 0) {
+	         // 삭제 요청 실패
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(roomNumber + "방은 예약이 남아 있습니다");
+	     }
+
+	     return ResponseEntity.ok(roomNumber + "방은 삭제 요청이 되었습니다.");
+	 }
+
 	 private String uploadImage(MultipartFile imageFile) throws Exception {
 	        try {
 	            Map<?, ?> uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());
