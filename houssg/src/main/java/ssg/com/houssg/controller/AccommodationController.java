@@ -95,11 +95,13 @@ public class AccommodationController {
                                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
                                                                    @RequestParam(name = "page", required = false, defaultValue = "1") int page) {
     	List<AccommodationDto> searchResults;
-    	AccommodationParam param = new AccommodationParam(search, type, select, pageSize, page);
+    	
     	
     	 // 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
         int start = (page - 1) * pageSize;
         int end = page * pageSize;
+        
+        AccommodationParam param = new AccommodationParam(search, type, select, pageSize, page, start);
         
         if (type != null && search != null && select != null) {
         	System.out.println(param.toString());
@@ -107,7 +109,8 @@ public class AccommodationController {
         } else if (type != null && select != null) {
         	System.out.println(param.toString());
             searchResults = service.typeSearch(param);
-            System.out.println(page);
+            System.out.println(start);
+            System.out.println(end);
         } else if (search != null && select != null) {
         	System.out.println(param.toString());
             searchResults = service.getAddressSearch(param);

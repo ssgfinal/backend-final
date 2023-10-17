@@ -15,7 +15,6 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
 		    FROM review
-		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 	    WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0) 
@@ -37,25 +36,24 @@
 	    LIMIT #{pageSize} OFFSET #{start}
 	</select>
 
-	<select id="typeSearch" parameterType="string" resultType="ssg.com.houssg.dto.AccommodationDto">
+	<select id="typeSearch" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
 	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
-		    MIN(ro.room_price) AS min_price, 
-		    IFNULL(r.review_count, 0) AS review_count,
-		    IFNULL(r.avg_rating, 0.0) AS avg_rating
+	        MIN(ro.room_price) AS min_price, 
+	        IFNULL(r.review_count, 0) AS review_count,
+	        IFNULL(r.avg_rating, 0.0) AS avg_rating
 	    FROM accommodation a
 	    JOIN rooms ro ON a.accom_number = ro.accom_number
-		LEFT JOIN favorite f ON a.accom_number = f.accom_number
-		LEFT JOIN (
-		    SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
-		    FROM review
-		    WHERE report_status = 0
-		    GROUP BY accom_number
-		) r ON a.accom_number = r.accom_number
-		WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
-		AND (a.accom_category = #{type})
-		GROUP BY a.accom_number
-		<if test="select == '평점 높은순'">
-        	ORDER BY avg_rating DESC
+	    LEFT JOIN favorite f ON a.accom_number = f.accom_number
+	    LEFT JOIN (
+	        SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
+	        FROM review
+	        GROUP BY accom_number
+	    ) r ON a.accom_number = r.accom_number
+	    WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
+	    AND (a.accom_category = #{type})
+	    GROUP BY a.accom_number
+	    <if test="select == '평점 높은순'">
+	        ORDER BY avg_rating DESC
 	    </if>
 	    <if test="select == '최근 등록순'">
 	        ORDER BY a.accom_number DESC
@@ -68,7 +66,7 @@
 	    </if>
 	    LIMIT #{pageSize} OFFSET #{start}
 	</select>
-	
+
 	<select id="search" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
 	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
@@ -80,7 +78,6 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
 		    FROM review
-		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 		WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
@@ -141,7 +138,6 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
-		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 		WHERE a.accom_number = #{accomNumber} and (a.deletion_request = 0 OR a.deletion_request = 1) and add_request=0
@@ -170,7 +166,6 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
-		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0 
@@ -216,7 +211,6 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
-		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
@@ -235,7 +229,6 @@
 		LEFT JOIN (
 		    SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
 		    FROM review
-		    WHERE report_status = 0
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
 		WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
@@ -255,7 +248,6 @@
         LEFT JOIN (
             SELECT accom_number, COUNT(*) AS review_count, FORMAT(AVG(review_rating), 1) AS avg_rating
             FROM review
-            WHERE report_status = 0
             GROUP BY accom_number
         ) r ON a.accom_number = r.accom_number
         WHERE (a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0
