@@ -32,6 +32,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.ReviewDto;
+import ssg.com.houssg.dto.ReviewParam;
 import ssg.com.houssg.service.ReviewService;
 
 @RestController
@@ -97,15 +98,25 @@ public class ReviewController {
 
 	// my 리뷰 보기
 	@GetMapping("mypage/review")
-	public ResponseEntity<List<ReviewDto>> getMyReview(HttpServletRequest httpRequest) {
+	public ResponseEntity<List<ReviewDto>> getMyReview(HttpServletRequest httpRequest,
+	                                                   @RequestParam int pageSize,
+	                                                   @RequestParam int page) {
 	    System.out.println("나의 리뷰 보기");
+	    
+	    // 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
+	    int start = (page - 1) * pageSize;
+	    int end = page * pageSize;
+	    
 	    String token = getTokenFromRequest(httpRequest);
-        String userId = getUserIdFromToken(token);
-	    List<ReviewDto> reviews = service.getMyReview(userId);
+	    String userId = getUserIdFromToken(token);
+	    ReviewParam param = new ReviewParam(userId, pageSize, page, start);
+	    // 데이터베이스 쿼리에 start와 end를 사용하여 데이터 범위를 지정
+	    List<ReviewDto> reviews = service.getMyReview(param);
 
 	    if (reviews.isEmpty()) {
 	        // 리뷰가 없는 경우
-	    	return new ResponseEntity<>(new ArrayList<ReviewDto>(),HttpStatus.OK);
+	        System.out.println(page);
+	        return new ResponseEntity<>(new ArrayList<ReviewDto>(), HttpStatus.OK);
 	    } else {
 	        // 리뷰를 찾은 경우
 	        return ResponseEntity.ok(reviews); // 리뷰 목록 반환

@@ -4,7 +4,7 @@
 
 <mapper namespace="ssg.com.houssg.dao.AccommodationDao">
 	
-	<select id="getAddressSearch" parameterType="string" resultType="ssg.com.houssg.dto.AccommodationDto">
+	<select id="getAddressSearch" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
 		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
 		    MIN(ro.room_price) AS min_price, 
 		    IFNULL(r.review_count, 0) AS review_count,

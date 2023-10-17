@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import ssg.com.houssg.dto.ReviewDto;
+import ssg.com.houssg.dto.ReviewParam;
 
 @Mapper
 @Repository
@@ -14,7 +15,7 @@ public interface ReviewDao {
 	// 리뷰 추가
 	int addReview(ReviewDto dto);
 	// 마이 리뷰 보기
-	List<ReviewDto> getMyReview(String id);
+	List<ReviewDto> getMyReview(ReviewParam param);
 	// 한 숙소 리뷰 보기
 	List<ReviewDto> getAllReview(int accomNumber);
 	// 리뷰 신고하기
