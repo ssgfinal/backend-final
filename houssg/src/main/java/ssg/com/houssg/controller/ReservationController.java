@@ -159,20 +159,28 @@ public class ReservationController {
 	}
 
 	// 결제완료 >> 예약완료 체크
-	@PostMapping("/complete")
+	@PostMapping("/check-complete")
 	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request) {
-		int reservationNumber = request.getReservationNumber();
-		String sign = request.getSign();
+	    int reservationNumber = request.getReservationNumber();
+	    String sign = request.getSign();
 
-		if ("success".equals(sign)) {
-			reservationService.paymentCheck(reservationNumber);
-			return ResponseEntity.ok("예약완료");
-		} else if ("fail".equals(sign)) {
-			return ResponseEntity.badRequest().body("결제실패");
-		} else {
-			return ResponseEntity.badRequest().body("잘못된 요청입니다.");
-		}
+	    if ("success".equals(sign)) {
+	        reservationService.paymentCheck(reservationNumber);
+	        return ResponseEntity.ok("예약완료");
+	    } else if ("fail".equals(sign)) {
+	        // "fail" 경우에 해당 예약 번호에 대한 삭제 작업 수행
+	        boolean deleted = reservationService.deleteReservation(reservationNumber);
+
+	        if (deleted) {
+	            return ResponseEntity.ok("결제실패 및 예약삭제 완료");
+	        } else {
+	            return ResponseEntity.badRequest().body("결제실패 및 예약 삭제 실패");
+	        }
+	    } else {
+	        return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+	    }
 	}
+
 
 	// 연도 + 월 기준 객실 별 예약 현황 조회
 	@GetMapping("/available-room")

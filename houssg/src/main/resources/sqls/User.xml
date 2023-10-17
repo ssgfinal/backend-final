@@ -78,12 +78,27 @@
 		AND id = #{id}
 	</select>
 
-	<select id="findUserById"
-		parameterType="java.util.Map" resultType="ssg.com.houssg.dto.UserDto">
+	<select id="findUserById" parameterType="java.util.Map"
+		resultType="ssg.com.houssg.dto.UserDto">
 		SELECT *
 		FROM user
-		WHERE id = #{id} 
+		WHERE id = #{id}
 	</select>
+
+	<select id="findPasswordById" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT password FROM user WHERE id = #{id}
+	</select>
+
+	<update id="changePhone">
+		update user set phonenumber = #{phone_number}
+		where id = #{id};
+	</update>
+	
+	<update id="changeNickname">
+		update user set nickname = #{nick_name}
+		where id = #{id};
+	</update>
 
 
 </mapper>

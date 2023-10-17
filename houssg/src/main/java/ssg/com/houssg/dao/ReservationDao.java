@@ -42,6 +42,9 @@ public interface ReservationDao {
 	// 이용 완료
 	void usedCheck();
 	
+	// 예약 삭제
+    int deleteReservation(int reservationNumber);
+	
 	// 포인트 적립
 	void paymentRewards(UserDto userDto);
 	

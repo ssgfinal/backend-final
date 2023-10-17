@@ -167,5 +167,9 @@ public class ReservationService {
 		dao.offLineEnrollByOwner(reservationDto);
 	}
 
-
+	// 예약 삭제
+    public boolean deleteReservation(int reservationNumber) {
+        int rowsAffected = dao.deleteReservation(reservationNumber);
+        return rowsAffected > 0;
+    }
 }
