@@ -109,22 +109,14 @@ public class RoomService {
         
         return updatedRoomServiceCount;
     }
-	public int deleteRoom(int roomNumber) {
-	    // 서비스 먼저 삭제
-	    int deleteRoomServiceCount = serdao.deleteService(roomNumber);
-	    
-	    // 서비스 삭제가 실패하면 방 삭제를 시도하지 않음
-	    if (deleteRoomServiceCount <= 0) {
-	        System.out.println("방 서비스 삭제 실패");
-	        return 0;
-	    }
+	public int deleteRequest(int roomNumber) {
 	    
 	    // 방 삭제 시도
-	    int deleteRoomCount = dao.deleteRoom(roomNumber);
+	    int deleteRoomCount = dao.deleteRequest(roomNumber);
 
 	    if (deleteRoomCount <= 0) {
 	        // 방 삭제 실패 시 오류 메시지 출력
-	        System.out.println("방 삭제 실패");
+	        System.out.println("예약이 존재합니다");
 	        return 0;
 	    }
 

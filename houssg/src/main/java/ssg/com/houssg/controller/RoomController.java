@@ -155,20 +155,38 @@ public class RoomController {
 
 	    return new ResponseEntity<>("방 추가 성공", HttpStatus.OK);
 	}
-	 @GetMapping("room/detail")
-	    public ResponseEntity<List<RoomDto>> choiceAccom(@RequestParam int accomNumber) {
-	        System.out.println(accomNumber);
-	        System.out.println("숙소상세로 들어갑니다");
-	        List<RoomDto> list = service.choiceAccom(accomNumber);
-
-	        if (list != null && !list.isEmpty()) {
-	            // 숙소 정보가 존재할 경우 200 OK 응답과 데이터 반환
-	            return new ResponseEntity<>(list, HttpStatus.OK);
+	@GetMapping("room/detail")
+	public ResponseEntity<List<RoomDto>> choiceAccom(@RequestParam int accomNumber) {
+	    System.out.println(accomNumber);
+	    System.out.println("숙소 상세로 들어갑니다");
+	    
+	    List<RoomDto> list = service.choiceAccom(accomNumber);
+	    
+	    if (list != null && !list.isEmpty()) {
+	        // 숙소 정보가 존재할 경우 200 OK 응답과 데이터 반환
+	        if (roomIsInDeleteRequest(list)) {
+	            // 방이 삭제 요청 중인 경우
+	            return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
 	        } else {
-	            return new ResponseEntity<>(new ArrayList<RoomDto>(),HttpStatus.OK);
+	            // 방이 삭제 요청 중이 아닌 경우
+	            return new ResponseEntity<>(list, HttpStatus.OK);
+	        }
+	    } else {
+	        return new ResponseEntity<>(new ArrayList<RoomDto>(), HttpStatus.OK);
+	    }
+	}
+
+	private boolean roomIsInDeleteRequest(List<RoomDto> roomList) {
+	    for (RoomDto room : roomList) {
+	        if (room.getDelRequest() == 1) {
+	            // 삭제 요청 중인 방이 발견되면 true를 반환
+	            System.out.println("점주가 삭제요청 중인 방입니다");
+	            return true;
 	        }
 	    }
-	 
+	    return false;
+	}
+
 	 @PatchMapping(value = "room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	 public ResponseEntity<String> updateRoom(
 	     @RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFileList,
@@ -256,23 +274,19 @@ public class RoomController {
 	         return new ResponseEntity<>("객실 업데이트 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	     }
 	 }
-	 @DeleteMapping("room")
-	    public ResponseEntity<String> deleteRoom(@RequestParam int roomNumber) {
-	        // 이미지 삭제를 시도
-	        int imgCount = innerService.deleteImg(roomNumber);
-	        if (imgCount <= 0) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Images for room " + roomNumber + " not found or couldn't be deleted");
-	        }
-
-	        // 방 삭제를 시도
-	        int roomCount = service.deleteRoom(roomNumber);
-	        if (roomCount <= 0) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room with number " + roomNumber + " not found or couldn't be deleted");
-	        }
+	 @PatchMapping("room/request")
+	 public ResponseEntity<String> deleteRoom(@RequestParam int roomNumber) {
+	     
+		 	// 방 삭제를 요청
+		 
+	      int roomCount = service.deleteRequest(roomNumber);
+	      if (roomCount <= 0) {
+	          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(roomNumber + "방은 예약이 남아 있습니다");
+	      }
 
 	        // 모든 삭제가 성공적으로 완료되면 성공 메시지 반환
-	        return ResponseEntity.ok("Successfully deleted room with number: " + roomNumber);
-	    }
+	      return ResponseEntity.ok(roomNumber+"방은 삭제 요청이 되었습니다.");
+     }
 	 private String uploadImage(MultipartFile imageFile) throws Exception {
 	        try {
 	            Map<?, ?> uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());
