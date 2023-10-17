@@ -23,5 +23,5 @@ public interface RoomDao {
 	
 	int updateRoom(RoomDto roomDto);
 	
-	int deleteRoom(int roomNumber);
+	int deleteRequest(int roomNumber);
 }

@@ -31,7 +31,7 @@ public class FavoriteController {
 	@Autowired
 	FavoriteService service;
 	
-	@PostMapping("favorite/add")
+	@PostMapping("favorite")
 	public ResponseEntity<String> addFavorite(@RequestParam int accomNumber,HttpServletRequest httpRequest) {
 		String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
