@@ -102,5 +102,11 @@
 		where id =
 		#{id};
 	</update>
+	
+	<select id="kakoLogin" parameterType="string" resultType="ssg.com.houssg.dto.UserDto">
+		select *
+		from user
+		where id=#{id}
+	</select>
 
 </mapper>
