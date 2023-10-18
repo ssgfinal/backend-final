@@ -41,5 +41,7 @@ public interface UserDao {
 	void changeNickname(String id, String nick_name);
 	
 	// 카카오 로그인
-	int kakaoLogin(String id);
+	UserDto kakaoLogin(String id);
+	
+	
 }

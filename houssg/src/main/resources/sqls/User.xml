@@ -103,7 +103,7 @@
 		#{id};
 	</update>
 	
-	<select id="kakoLogin" parameterType="string" resultType="ssg.com.houssg.dto.UserDto">
+	<select id="kakaoLogin" parameterType="string" resultType="ssg.com.houssg.dto.UserDto">
 		select *
 		from user
 		where id=#{id}
