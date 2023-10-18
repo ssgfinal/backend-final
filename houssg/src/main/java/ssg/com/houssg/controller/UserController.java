@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.function.ServerRequest.Headers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -357,7 +359,7 @@ public class UserController {
 	
     @PostMapping("/kakaoLogin")
     public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> requestBody,
-    									@RequestBody UserDto dto) {
+    									@RequestParam(value="phonenumber", required=false) String phonenumber) {
         System.out.println("MemberController 카카오 로그인 " + new Date());
 
         String kakaoAccessToken = requestBody.get("access_token");
@@ -376,7 +378,6 @@ public class UserController {
             if (responseCode == 200) {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode jsonNode = mapper.readTree(conn.getInputStream());
-                System.out.println(jsonNode);
                 String memberId = jsonNode.get("id").asText();
                 String memberName = jsonNode.get("properties").get("nickname").asText();
 
@@ -384,26 +385,52 @@ public class UserController {
                 UserDto userDto = new UserDto();
                 userDto.setId(memberId); // 아이디 설정
                 userDto.setNickname(memberName); // 닉네임 설정
-                System.out.println(userDto.getId());
-                System.out.println(userDto.getNickname());
                 // 이후 UserDto를 이용하여 로그인 또는 회원가입 처리를 수행합니다.
-                int count = service.idCheck(memberId);
-                System.out.println(count);
-                if(count != 0) {
-                    service.kakaoLogin(memberId);
+                int check = service.idCheck(memberId);
+
+                if(check != 0) {
+                	UserDto login = service.kakaoLogin(memberId);
+                	System.out.println(login);
+                    if(login==null||login.equals("")) {
+                    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인 실패");
+                    } else {
+                    	String token = jwtTokenProvider.createAccessToken(userDto); // UserDto 객체를 createToken 메서드에 전달
+             			System.out.println("생성된 토큰: " + token);
+             			String refreshToken = jwtTokenProvider.createRefreshToken(userDto);
+             			System.out.println("생성된 리프레시 토큰: " + refreshToken);
+             			
+             			Map<String, Object> responseMap = new HashMap<>();
+            			responseMap.put("message", "로그인 성공");
+            			responseMap.put("nickname", userDto.getNickname()); 
+            			responseMap.put("point", userDto.getPoint());
+
+            			HttpHeaders headers = new HttpHeaders();
+            			headers.add("Authorization", "Bearer " + token);
+            			headers.add("RefreshToken", refreshToken);
+            			tokenService.storeRefreshToken(refreshToken, userDto);
+            			System.out.println("로그인 성공" + new Date());
+
+            			return ResponseEntity.ok().headers(headers).body(responseMap); // 토큰 반환
+                    }
                 } else {
+                	HttpHeaders headers = new HttpHeaders();
+                	headers.add("Authorization","Bearer +kakako+");
+                	
+                	
                 	System.out.println("회원가입합니다");
-//                	service.kakaoSignup();
+                    userDto.setPassword("Abcd123@");
+                    userDto.setPhonenumber(phonenumber);
+                    UserUtil userUtil = new UserUtil();
+                    if (!userUtil.isValidUser(userDto)) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body("회원가입 실패, 전화번호를 입력해 주세요");
+                    }
+                    int count = service.signUp(userDto);
+                    if (count > 0) {
+                        return ResponseEntity.ok().body("회원가입 성공");
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패2");
+                    }
                 }
-//                    회원가입 처리
-//                    userDto.setPhonenumber(입력한 값);
-//                    userDto.setPoint(0);
-//                    userDto.setPassword(입력한값 없어도 되는건가);
-                // 이어서 다른 로직을 수행하고 결과를 반환합니다.
-                // ...
-                
-                // 성공적으로 로그인 또는 회원가입이 이루어지면 HttpStatus.OK 반환
-                return ResponseEntity.ok("카카오 로그인 성공");
             } else {
                 System.out.println("카카오 응답 : " + responseCode);
                 System.out.println("카카오 로그인 실패");

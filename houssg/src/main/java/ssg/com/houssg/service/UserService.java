@@ -83,7 +83,7 @@ public class UserService {
  	}
 
  	// 카카오 로그인
- 	public int kakaoLogin(String id) {
+ 	public UserDto kakaoLogin(String id) {
  		return dao.kakaoLogin(id);
  	}
 }
