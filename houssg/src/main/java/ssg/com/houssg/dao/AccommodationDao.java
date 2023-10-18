@@ -51,5 +51,11 @@ public interface AccommodationDao {
 	List<AccommodationDto> newAccom20();
 	
 	AccommodationDto choiceAccom(int accomNumber);
+	
+	int addressTotal(AccommodationParam param);
+	
+	int typeTotal(AccommodationParam param);
+	
+	int searchTotal(AccommodationParam param);
 
 }

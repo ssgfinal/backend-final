@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -102,23 +103,28 @@ public class ReviewController {
 	                                                   @RequestParam int pageSize,
 	                                                   @RequestParam int page) {
 	    System.out.println("나의 리뷰 보기");
-	    
+
 	    // 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
 	    int start = (page - 1) * pageSize;
 	    int end = page * pageSize;
-	    
+
 	    String token = getTokenFromRequest(httpRequest);
 	    String userId = getUserIdFromToken(token);
 	    ReviewParam param = new ReviewParam(userId, pageSize, page, start);
 	    // 데이터베이스 쿼리에 start와 end를 사용하여 데이터 범위를 지정
 	    List<ReviewDto> reviews = service.getMyReview(param);
+	    int total = service.reviewCount(param);
+
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.add("X-Total-Count", String.valueOf(total)); // X-Total-Count라는 헤더 필드에 총 갯수 추가
 
 	    if (reviews.isEmpty()) {
 	        // 리뷰가 없는 경우
-	        System.out.println(page);
-	        return new ResponseEntity<>(new ArrayList<ReviewDto>(), HttpStatus.OK);
+	        return new ResponseEntity<>(new ArrayList<ReviewDto>(), headers, HttpStatus.OK);
 	    } else {
 	        // 리뷰를 찾은 경우
+	        System.out.println(page);
+	        System.out.println(total);
 	        return ResponseEntity.ok(reviews); // 리뷰 목록 반환
 	    }
 	}
