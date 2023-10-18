@@ -16,6 +16,7 @@ import javax.naming.directory.SearchResult;
 import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -103,21 +104,32 @@ public class AccommodationController {
         
         AccommodationParam param = new AccommodationParam(search, type, select, pageSize, page, start);
         
+        int total = 0;
+        
         if (type != null && search != null && select != null) {
         	System.out.println(param.toString());
             searchResults = service.search(param);
+            total = service.searchTotal(param);
+            System.out.println("총 갯수 : "+total);
         } else if (type != null && select != null) {
         	System.out.println(param.toString());
             searchResults = service.typeSearch(param);
-            System.out.println(start);
-            System.out.println(end);
+            total = service.typeTotal(param);
+            System.out.println("총갯수 : "+total);
         } else if (search != null && select != null) {
         	System.out.println(param.toString());
+        	total = service.addressTotal(param);
+        	System.out.println("총 갯수: "+total);	
             searchResults = service.getAddressSearch(param);
         } else {
             return new ResponseEntity<>(new ArrayList<AccommodationDto>(), HttpStatus.OK);
         }
-        return ResponseEntity.ok(searchResults);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(total)); // X-Total-Count라는 헤더 필드에 총 갯수 추가
+
+        return ResponseEntity.ok()
+            .headers(headers)
+            .body(searchResults);
     }
 
 

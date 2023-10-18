@@ -35,7 +35,22 @@
 	    </if>
 	    LIMIT #{pageSize} OFFSET #{start}
 	</select>
-
+	
+	<select id="addressTotal" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="int">
+	    SELECT COUNT(DISTINCT a.accom_number) AS total_count
+	    FROM accommodation a
+	    JOIN rooms ro ON a.accom_number = ro.accom_number
+	    LEFT JOIN favorite f ON a.accom_number = f.accom_number
+	    LEFT JOIN (
+	        SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
+	        FROM review
+	        GROUP BY accom_number
+	    ) r ON a.accom_number = r.accom_number
+	    WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0) 
+	    AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
+		OR (REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%')))
+	</select>
+		
 	<select id="typeSearch" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
 	    SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
 	        MIN(ro.room_price) AS min_price, 
@@ -65,6 +80,20 @@
 	        ORDER BY min_price ASC
 	    </if>
 	    LIMIT #{pageSize} OFFSET #{start}
+	</select>
+	
+	<select id="typeTotal" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="int">
+		SELECT COUNT(DISTINCT a.accom_number) AS total_count
+		FROM accommodation a
+	    JOIN rooms ro ON a.accom_number = ro.accom_number
+	    LEFT JOIN favorite f ON a.accom_number = f.accom_number
+	    LEFT JOIN (
+	        SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
+	        FROM review
+	        GROUP BY accom_number
+	    ) r ON a.accom_number = r.accom_number
+	    WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
+	    AND (a.accom_category = #{type})
 	</select>
 
 	<select id="search" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="ssg.com.houssg.dto.AccommodationDto">
@@ -98,6 +127,22 @@
 	        ORDER BY min_price ASC
 	    </if>
 	    LIMIT #{pageSize} OFFSET #{start}
+	</select>
+	
+	<select id="searchTotal" parameterType="ssg.com.houssg.dto.AccommodationParam" resultType="int">
+		SELECT COUNT(DISTINCT a.accom_number) AS total_count
+	    FROM accommodation a
+	    JOIN rooms ro ON a.accom_number = ro.accom_number
+		LEFT JOIN favorite f ON a.accom_number = f.accom_number
+		LEFT JOIN (
+		    SELECT accom_number, COUNT(*) AS review_count, ROUND(AVG(review_rating), 1) AS avg_rating
+		    FROM review
+		    GROUP BY accom_number
+		) r ON a.accom_number = r.accom_number
+		WHERE ((a.deletion_request = 0 OR a.deletion_request = 1) AND a.add_request = 0)
+		AND (a.accom_category = #{type})
+		AND ((REPLACE(TRIM(a.accom_name), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
+		OR REPLACE(TRIM(a.accom_address), ' ', '%') LIKE CONCAT('%', REPLACE(TRIM(#{search}), ' ', '%'), '%'))
 	</select>
 	
 	<!-- (5) 숙소 등록 후 selectKey에 의해, autoIncrement된 accom_number 값이 반환됨 -->
