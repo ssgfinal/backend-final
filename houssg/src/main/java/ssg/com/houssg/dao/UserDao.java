@@ -39,4 +39,7 @@ public interface UserDao {
 	
 	// 마이페이지 닉네임 변경
 	void changeNickname(String id, String nick_name);
+	
+	// 카카오 로그인
+	int kakaoLogin(String id);
 }

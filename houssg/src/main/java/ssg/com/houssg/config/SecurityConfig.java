@@ -52,6 +52,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PATCH", "DELETE"));
         configuration.addExposedHeader("Authorization");
         configuration.addExposedHeader("RefreshToken");
+        configuration.addExposedHeader("Total-Count");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();  
         source.registerCorsConfiguration("/**", configuration);
