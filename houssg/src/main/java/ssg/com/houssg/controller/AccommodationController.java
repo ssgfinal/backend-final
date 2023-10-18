@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +41,7 @@ import ssg.com.houssg.dto.AccommodationOcrDto;
 import ssg.com.houssg.dto.AccommodationParam;
 import ssg.com.houssg.dto.AccommodationRequest;
 import ssg.com.houssg.dto.FacilityDto;
-import ssg.com.houssg.dto.ReviewDto;
+import ssg.com.houssg.dto.ResponseWrapper;
 import ssg.com.houssg.service.AccommodationService;
 import ssg.com.houssg.service.FacilityService;
 import ssg.com.houssg.util.NaverOcrService;
@@ -90,15 +89,15 @@ public class AccommodationController {
         }
     }
     @GetMapping("/search")
-    public ResponseEntity<List<AccommodationDto>> getAddressSearch(@RequestParam(name = "search", required = false) String search,
+    public ResponseEntity<ResponseWrapper<AccommodationDto>> getAddressSearch(@RequestParam(name = "search", required = false) String search,
                                                                    @RequestParam(name = "type", required = false) String type,
                                                                    @RequestParam(name = "select", required = false) String select,
-                                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize,
                                                                    @RequestParam(name = "page", required = false, defaultValue = "1") int page) {
     	List<AccommodationDto> searchResults;
     	
     	
     	// 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
+    	int pageSize = 24;
         int start = (page - 1) * pageSize;
         int end = page * pageSize;
         
@@ -122,14 +121,11 @@ public class AccommodationController {
         	System.out.println("총 갯수: "+total);	
             searchResults = service.getAddressSearch(param);
         } else {
-            return new ResponseEntity<>(new ArrayList<AccommodationDto>(), HttpStatus.OK);
+        	return new ResponseEntity<>(new ResponseWrapper<>(new ArrayList<>(), total), HttpStatus.OK);
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Total-Count", String.valueOf(total)); // Total-Count라는 헤더 필드에 총 갯수 추가
-
-        return ResponseEntity.ok()
-            .headers(headers)
-            .body(searchResults);
+        
+        ResponseWrapper<AccommodationDto> responseWrapper = new ResponseWrapper<>(searchResults,total);
+        return ResponseEntity.ok(responseWrapper);
     }
 
 

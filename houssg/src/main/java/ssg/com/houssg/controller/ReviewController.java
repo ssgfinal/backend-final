@@ -32,6 +32,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.ResponseWrapper;
 import ssg.com.houssg.dto.ReviewDto;
 import ssg.com.houssg.dto.ReviewParam;
 import ssg.com.houssg.service.ReviewService;
@@ -99,7 +100,7 @@ public class ReviewController {
 
 	// my 리뷰 보기
 	@GetMapping("mypage/review")
-	public ResponseEntity<List<ReviewDto>> getMyReview(HttpServletRequest httpRequest,
+	public ResponseEntity<ResponseWrapper<ReviewDto>> getMyReview(HttpServletRequest httpRequest,
 	                                                   @RequestParam int pageSize,
 	                                                   @RequestParam int page) {
 	    System.out.println("나의 리뷰 보기");
@@ -118,14 +119,13 @@ public class ReviewController {
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.add("Total-Count", String.valueOf(total)); // Total-Count라는 헤더 필드에 총 갯수 추가
 
+	    ResponseWrapper<ReviewDto> responseWrapper = new ResponseWrapper<>(reviews, total);
 	    if (reviews.isEmpty()) {
 	        // 리뷰가 없는 경우
-	        return new ResponseEntity<>(new ArrayList<ReviewDto>(), headers, HttpStatus.OK);
+	        return new ResponseEntity<>(new ResponseWrapper<>(new ArrayList<>(), total), HttpStatus.OK);
 	    } else {
 	        // 리뷰를 찾은 경우
-	        System.out.println(page);
-	        System.out.println(total);
-	        return ResponseEntity.ok(reviews); // 리뷰 목록 반환
+	    	return ResponseEntity.ok(responseWrapper);
 	    }
 	}
 	// 숙소에 관한 리뷰
