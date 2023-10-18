@@ -116,7 +116,7 @@ public class ReviewController {
 	    int total = service.reviewCount(param);
 
 	    HttpHeaders headers = new HttpHeaders();
-	    headers.add("X-Total-Count", String.valueOf(total)); // X-Total-Count라는 헤더 필드에 총 갯수 추가
+	    headers.add("Total-Count", String.valueOf(total)); // Total-Count라는 헤더 필드에 총 갯수 추가
 
 	    if (reviews.isEmpty()) {
 	        // 리뷰가 없는 경우
