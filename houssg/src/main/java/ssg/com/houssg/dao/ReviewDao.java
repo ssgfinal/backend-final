@@ -30,4 +30,6 @@ public interface ReviewDao {
 	int addComment(int reviewNumber, String reviewComment);
 	// 답글 수정
 	int updateComment(int reviewNumber, String reviewComment);
+	// 예약에서 나의리뷰보기
+	List<ReviewDto> reservationReview(String id, int reservationNumber);
 }

@@ -75,4 +75,10 @@
 	      AND r.accom_number = a.accom_number
 	      AND r.manager_id = a.id
 	</update>
+	<!-- 예약에서 나의리뷰보기 -->
+	<select id="reservationReview" parameterType="ssg.com.houssg.dto.ReviewDto" resultType="ssg.com.houssg.dto.ReviewDto">
+		SELECT *
+		FROM review
+		WHERE id=#{id} AND reservation_number = #{reservationNumber}
+	</select>
 </mapper>

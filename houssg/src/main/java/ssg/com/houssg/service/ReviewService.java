@@ -52,4 +52,8 @@ public class ReviewService {
 	public int updateComment(int reviewNumber, String reviewComment) {
 		return dao.updateComment(reviewNumber, reviewComment);
 	}
+	// 예약에서 나의리뷰보기
+	public List<ReviewDto> reservationReview(String id, int reservationNumber){
+		return dao.reservationReview(id, reservationNumber);
+	}
 }
