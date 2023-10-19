@@ -1,5 +1,7 @@
 package ssg.com.houssg.service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import ssg.com.houssg.dto.AccomReservationListDto;
 import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
+import ssg.com.houssg.dto.ReservationForLmsDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -27,7 +30,7 @@ public class ReservationService {
 	public List<UserCouponDto> getCouponInfo(String Id) {
 		return dao.getCouponInfo(Id);
 	}
-	
+
 	// 객실별 예약현황 조회
 	public List<ReservationRoomDto> getReservationStatus(int roomNumber) {
 		return dao.getReservationStatus(roomNumber);
@@ -54,7 +57,7 @@ public class ReservationService {
 		// 쿠폰 정보 설정
 		List<UserCouponDto> couponList = getCouponInfo(userId);
 		basicInfo.setCouponList(couponList);
-		
+
 		return basicInfo;
 	}
 
@@ -77,6 +80,11 @@ public class ReservationService {
 	// 결제완료 >> 예약완료
 	public void paymentCheck(int reservationNumber) {
 		dao.paymentCheck(reservationNumber);
+	}
+
+	// 예약취소
+	public void cancelReservationByUser(int reservationNumber) {
+		dao.cancelReservationByOwner(reservationNumber);
 	}
 
 	// 쿠폰사용 여부 체크
@@ -104,20 +112,20 @@ public class ReservationService {
 		System.out.println(availableRooms);
 
 		if (availableRooms.stream().anyMatch(reservedRoom -> reservedRoom.getAvailableRooms() == 0)) {
-	        return false; // 하나라도 0인 경우 false 반환
-	    }
+			return false; // 하나라도 0인 경우 false 반환
+		}
 
 		return true; // 모든 방이 예약 가능하면 true 반환
 	}
-	
+
 	// 예약 가능 여부 확인 for offline
 	public boolean isReservationAvailableForOffLine(OffLineReservationDto offLineReservationDto) {
 		List<ReservationRoomDto> availableRooms = dao.lastCheckForOffLine(offLineReservationDto);
 		System.out.println(availableRooms);
-		
+
 		if (availableRooms.stream().anyMatch(reservedRoom -> reservedRoom.getAvailableRooms() == 0)) {
-	        return false; // 하나라도 0인 경우 false 반환
-	    }
+			return false; // 하나라도 0인 경우 false 반환
+		}
 
 		return true; // 모든 방이 예약 가능하면 true 반환
 	}
@@ -147,12 +155,12 @@ public class ReservationService {
 		dao.cancelReservationByOwner(reservationNumber);
 	}
 
-	// 2. 사업자 - 예약취소 - 포인트 반환
+	// 2. 예약취소 - 포인트 반환
 	public void returnUsePoint(String Id, int usePoint) {
 		dao.returnUsePoint(Id, usePoint);
 	}
 
-	// 3. 사업자 - 예약취소 - 쿠폰 반환
+	// 3. 예약취소 - 쿠폰 반환
 	public void returnUseCoupon(String couponNumber) {
 		dao.returnUseCoupon(couponNumber);
 	}
@@ -168,9 +176,32 @@ public class ReservationService {
 	}
 
 	// 예약 삭제
-    public boolean deleteReservation(int reservationNumber) {
-        int rowsAffected = dao.deleteReservation(reservationNumber);
-        return rowsAffected > 0;
+	public boolean deleteReservation(int reservationNumber) {
+		int rowsAffected = dao.deleteReservation(reservationNumber);
+		return rowsAffected > 0;
+	}
+
+	// 예약번호로 예약정보 조회
+	public ReservationForLmsDto getReservationInfoForGuest(int reservationNumber) {
+		return dao.getReservationInfoForGuest(reservationNumber);
+	}
+	
+	
+	// 수수료 계산
+	public int calculateCancellationFee(int reservationNumber, LocalDate startDate, int paymentAmount) {
+        LocalDate currentDate = LocalDate.now();
+        Period period = Period.between(currentDate, startDate);
+        int daysUntilCheckIn = period.getDays();
+
+        if (daysUntilCheckIn >= 7) {
+            return 0; // 일주일 전
+        } else if (daysUntilCheckIn >= 5) {
+            return (int) (paymentAmount * 0.3); // 5, 6일 전
+        } else if (daysUntilCheckIn >= 2) {
+            return (int) (paymentAmount * 0.5); // 2, 3, 4일 전
+        } else {
+        	return -1; // 하루 전, 당일 (취소불가)
+        }
     }
-    
+
 }

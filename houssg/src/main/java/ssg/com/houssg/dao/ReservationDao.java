@@ -9,6 +9,7 @@ import ssg.com.houssg.dto.AccomListDto;
 import ssg.com.houssg.dto.AccomReservationListDto;
 import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationDto;
+import ssg.com.houssg.dto.ReservationForLmsDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -40,7 +41,7 @@ public interface ReservationDao {
 	void paymentCheck(int reservationNumber);
 
 	// 유저 - 예약 취소
-	void cancelReservation();
+	void cancelReservationByUser();
 
 	// 이용 완료
 	void usedCheck();
@@ -81,10 +82,10 @@ public interface ReservationDao {
     // 1. 사업자 - 예약취소
     void cancelReservationByOwner(int reservationNumber);
     
-    // 2. 사업자 - 예약취소 - 포인트 반환
+    // 2. 예약취소 - 포인트 반환
     void returnUsePoint(String Id, int usePoint);
     
-    // 3. 사업자 - 예약취소 - 쿠폰 반환
+    // 3. 예약취소 - 쿠폰 반환
     void returnUseCoupon(String couponNumber);
     
     // 4. 사업자 - 예약취소 - 취소 포인트 리워드 지급
@@ -95,6 +96,12 @@ public interface ReservationDao {
     
     // 사업자 - 오프라인 예약 추가
     void offLineEnrollByOwner(ReservationDto reservationDto);
+    
+    // 예약번호로 게스트 전화번호 조회
+    ReservationForLmsDto getReservationInfoForGuest(int reservationNumber);
+    
+    // 방문 하루 전 예약정보 조회
+    ReservationForLmsDto getOndDayAgoReservation();
     
 }
 

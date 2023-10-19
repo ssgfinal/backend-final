@@ -249,9 +249,11 @@
 	<!-- reservationNumber를 기반으로 예약 정보 조회 -->
 	<select id="getReservationDetails"
 		resultType="ssg.com.houssg.dto.ReservationDto">
-		SELECT r.id, r.use_point, r.coupon_number, r.payment_amount
+		SELECT r.id, r.use_point, r.coupon_number,
+		r.payment_amount, r.start_date
 		FROM reservation r
-		WHERE r.reservation_number = #{reservationNumber}
+		WHERE
+		r.reservation_number = #{reservationNumber}
 	</select>
 
 	<!-- 사업자 - 예약취소 -->
@@ -260,9 +262,19 @@
 		set status = 4
 		where
 		reservation_number = #{reservationNumber}
+		AND status = 1
 	</update>
 
-	<!-- 사업자 예약취소 - 쿠폰 반환 -->
+	<!-- 유저 - 예약취소 -->
+	<update id="cancelReservationByUser">
+		update reservation
+		set status = 3
+		where
+		reservation_number = #{reservationNumber}
+		AND status = 1
+	</update>
+
+	<!-- 예약취소 - 쿠폰 반환 -->
 	<update id="returnUseCoupon">
 		UPDATE user_coupon
 		SET is_used = 0
@@ -270,7 +282,7 @@
 		= #{couponNumber}
 	</update>
 
-	<!-- 사업자 예약취소 - 포인트 반환 -->
+	<!-- 예약취소 - 포인트 반환 -->
 	<update id="returnUsePoint">
 		UPDATE user
 		SET point = point + #{usePoint}
@@ -300,9 +312,10 @@
 	<delete id="deleteUnpaidReservation">
 		DELETE FROM reservation
 		WHERE status = 0
-		AND TIMESTAMPDIFF(SECOND, reservation_time, NOW()) >= 600;
+		AND
+		TIMESTAMPDIFF(SECOND, reservation_time, NOW()) >= 600;
 	</delete>
-	
+
 	<!-- 오프라인 예약 추가(오너) -->
 	<insert id="offLineEnrollByOwner"
 		parameterType="ssg.com.houssg.dto.ReservationDto">
@@ -336,7 +349,7 @@
 		#{usePoint},#{totalPrice},#{paymentAmount},#{guestName},#{guestPhone},
 		#{accomNumber},#{accomName},#{roomNumber},0)
 	</insert>
-	
+
 	<!-- 오프라인 예약등록 전 예약가능 체크 -->
 	<select id="lastCheckForOffLine"
 		resultType="ssg.com.houssg.dto.ReservationRoomDto">
@@ -366,10 +379,43 @@
 		rooms.room_number
 		ORDER BY date_range.Date, rooms.room_number;
 	</select>
-	
+
+	<!-- 예약 삭제 -->
 	<delete id='deleteReservation'>
-		delete from reservation 
-		where reservation_number = #{reservationNumber}
+		delete from reservation
+		where reservation_number =
+		#{reservationNumber}
 	</delete>
+
+	<!-- reservationNumber로 알람전송에 필요한 정보 조회 -->
+	<select id="getReservationInfoForGuest"
+		resultType="ssg.com.houssg.dto.ReservationForLmsDto">
+		SELECT
+		r.guest_phone, r.guest_name, r.start_date,
+		r.end_date,
+		r.accom_number, r.accom_name, r.room_category,
+		r.payment_amount,
+		a.check_in, a.check_out
+		FROM reservation r
+		JOIN
+		accommodation a ON r.accom_number = a.accom_number
+		WHERE
+		r.reservation_number = #{reservationNumber}
+	</select>
+
+	<!-- start_date 하루 전 예약 정보 조회 -->
+	<select id="getOndDayAgoReservation"
+		resultType="ssg.com.houssg.dto.ReservationForLmsDto">
+		SELECT r.guest_phone, r.guest_name, r.start_date,
+		r.end_date,
+		r.accom_number, r.accom_name, r.room_category,
+		r.payment_amount,
+		a.check_in, a.check_out, r.reservation_number
+		FROM reservation r
+		JOIN
+		accommodation a ON r.accom_number = a.accom_number
+		WHERE status = 1
+		AND start_date = DATE_ADD(CURDATE(), INTERVAL 1 DAY);
+	</select>
 
 </mapper>

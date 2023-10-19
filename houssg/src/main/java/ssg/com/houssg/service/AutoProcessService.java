@@ -8,7 +8,9 @@ import ssg.com.houssg.dao.MonthlySalesDao;
 import ssg.com.houssg.dao.ReservationDao;
 import ssg.com.houssg.dao.SmsCodeDao;
 import ssg.com.houssg.dto.MonthlySalesDto;
+import ssg.com.houssg.dto.ReservationForLmsDto;
 import ssg.com.houssg.dto.UserDto;
+import ssg.com.houssg.util.LmsUtil;
 
 @Service
 public class AutoProcessService {
@@ -21,6 +23,9 @@ public class AutoProcessService {
 
 	@Autowired
 	private MonthlySalesDao monthlySalesDao;
+	
+	@Autowired
+	private LmsUtil lsmUtil;
 
 	// 3600000 = 1시간
 	@Scheduled(fixedRate = 1800000) // 30분마다 실행 (시간 단위는 밀리초)
@@ -65,5 +70,20 @@ public class AutoProcessService {
 	public void updateSales() {
 		monthlySalesDao.updateMonthlySales();
 		System.out.println("정산 업데이트");
+	}
+	
+	
+	@Scheduled(cron = "0 0 12 * * *")
+	public void getOndDayAgoReservation() {
+		ReservationForLmsDto LmsInfo = reservationDao.getOndDayAgoReservation();
+
+		if (LmsInfo == null) {
+			System.out.println("예약 정보가 없음");
+			return;
+		}
+
+		// LmsUtil를 사용하여 SMS 전송
+		lsmUtil.sendLmsForOneDayAgo(LmsInfo);
+		System.out.println("하루전 문자 발송 성공");
 	}
 }
