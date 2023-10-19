@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -164,7 +165,7 @@ public class ReservationController {
 	}
 
 	// 결제완료 >> 예약완료 체크
-	@PostMapping("/check-complete")
+	@PatchMapping("/check-complete")
 	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request
 			) {
 		int reservationNumber = request.getReservationNumber();
@@ -198,7 +199,7 @@ public class ReservationController {
 	}
 
 	// 예약 취소
-	@PostMapping("/cancel")
+	@PatchMapping("/cancel")
 	public ResponseEntity<String> cancelReservation(@RequestParam("reservationNumber") int reservationNumber,
 			@RequestParam("bank") String bankName, @RequestParam("account") String account) {
 		// 1. 예약 정보 조회: reservationNumber를 사용하여 필요한 데이터 가져오기
@@ -365,7 +366,7 @@ public class ReservationController {
 	}
 
 	// 사업자 - 예약 취소, 사용한 포인트, 쿠폰 반환, 취소리워드 지급
-	@PostMapping("/owner-cancel")
+	@PatchMapping("/owner-cancel")
 	public ResponseEntity<String> cancelAndProcessRewards(@RequestParam("reservationNumber") int reservationNumber) {
 		// 1. 예약 정보 조회: reservationNumber를 사용하여 필요한 데이터 가져오기
 		ReservationDto reservation = reservationService.getReservationDetails(reservationNumber);
