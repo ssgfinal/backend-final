@@ -214,6 +214,26 @@ public class ReviewController {
 	        return new ResponseEntity<>("Comment update failed", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+	@GetMapping("reservation/review")
+	public ResponseEntity<List<ReviewDto> > reservationReview(@RequestParam int reservationNumber, HttpServletRequest httpRequest) {
+	    System.out.println("예약에서 나의 리뷰 보기");
+	    
+	    // 토큰 및 사용자 ID를 추출하는 코드 (getTokenFromRequest 및 getUserIdFromToken 메서드 사용)
+	    String token = getTokenFromRequest(httpRequest);
+	    String userId = getUserIdFromToken(token);
+	    
+	    // 서비스 메서드를 호출하여 리뷰 목록을 가져옵니다.
+	    List<ReviewDto> list = service.reservationReview(userId, reservationNumber);
+	    
+	    // 리뷰 목록이 null인 경우 빈 배열로 반환하도록 처리
+	    if (list == null) {
+	        return ResponseEntity.ok(new ArrayList<>());
+	    }
+	    
+	    // ResponseEntity를 사용하여 응답을 래핑하여 반환합니다.
+	    return ResponseEntity.ok(list);
+	}
+	
 	private String getTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");
 
