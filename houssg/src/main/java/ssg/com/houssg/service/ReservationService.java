@@ -15,6 +15,7 @@ import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationInfoDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationForLmsDto;
+import ssg.com.houssg.dto.ReservationHistoryDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -102,7 +103,7 @@ public class ReservationService {
 	}
 
 	// 유저 - Id로 예약내역 조회
-	public List<ReservationDto> findRerservationById(String Id) {
+	public List<ReservationHistoryDto> findRerservationById(String Id) {
 		return dao.findRerservationById(Id);
 	}
 

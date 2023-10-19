@@ -10,6 +10,7 @@ import ssg.com.houssg.dto.AccomReservationListDto;
 import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationForLmsDto;
+import ssg.com.houssg.dto.ReservationHistoryDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -59,7 +60,7 @@ public interface ReservationDao {
 	void usedPoint(String Id, int usePoint);
 
 	// 유저 -ID로 예약내역정보 조회
-	List<ReservationDto> findRerservationById(String Id);
+	List<ReservationHistoryDto> findRerservationById(String Id);
 	
 	// "lastCheck" 쿼리를 실행하고 결과를 반환
     List<ReservationRoomDto> lastCheck(ReservationDto reservationDto);
