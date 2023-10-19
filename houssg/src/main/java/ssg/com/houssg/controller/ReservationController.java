@@ -1,5 +1,6 @@
 package ssg.com.houssg.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +34,12 @@ import ssg.com.houssg.dto.BookableRoomForOwnerDto;
 import ssg.com.houssg.dto.CompleteReservationRequestDto;
 import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationDto;
+import ssg.com.houssg.dto.ReservationForLmsDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
 import ssg.com.houssg.service.ReservationService;
+import ssg.com.houssg.util.LmsUtil;
 import ssg.com.houssg.util.ReservationUtil;
 
 @RestController
@@ -48,6 +51,9 @@ public class ReservationController {
 
 	@Autowired
 	private ReservationService reservationService;
+
+	@Autowired
+	private LmsUtil lsmUtil;
 
 	// 예약 페이지 기본 정보 조회
 	@GetMapping("/basic-info")
@@ -95,7 +101,7 @@ public class ReservationController {
 				ArrayNode emptyArray = objectMapper.createArrayNode();
 				responseJson.set("couponInfoList", emptyArray);
 			}
-			
+
 			// JSON 문자열 반환
 			System.out.println(responseJson.toString());
 			return ResponseEntity.ok(responseJson.toString());
@@ -159,27 +165,84 @@ public class ReservationController {
 
 	// 결제완료 >> 예약완료 체크
 	@PostMapping("/check-complete")
-	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request) {
-	    int reservationNumber = request.getReservationNumber();
-	    String sign = request.getSign();
+	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request
+			) {
+		int reservationNumber = request.getReservationNumber();
+		String sign = request.getSign();
 
-	    if ("success".equals(sign)) {
-	        reservationService.paymentCheck(reservationNumber);
-	        return ResponseEntity.ok("예약완료");
-	    } else if ("fail".equals(sign)) {
-	        // "fail" 경우에 해당 예약 번호에 대한 삭제 작업 수행
-	        boolean deleted = reservationService.deleteReservation(reservationNumber);
+		if ("success".equals(sign)) {
+			reservationService.paymentCheck(reservationNumber);
+			// request의 예약번호를 통해 reservation 정보 조회
+			ReservationForLmsDto LmsInfo = reservationService.getReservationInfoForGuest(reservationNumber);
 
-	        if (deleted) {
-	            return ResponseEntity.ok("결제실패 및 예약삭제 완료");
-	        } else {
-	            return ResponseEntity.badRequest().body("결제실패 및 예약 삭제 실패");
-	        }
-	    } else {
-	        return ResponseEntity.badRequest().body("잘못된 요청입니다.");
-	    }
+			if (LmsInfo == null) {
+				return ResponseEntity.badRequest().body("예약 정보를 찾을 수 없습니다.");
+			}
+
+			// LmsUtil를 사용하여 SMS 전송
+			lsmUtil.sendLmsForComplete(LmsInfo, String.valueOf(reservationNumber));
+
+			return ResponseEntity.ok("예약완료");
+		} else if ("fail".equals(sign)) {
+			// "fail" 경우에 해당 예약 번호에 대한 삭제 작업 수행
+			boolean deleted = reservationService.deleteReservation(reservationNumber);
+
+			if (deleted) {
+				return ResponseEntity.ok("결제실패 및 예약삭제 완료");
+			} else {
+				return ResponseEntity.badRequest().body("결제실패 및 예약 삭제 실패");
+			}
+		} else {
+			return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+		}
 	}
 
+	// 예약 취소
+	@PostMapping("/cancel")
+	public ResponseEntity<String> cancelReservation(@RequestParam("reservationNumber") int reservationNumber,
+			@RequestParam("bank") String bankName, @RequestParam("account") String account) {
+		// 1. 예약 정보 조회: reservationNumber를 사용하여 필요한 데이터 가져오기
+		ReservationDto reservation = reservationService.getReservationDetails(reservationNumber);
+		String id = reservation.getId();
+		int usePoint = reservation.getUsePoint();
+		String couponNumber = reservation.getCouponNumber();
+		int paymentAmount = reservation.getPaymentAmount();
+
+		// 2. 예약 취소
+		reservationService.cancelReservationByUser(reservationNumber);
+
+		// 3. 예약 취소 - 포인트 반환
+		reservationService.returnUsePoint(id, usePoint);
+
+		// 4. 예약 취소 - 쿠폰 반환
+		reservationService.returnUseCoupon(couponNumber);
+
+		// 5. 예약 취소 - 환불금액 계산
+		String startDateStr = reservation.getStartDate();
+		LocalDate startDate = LocalDate.parse(startDateStr);
+		int cancellationFee = reservationService.calculateCancellationFee(reservationNumber, startDate, paymentAmount);
+		System.out.println("수수료" + cancellationFee);
+		
+		if (cancellationFee == -1) {
+		    // 현재 날짜와 start_date가 같은 경우
+		    return ResponseEntity.badRequest().body("예약 취소 불가");
+		}
+		int refundAmount = paymentAmount - cancellationFee;
+		System.out.println("환불금" + refundAmount);
+
+		// 예약번호를 통해 reservation 정보 조회
+		ReservationForLmsDto LmsInfo = reservationService.getReservationInfoForGuest(reservationNumber);
+
+		if (LmsInfo == null) {
+			return ResponseEntity.badRequest().body("예약 정보를 찾을 수 없습니다.");
+		}
+
+		// LmsUtil를 사용하여 SMS 전송
+		lsmUtil.sendLmsForUserCancel(LmsInfo, String.valueOf(reservationNumber), refundAmount, bankName, account
+				);
+
+		return ResponseEntity.ok("취소완료");
+	}
 
 	// 연도 + 월 기준 객실 별 예약 현황 조회
 	@GetMapping("/available-room")
@@ -323,6 +386,16 @@ public class ReservationController {
 		// 5. 사업자 - 예약 취소 - 취소 리워드 계산
 		reservationService.pointRewardsForCancel(reservationNumber, paymentAmount);
 
+		// request의 예약번호를 통해 reservation 정보 조회
+		ReservationForLmsDto LmsInfo = reservationService.getReservationInfoForGuest(reservationNumber);
+
+		if (LmsInfo == null) {
+			return ResponseEntity.badRequest().body("예약 정보를 찾을 수 없습니다.");
+		}
+
+		// LmsUtil를 사용하여 SMS 전송
+		lsmUtil.sendLmsForOwnerCancel(LmsInfo, String.valueOf(reservationNumber));
+
 		return ResponseEntity.ok("취소완료");
 	}
 
@@ -330,7 +403,7 @@ public class ReservationController {
 	@PostMapping("/owner/offline")
 	public ResponseEntity<?> offLineReservation(@RequestBody OffLineReservationDto offLineReservationDto) {
 		try {
-			
+
 			// 예약 가능 여부 확인
 			boolean isAvailable = reservationService.isReservationAvailableForOffLine(offLineReservationDto);
 
@@ -341,37 +414,37 @@ public class ReservationController {
 
 				// 현재 날짜와 시각을 얻어옴
 				LocalDateTime reservationTime = LocalDateTime.now();
-				
-				ReservationDto reservationDto = new ReservationDto();
-	            reservationDto.setReservationNumber(reservationNumber); // 예약번호 설정
-	            reservationDto.setReservationTime(reservationTime); // 예약시간 설정
-	            
-	            // OffLineReservationDto로 안받는 값들은 기본 세팅
-	            reservationDto.setStatus(1);
-	            reservationDto.setNickname("offline");
-	            reservationDto.setPhoneNumber("offline");
-	            reservationDto.setId("offline"); 
-	            reservationDto.setCouponNumber("offline");
-	            reservationDto.setCouponName("offline");
-	            reservationDto.setDiscount(0);
-	            reservationDto.setUsePoint(0);
-	            reservationDto.setTotalPrice(0); 
-	            reservationDto.setPaymentAmount(0); 
-	            reservationDto.setReviewStatus(0); 
 
-	            // 나머지 필드는 OffLineReservationDto에서 가져오기
-	            reservationDto.setStartDate(offLineReservationDto.getStartDate());
-	            reservationDto.setEndDate(offLineReservationDto.getEndDate());
-	            reservationDto.setGuestName(offLineReservationDto.getGuestName());
-	            reservationDto.setGuestPhone(offLineReservationDto.getGuestPhone());
-	            reservationDto.setAccomNumber(offLineReservationDto.getAccomNumber());
-	            reservationDto.setAccomName(offLineReservationDto.getAccomName());
-	            reservationDto.setRoomNumber(offLineReservationDto.getRoomNumber());
-	            reservationDto.setRoomCategory(offLineReservationDto.getRoomCategory());
-	            reservationDto.setRoomPrice(0); // int 필드를 0으로 설정
-	            
-	            reservationService.offLineEnrollByOwner(reservationDto);
-				
+				ReservationDto reservationDto = new ReservationDto();
+				reservationDto.setReservationNumber(reservationNumber); // 예약번호 설정
+				reservationDto.setReservationTime(reservationTime); // 예약시간 설정
+
+				// OffLineReservationDto로 안받는 값들은 기본 세팅
+				reservationDto.setStatus(1);
+				reservationDto.setNickname("offline");
+				reservationDto.setPhoneNumber("offline");
+				reservationDto.setId("offline");
+				reservationDto.setCouponNumber("offline");
+				reservationDto.setCouponName("offline");
+				reservationDto.setDiscount(0);
+				reservationDto.setUsePoint(0);
+				reservationDto.setTotalPrice(0);
+				reservationDto.setPaymentAmount(0);
+				reservationDto.setReviewStatus(0);
+
+				// 나머지 필드는 OffLineReservationDto에서 가져오기
+				reservationDto.setStartDate(offLineReservationDto.getStartDate());
+				reservationDto.setEndDate(offLineReservationDto.getEndDate());
+				reservationDto.setGuestName(offLineReservationDto.getGuestName());
+				reservationDto.setGuestPhone(offLineReservationDto.getGuestPhone());
+				reservationDto.setAccomNumber(offLineReservationDto.getAccomNumber());
+				reservationDto.setAccomName(offLineReservationDto.getAccomName());
+				reservationDto.setRoomNumber(offLineReservationDto.getRoomNumber());
+				reservationDto.setRoomCategory(offLineReservationDto.getRoomCategory());
+				reservationDto.setRoomPrice(0); // int 필드를 0으로 설정
+
+				reservationService.offLineEnrollByOwner(reservationDto);
+
 				// 예약 등록 성공 시 클라이언트에게 성공 응답 반환
 				return ResponseEntity.ok(reservationNumber);
 			} else {
