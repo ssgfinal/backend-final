@@ -1,5 +1,8 @@
 package ssg.com.houssg.controller;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.function.ServerRequest.Headers;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -348,6 +355,95 @@ public class UserController {
 	        return ResponseEntity.badRequest().body("닉네임 변경 실패");
 	    }
 	}
+	
+    @PostMapping("/kakaoLogin")
+    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> requestBody,
+    									@RequestParam(value="phonenumber", required=false) String phonenumber) {
+        System.out.println("MemberController 카카오 로그인 " + new Date());
+
+        String kakaoAccessToken = requestBody.get("access_token");
+
+        String apiUrl = "https://kapi.kakao.com/v2/user/me";
+
+        try {
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "Bearer " + kakaoAccessToken);
+
+            int responseCode = conn.getResponseCode();
+            System.out.println("카카오 응답 : " + responseCode);
+
+            if (responseCode == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readTree(conn.getInputStream());
+                String memberId = jsonNode.get("id").asText();
+                String memberName = jsonNode.get("properties").get("nickname").asText();
+
+                // 이 부분에서 UserDto에 값을 설정합니다.
+                UserDto userDto = new UserDto();
+                userDto.setId(memberId); // 아이디 설정
+                userDto.setNickname(memberName); // 닉네임 설정
+                // 이후 UserDto를 이용하여 로그인 또는 회원가입 처리를 수행합니다.
+                int check = service.idCheck(memberId);
+
+                if(check != 0) {
+                	UserDto login = service.kakaoLogin(memberId);
+                	System.out.println(login);
+                    if(login==null||login.equals("")) {
+                    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인 실패");
+                    } else {
+                    	String token = jwtTokenProvider.createAccessToken(userDto); // UserDto 객체를 createToken 메서드에 전달
+             			System.out.println("생성된 토큰: " + token);
+             			String refreshToken = jwtTokenProvider.createRefreshToken(userDto);
+             			System.out.println("생성된 리프레시 토큰: " + refreshToken);
+             			
+             			Map<String, Object> responseMap = new HashMap<>();
+            			responseMap.put("message", "로그인 성공");
+            			responseMap.put("nickname", userDto.getNickname()); 
+            			responseMap.put("point", userDto.getPoint());
+
+            			HttpHeaders headers = new HttpHeaders();
+            			headers.add("Authorization", "Bearer " + token);
+            			headers.add("RefreshToken", refreshToken);
+            			tokenService.storeRefreshToken(refreshToken, userDto);
+            			System.out.println("로그인 성공" + new Date());
+
+            			return ResponseEntity.ok().headers(headers).body(responseMap); // 토큰 반환
+                    }
+                } else {
+                	HttpHeaders headers = new HttpHeaders();
+                	headers.add("Authorization","Bearer +kakako+");
+                	
+                	
+                	System.out.println("회원가입합니다");
+                    userDto.setPassword("Abcd123@");
+                    userDto.setPhonenumber(phonenumber);
+                    UserUtil userUtil = new UserUtil();
+                    if (!userUtil.isValidUser(userDto)) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body("회원가입 실패, 전화번호를 입력해 주세요");
+                    }
+                    int count = service.signUp(userDto);
+                    if (count > 0) {
+                        return ResponseEntity.ok().body("회원가입 성공");
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패2");
+                    }
+                }
+            } else {
+                System.out.println("카카오 응답 : " + responseCode);
+                System.out.println("카카오 로그인 실패");
+                
+                // 실패할 경우 적절한 응답 반환
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("카카오 로그인 실패");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            
+            // 내부 서버 오류가 발생할 경우 500 상태 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("내부 서버 오류");
+        }
+    }
 
 
 	// AccessToken 획득 및 파싱 Part

@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
+import ssg.com.houssg.dto.ResponseWrapper;
 import ssg.com.houssg.dto.ReviewDto;
 import ssg.com.houssg.dto.ReviewParam;
 import ssg.com.houssg.service.ReviewService;
@@ -98,28 +100,32 @@ public class ReviewController {
 
 	// my 리뷰 보기
 	@GetMapping("mypage/review")
-	public ResponseEntity<List<ReviewDto>> getMyReview(HttpServletRequest httpRequest,
+	public ResponseEntity<ResponseWrapper<ReviewDto>> getMyReview(HttpServletRequest httpRequest,
 	                                                   @RequestParam int pageSize,
 	                                                   @RequestParam int page) {
 	    System.out.println("나의 리뷰 보기");
-	    
+
 	    // 페이지 크기와 현재 페이지를 고려하여 검색을 시작합니다.
 	    int start = (page - 1) * pageSize;
 	    int end = page * pageSize;
-	    
+
 	    String token = getTokenFromRequest(httpRequest);
 	    String userId = getUserIdFromToken(token);
 	    ReviewParam param = new ReviewParam(userId, pageSize, page, start);
 	    // 데이터베이스 쿼리에 start와 end를 사용하여 데이터 범위를 지정
 	    List<ReviewDto> reviews = service.getMyReview(param);
+	    int total = service.reviewCount(param);
 
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.add("Total-Count", String.valueOf(total)); // Total-Count라는 헤더 필드에 총 갯수 추가
+
+	    ResponseWrapper<ReviewDto> responseWrapper = new ResponseWrapper<>(reviews, total);
 	    if (reviews.isEmpty()) {
 	        // 리뷰가 없는 경우
-	        System.out.println(page);
-	        return new ResponseEntity<>(new ArrayList<ReviewDto>(), HttpStatus.OK);
+	        return new ResponseEntity<>(new ResponseWrapper<>(new ArrayList<>(), total), HttpStatus.OK);
 	    } else {
 	        // 리뷰를 찾은 경우
-	        return ResponseEntity.ok(reviews); // 리뷰 목록 반환
+	    	return ResponseEntity.ok(responseWrapper);
 	    }
 	}
 	// 숙소에 관한 리뷰

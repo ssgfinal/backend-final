@@ -27,12 +27,24 @@ public class AccommodationService {
         return dao.getAddressSearch(param);
     }
     
+    public int addressTotal(AccommodationParam param) {
+    	return dao.addressTotal(param);
+    }
+    
     public List<AccommodationDto> typeSearch(AccommodationParam param){
     	return dao.typeSearch(param);
     }
     
+    public int typeTotal(AccommodationParam param) {
+    	return dao.typeTotal(param);
+    }
+    
     public List<AccommodationDto> search(AccommodationParam param){
     	return dao.search(param);
+    }
+    
+    public int searchTotal(AccommodationParam param) {
+    	return dao.searchTotal(param);
     }
     
     public List<AccommodationDto> getMyAccom(String id){
@@ -55,18 +67,23 @@ public class AccommodationService {
         }
         return accommodationDtoList;
     }
+    
     public int updateAccom(AccommodationDto dto) {
     	return dao.updateAccom(dto);
     }
+    
     public int deleteAccommodationById(int accommodationId) {
         return dao.deleteAccommodationById(accommodationId);
     }
+    
     public int accomApproval(int accomNumber) {
     	return dao.accomApproval(accomNumber);
     }
+    
     public int accomApprovalX(int accomNumber) {
     	return dao.accomApprovalX(accomNumber);
     }
+    
     public List<AccommodationDto> getApprovalAccom(){
     	List<AccommodationDto> accommodationDtoList = dao.getApprovalAccom();
 
@@ -77,6 +94,7 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
+    
     public List<AccommodationDto> getDeletionAccom(){
     	List<AccommodationDto> accommodationDtoList = dao.getDeletionAccom();
     	for (AccommodationDto accommodationDto : accommodationDtoList) {
@@ -101,6 +119,7 @@ public class AccommodationService {
 
         return insertedAccomNumber;
     }
+    
     public void updateAccommodationAndFacility(AccommodationDto accommodationDto, FacilityDto facilityDto) {
         dao.updateAccommodation(accommodationDto);
         facilityDto.setAccomNumber(accommodationDto.getAccomNumber());
@@ -129,13 +148,14 @@ public class AccommodationService {
     	return accommodationDto;
     }
     
-    
     public int updateRequest(int accomNumber) {
     	return dao.updateRequest(accomNumber);
     }
+    
     public int deleteRequest() {
     	return dao.deleteRequest();
     }
+    
     public List<AccommodationDto> getAllAccom(){
     	List<AccommodationDto> accommodationDtoList = dao.getAllAccom();
 
@@ -167,6 +187,7 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
+    
     public List<AccommodationDto> accomScore20(){
     	List<AccommodationDto> accommodationDtoList =  dao.accomScore20();
     	 // 각 승인된 숙소에 대한 시설 정보 설정
@@ -176,6 +197,7 @@ public class AccommodationService {
 
         return accommodationDtoList;
     }
+    
     public AccommodationDto choiceAccom(int accomNumber){
     	AccommodationDto accommodationDto = dao.choiceAccom(accomNumber);
     	FacilityDto facilityDto = facdao.getFacility(accomNumber);
@@ -196,6 +218,7 @@ public class AccommodationService {
     	}
     	return accommodationDto;
     }
+    
     private void setFacilityData(AccommodationDto accommodationDto) {
         FacilityDto facilityDto = facdao.getFacility(accommodationDto.getAccomNumber());
 

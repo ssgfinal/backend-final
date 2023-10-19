@@ -24,6 +24,10 @@ public class ReviewService {
 	public List<ReviewDto> getMyReview(ReviewParam param){
 		return dao.getMyReview(param);
 	}
+	// 마이 리뷰 총합
+	public int reviewCount(ReviewParam param) {
+		return dao.reviewCount(param);
+	}
 	// 한 숙소 리뷰 보기
 	public List<ReviewDto> getAllReview(int accomNumber){
 		return dao.getAllReview(accomNumber);

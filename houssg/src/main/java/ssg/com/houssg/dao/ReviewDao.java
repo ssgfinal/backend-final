@@ -16,6 +16,8 @@ public interface ReviewDao {
 	int addReview(ReviewDto dto);
 	// 마이 리뷰 보기
 	List<ReviewDto> getMyReview(ReviewParam param);
+	// 마이 리뷰 총합
+	int reviewCount(ReviewParam param);
 	// 한 숙소 리뷰 보기
 	List<ReviewDto> getAllReview(int accomNumber);
 	// 리뷰 신고하기

@@ -82,4 +82,8 @@ public class UserService {
  		dao.changeNickname(id, nick_name);
  	}
 
+ 	// 카카오 로그인
+ 	public UserDto kakaoLogin(String id) {
+ 		return dao.kakaoLogin(id);
+ 	}
 }
