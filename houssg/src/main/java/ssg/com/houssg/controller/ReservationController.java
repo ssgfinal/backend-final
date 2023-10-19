@@ -36,6 +36,7 @@ import ssg.com.houssg.dto.CompleteReservationRequestDto;
 import ssg.com.houssg.dto.OffLineReservationDto;
 import ssg.com.houssg.dto.ReservationDto;
 import ssg.com.houssg.dto.ReservationForLmsDto;
+import ssg.com.houssg.dto.ReservationHistoryDto;
 import ssg.com.houssg.dto.ReservationRoomDto;
 import ssg.com.houssg.dto.RoomDto;
 import ssg.com.houssg.dto.UserCouponDto;
@@ -283,7 +284,7 @@ public class ReservationController {
 
 	// 유저 - Id로 예약내역 정보 조회
 	@GetMapping("/history")
-	public List<ReservationDto> findRerservationById(HttpServletRequest request) {
+	public List<ReservationHistoryDto> findRerservationById(HttpServletRequest request) {
 
 		// HTTP 요청 헤더에서 토큰 추출
 		String token = getTokenFromRequest(request);

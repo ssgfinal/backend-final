@@ -192,17 +192,19 @@
 
 	<!-- 유저 - 예약내역 조회 -->
 	<select id="findRerservationById"
-		resultType="ssg.com.houssg.dto.ReservationDto">
-		SELECT reservation_number, reservation_time, status,
-		accom_number, accom_name, room_number, room_category,
-		start_date,
-		end_date, room_price, coupon_name, coupon_number, discount, use_point,
-		total_price, payment_amount,
-		guest_name, guest_phone, review_status
-		FROM reservation
-		WHERE id = #{Id}
-		ORDER BY reservation_time DESC;
+		resultType="ssg.com.houssg.dto.ReservationHistoryDto">
+		SELECT r.reservation_number, r.reservation_time, r.status,
+		a.accom_number, a.accom_name, r.room_number, r.room_category,
+		r.start_date, r.end_date, r.room_price, r.coupon_name, r.coupon_number,
+		r.discount, r.use_point, r.total_price, r.payment_amount,
+		r.guest_name, r.guest_phone, r.review_status, a.img
+		FROM reservation r
+		LEFT JOIN accommodation a ON r.accom_number = a.accom_number
+		WHERE r.id = #{Id}
+		ORDER BY r.reservation_time DESC;
 	</select>
+
+
 
 	<!-- 사업자 id로 소유한 숙소 번호, 명 찾기 -->
 	<select id="getAccommodationByOwnerId"
@@ -411,7 +413,8 @@
 		r.accom_number, r.accom_name, r.room_category,
 		r.payment_amount,
 		a.check_in, a.check_out, r.reservation_number
-		FROM reservation r
+		FROM
+		reservation r
 		JOIN
 		accommodation a ON r.accom_number = a.accom_number
 		WHERE status = 1
