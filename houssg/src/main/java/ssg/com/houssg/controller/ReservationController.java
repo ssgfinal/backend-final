@@ -461,6 +461,12 @@ public class ReservationController {
 		}
 	}
 
+	@GetMapping("/owner-modal")
+	public List<String> ownerModalCheck(@RequestParam("roomNumber") int roomNumber, @RequestParam("startDate") String startDate) {
+	    return reservationService.getOwnerModalCheck(roomNumber, startDate);
+	}
+
+
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");

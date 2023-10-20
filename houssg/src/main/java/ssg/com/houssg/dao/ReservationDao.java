@@ -68,6 +68,9 @@ public interface ReservationDao {
     // "lastCheck" 쿼리를 실행하고 결과를 반환
     List<ReservationRoomDto> lastCheckForOffLine(OffLineReservationDto offLineReservationDto);
     
+    // "ownerModalCheck" 쿼리를 실행하고 결과를 반환
+    List<ReservationRoomDto> ownerModalCheck(int roomNumber, String startDate);
+    
     // 사업자 ID로 가지고있는 숙소번호, 이름 가져옴
     List<AccomListDto> getAccommodationByOwnerId(String Id);
     

@@ -195,11 +195,14 @@
 		resultType="ssg.com.houssg.dto.ReservationHistoryDto">
 		SELECT r.reservation_number, r.reservation_time, r.status,
 		a.accom_number, a.accom_name, r.room_number, r.room_category,
-		r.start_date, r.end_date, r.room_price, r.coupon_name, r.coupon_number,
-		r.discount, r.use_point, r.total_price, r.payment_amount,
+		r.start_date, r.end_date, r.room_price, r.coupon_name,
+		r.coupon_number,
+		r.discount, r.use_point, r.total_price,
+		r.payment_amount,
 		r.guest_name, r.guest_phone, r.review_status, a.img
 		FROM reservation r
-		LEFT JOIN accommodation a ON r.accom_number = a.accom_number
+		LEFT JOIN accommodation a ON r.accom_number =
+		a.accom_number
 		WHERE r.id = #{Id}
 		ORDER BY r.reservation_time DESC;
 	</select>
@@ -381,6 +384,30 @@
 		rooms.room_number
 		ORDER BY date_range.Date, rooms.room_number;
 	</select>
+
+	<select id="ownerModalCheck"
+		resultType="ssg.com.houssg.dto.ReservationRoomDto">
+		SELECT date_range.Date AS date,
+		CASE
+		WHEN rooms.room_number IS NOT NULL THEN MAX(rooms.room_availability) -
+		COALESCE(SUM(CASE WHEN
+		reservation.start_date &lt;= date_range.Date AND
+		reservation.end_date > date_range.Date THEN 1 ELSE 0 END), 0)
+		ELSE MAX(rooms.room_availability)
+		END AS availableRooms
+		FROM (
+		SELECT DATE_ADD(#{startDate}, INTERVAL n DAY) AS Date
+		FROM for_count
+		WHERE DATE_ADD(#{startDate}, INTERVAL n DAY) &lt;= DATE_ADD(#{startDate},
+		INTERVAL 20 DAY)
+		) AS date_range
+		LEFT JOIN rooms ON rooms.room_number = #{roomNumber}
+		LEFT JOIN reservation ON reservation.room_number = rooms.room_number AND
+		reservation.status IN (0, 1)
+		GROUP BY date_range.Date
+		ORDER BY date_range.Date;
+	</select>
+
 
 	<!-- 예약 삭제 -->
 	<delete id='deleteReservation'>

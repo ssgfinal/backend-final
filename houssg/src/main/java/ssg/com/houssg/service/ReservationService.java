@@ -2,6 +2,7 @@ package ssg.com.houssg.service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,39 @@ public class ReservationService {
 
 		return Info;
 	}
+
+	// 사업자 예약 추가 - start_Date기준 예약가능한 객실 정보 조회
+	public List<String> getOwnerModalCheck(int roomNumber, String startDate) {
+	    List<ReservationRoomDto> bookableRoomList = dao.ownerModalCheck(roomNumber, startDate);
+	    List<String> availableDates = new ArrayList<>();
+	    boolean zeroDate = false;
+
+	    // 첫 번째 예약 가능한 날짜를 찾음
+	    int firstzeroDateIndex = 0;
+	    for (int i = 0; i < bookableRoomList.size(); i++) {
+	        ReservationRoomDto roomDto = bookableRoomList.get(i);
+	        if (roomDto.getAvailableRooms() == 0) {
+	        	firstzeroDateIndex = i;
+	            zeroDate = true;
+	            break;
+	        }
+	    }
+
+	    if (!zeroDate) {
+	        // 만약 처음부터 끝까지 0이 없으면 모든 날짜를 반환
+	    	for (int i = 1; i < bookableRoomList.size(); i++) {
+	            availableDates.add(bookableRoomList.get(i).getDate());
+	        }
+	    } else {
+	        // 처음 0이 나온 날짜까지 반환
+	        for (int i = 1; i <= firstzeroDateIndex; i++) {
+	            availableDates.add(bookableRoomList.get(i).getDate());
+	        }
+	    }
+
+	    return availableDates;
+	}
+
 
 	// 예약등록
 	public void enrollReservation(ReservationDto reservationDto) {
@@ -186,23 +220,22 @@ public class ReservationService {
 	public ReservationForLmsDto getReservationInfoForGuest(int reservationNumber) {
 		return dao.getReservationInfoForGuest(reservationNumber);
 	}
-	
-	
+
 	// 수수료 계산
 	public int calculateCancellationFee(int reservationNumber, LocalDate startDate, int paymentAmount) {
-        LocalDate currentDate = LocalDate.now();
-        Period period = Period.between(currentDate, startDate);
-        int daysUntilCheckIn = period.getDays();
+		LocalDate currentDate = LocalDate.now();
+		Period period = Period.between(currentDate, startDate);
+		int daysUntilCheckIn = period.getDays();
 
-        if (daysUntilCheckIn >= 7) {
-            return 0; // 일주일 전
-        } else if (daysUntilCheckIn >= 5) {
-            return (int) (paymentAmount * 0.3); // 5, 6일 전
-        } else if (daysUntilCheckIn >= 2) {
-            return (int) (paymentAmount * 0.5); // 2, 3, 4일 전
-        } else {
-        	return -1; // 하루 전, 당일 (취소불가)
-        }
-    }
+		if (daysUntilCheckIn >= 7) {
+			return 0; // 일주일 전
+		} else if (daysUntilCheckIn >= 5) {
+			return (int) (paymentAmount * 0.3); // 5, 6일 전
+		} else if (daysUntilCheckIn >= 2) {
+			return (int) (paymentAmount * 0.5); // 2, 3, 4일 전
+		} else {
+			return -1; // 하루 전, 당일 (취소불가)
+		}
+	}
 
 }
