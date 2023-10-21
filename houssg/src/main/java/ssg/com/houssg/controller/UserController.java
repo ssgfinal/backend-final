@@ -367,26 +367,20 @@ public class UserController {
 	        return ResponseEntity.badRequest().body("닉네임 변경 실패");
 	    }
 	}
-	
-	private final ConcurrentHashMap<String, Boolean> previousCodes = new ConcurrentHashMap<>();
+
 	
 	@PostMapping("/kakao/log-in")
 	public ResponseEntity<?> kakao(@RequestParam("code") String authorizationCode) {
 	    String apiUrl = "https://kauth.kakao.com/oauth/token";
 	    
-	    if (isDuplicateCode(authorizationCode)) {
-            // 중복 코드 처리
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 코드가 감지되었습니다.");
-        }
-
-        // 저장된 코드를 표시하고 메모리에 저장합니다.
-        markAsDuplicateCode(authorizationCode);
-
 	    try {
+	    	ResponseEntity<String> responseEntity ;
+		    HttpHeaders headers = new HttpHeaders();
+
+	    	try {
 	        RestTemplate restTemplate = new RestTemplate();
 	        
 	        // 요청 헤더 설정
-	        HttpHeaders headers = new HttpHeaders();
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 	        
 	        // 요청 파라미터 설정
@@ -399,8 +393,11 @@ public class UserController {
 	        
 	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
 	        // 토큰 요청을 보냅니다.
-	        ResponseEntity<String> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, String.class);
-	        
+	          responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, String.class);
+	    	} catch (Exception e){
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 코드가 감지되었습니다.");
+	    	}
+	    	
 	        // 성공적인 경우, 액세스 토큰을 클라이언트에게 반환합니다.
 	        if (responseEntity.getStatusCode().is2xxSuccessful()) {
 	            String responseBody = responseEntity.getBody();
@@ -550,13 +547,4 @@ public class UserController {
 			return null;
 		}
 	}
-	// 중복 코드 확인
-    private boolean isDuplicateCode(String code) {
-        return previousCodes.containsKey(code);
-    }
-
-    // 중복 코드 저장
-    private void markAsDuplicateCode(String code) {
-        previousCodes.put(code, true);
-    }
 }
