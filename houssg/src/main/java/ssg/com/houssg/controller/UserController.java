@@ -370,7 +370,7 @@ public class UserController {
 
 	
 	@PostMapping("/kakao/log-in")
-	public ResponseEntity<?> kakao(@RequestParam("code") String authorizationCode) {
+	public ResponseEntity<?> kakao(@RequestParam("code") String authorizationCode, HttpServletRequest http) {
 	    String apiUrl = "https://kauth.kakao.com/oauth/token";
 	    System.out.println("카카오톡 로그인");
 	    try {
@@ -382,13 +382,20 @@ public class UserController {
 	        
 	        // 요청 헤더 설정
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-	        System.out.println("카카오톡 로그인11");
+	        String baseUrl = http.getRequestURL().toString();
+	        if (baseUrl.startsWith("http://localhost")) {
+	        	baseUrl = "http://localhost:8080";
+	        } else {
+	        	baseUrl = "http://52.79.147.124";
+	        }
+	        // base URL 출력 또는 사용
+	        System.out.println("Base URL: " + baseUrl);
 	        // 요청 파라미터 설정
 	        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 	        parameters.add("grant_type", "authorization_code");
 	        parameters.add("client_id", clientId);
 	        parameters.add("client_secret", clientSecret);
-	        parameters.add("redirect_uri", "http://localhost:8080"); 
+	        parameters.add("redirect_uri", baseUrl); 
 	        parameters.add("code", authorizationCode); // 실제 Authorization Code 사용
 	        System.out.println("카카오톡 로그인22");
 	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
