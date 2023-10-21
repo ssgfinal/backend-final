@@ -83,7 +83,7 @@ public class ReviewController {
 	        // 리뷰 등록 성공 시
 	        return ResponseEntity.ok("리뷰 등록 성공");
 	    } catch (Exception e) {
-
+	    	System.out.println(e);
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 등록 실패"); // 400 에러
 	    }
 	}
