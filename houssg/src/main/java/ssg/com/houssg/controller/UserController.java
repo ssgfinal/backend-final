@@ -386,7 +386,7 @@ public class UserController {
 	        // 요청 헤더 설정
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 	        String baseUrl = http.getRequestURL().toString();
-	        System.out.println(baseUrl);
+	        
 	        if (baseUrl.startsWith("http://localhost")) {
 	        	baseUrl = "http://localhost:8080";
 	        } else {
@@ -401,13 +401,11 @@ public class UserController {
 	        parameters.add("client_secret", clientSecret);
 	        parameters.add("redirect_uri", "http://localhost:8080"); 
 	        parameters.add("code", authorizationCode); // 실제 Authorization Code 사용
-	        System.out.println("카카오톡 로그인22");
 	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
 	        // 토큰 요청을 보냅니다.
 	          responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, String.class);
 	          
 	    	} catch (Exception e){
-	    		System.out.println(e);
 	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 코드가 감지되었습니다.");
 	    	}
 	    	
@@ -457,14 +455,13 @@ public class UserController {
 	                        	
 	                        	
 	                        	UserDto login = service.kakaoLogin(memberId);
-	                        	System.out.println(login);
 	                			
 	                            if(login==null||login.equals("")) {
 	                            	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인 실패");
 	                            } else {     			
 	                     			Map<String, Object> responseMap = new HashMap<>();
 	                    			responseMap.put("message", "로그인 성공");
-	                    			responseMap.put("phonenumber", userDto.getPhonenumber());
+	                    			responseMap.put("phonenumber", login.getPhonenumber());
 	                    			responseMap.put("nickname", login.getNickname()); 
 	                    			responseMap.put("point", login.getPoint());
 	                    			
