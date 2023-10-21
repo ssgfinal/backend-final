@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.function.ServerRequest.Headers;
 
 import com.cloudinary.Url;
@@ -34,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import ssg.com.houssg.dto.RequestDto;
@@ -379,7 +382,9 @@ public class UserController {
 
 	    	try {
 	        RestTemplate restTemplate = new RestTemplate();
-	        
+	        String requestURI = RequestContextHolder.currentRequestAttributes().getAttribute(
+	                RequestDispatcher.FORWARD_REQUEST_URI, RequestAttributes.SCOPE_REQUEST).toString();
+	        System.out.println(requestURI);
 	        // 요청 헤더 설정
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 	        String baseUrl = http.getRequestURL().toString();
@@ -396,7 +401,7 @@ public class UserController {
 	        parameters.add("grant_type", "authorization_code");
 	        parameters.add("client_id", clientId);
 	        parameters.add("client_secret", clientSecret);
-	        parameters.add("redirect_uri", baseUrl); 
+	        parameters.add("redirect_uri", "http://localhost:8080"); 
 	        parameters.add("code", authorizationCode); // 실제 Authorization Code 사용
 	        System.out.println("카카오톡 로그인22");
 	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
