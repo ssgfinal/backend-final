@@ -30,4 +30,8 @@ public class FavoriteService {
         Integer result = dao.roomGet(accomNumber, id);
         return (result != null) ? result : 0;
     }
+	public boolean isIdDuplicate(int accomNumber, String id) {
+		int count = dao.isIdDuplicate(accomNumber, id);
+		return count>0?true:false;
+	}
 }

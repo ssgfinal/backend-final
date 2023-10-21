@@ -123,4 +123,14 @@ public class RoomService {
 	    // 방 삭제 성공 시 1 반환 (또는 다른 성공 코드)
 	    return 1;
 	}
+	public boolean isCategoryDuplicate(int accomNumber,String roomCategory) {
+		int count = dao.isCategoryDuplicate(accomNumber,roomCategory);
+		return count > 0?true:false;
+	}
+	public int delRequest(int roomNumber) {
+		return dao.delRequest(roomNumber);
+	}
+	public int choiceRoom(int roomNumber) {
+		return dao.choiceRoom(roomNumber);
+	}
 }
