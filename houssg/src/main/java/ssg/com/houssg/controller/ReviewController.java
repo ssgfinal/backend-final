@@ -88,16 +88,6 @@ public class ReviewController {
 	    }
 	}
 
-	private String saveUploadedFile(MultipartFile file, String uploadDir) throws IOException {
-	    String originalFileName = file.getOriginalFilename();
-	    String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-	    String saveFileName = UUID.randomUUID().toString() + extension;
-	    String filePath = uploadDir + File.separator + saveFileName;
-	    file.transferTo(new File(filePath));
-	    return saveFileName;
-	}
-
-
 	// my 리뷰 보기
 	@GetMapping("mypage/review")
 	public ResponseEntity<ResponseWrapper<ReviewDto>> getMyReview(HttpServletRequest httpRequest,
@@ -115,9 +105,6 @@ public class ReviewController {
 	    // 데이터베이스 쿼리에 start와 end를 사용하여 데이터 범위를 지정
 	    List<ReviewDto> reviews = service.getMyReview(param);
 	    int total = service.reviewCount(param);
-
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.add("Total-Count", String.valueOf(total)); // Total-Count라는 헤더 필드에 총 갯수 추가
 
 	    ResponseWrapper<ReviewDto> responseWrapper = new ResponseWrapper<>(reviews, total);
 	    if (reviews.isEmpty()) {
@@ -215,7 +202,7 @@ public class ReviewController {
 	    }
 	}
 	@GetMapping("reservation/review")
-	public ResponseEntity<List<ReviewDto> > reservationReview(@RequestParam int reservationNumber, HttpServletRequest httpRequest) {
+	public ResponseEntity<List<ReviewDto>> reservationReview(@RequestParam int reservationNumber, HttpServletRequest httpRequest) {
 	    System.out.println("예약에서 나의 리뷰 보기");
 	    
 	    // 토큰 및 사용자 ID를 추출하는 코드 (getTokenFromRequest 및 getUserIdFromToken 메서드 사용)

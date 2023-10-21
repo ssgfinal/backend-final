@@ -18,4 +18,6 @@ public interface FavoriteDao {
 	List<FavoriteDto> getMyFavorite(String id);
 		
 	Integer roomGet(int accomNumber, String id);
+	
+	int isIdDuplicate(int accomNumber, String id);
 }

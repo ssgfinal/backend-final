@@ -32,37 +32,47 @@ public class FavoriteController {
 	FavoriteService service;
 	
 	@PostMapping("favorite")
-	public ResponseEntity<String> addFavorite(@RequestParam int accomNumber,HttpServletRequest httpRequest) {
+	public ResponseEntity<String> addFavorite(@RequestParam (required = false) Integer accomNumber,HttpServletRequest httpRequest) {
 		String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
 		// 찜하기 요청 처리
-	    int count = service.addFavorite(userId, accomNumber);
+	    
 
+	    if(accomNumber == null || accomNumber == 0) {
+	    	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
+	    }
+	    if(service.isIdDuplicate(accomNumber, userId)) {
+	    	return new ResponseEntity<>("찜 중복x",HttpStatus.BAD_REQUEST);
+	    }
 	    // 찜하기 결과에 따라 응답 설정
+	    int count = service.addFavorite(userId, accomNumber);
 	    if (count == 0) {
 	        // 찜하기가 실패하면 404 Not Found 응답 반환
-	        return new ResponseEntity<>("NO", HttpStatus.NO_CONTENT);
+	        return new ResponseEntity<>("등록 실패", HttpStatus.BAD_REQUEST);
 	    }
 
 	    // 찜하기가 성공하면 200 OK 응답 반환
-	    return new ResponseEntity<>("YES", HttpStatus.OK);
+	    return new ResponseEntity<>("찜 등록", HttpStatus.OK);
 	}
 
 	@DeleteMapping("favorite")
-	public ResponseEntity<String> deleteFavorite(@RequestParam int accomNumber,HttpServletRequest httpRequest) {
+	public ResponseEntity<String> deleteFavorite(@RequestParam (required = false) Integer accomNumber,HttpServletRequest httpRequest) {
 		String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
 		// 찜해제 요청 처리
+        if(accomNumber == null || accomNumber == 0) {
+	    	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
+	    }
 	    int count = service.deleteFavorite(userId, accomNumber);
-
+	    
 	    // 찜해제 결과에 따라 응답 설정
 	    if (count == 0) {
-	        // 찜해제가 실패하면 404 Not Found 응답 반환
-	        return new ResponseEntity<>("NO", HttpStatus.NO_CONTENT);
+	        // 찜해제가 실패하면 400 BAD_REQUEST 응답 반환
+	        return new ResponseEntity<>("삭제 할거 x", HttpStatus.BAD_REQUEST);
 	    }
 
 	    // 찜해제가 성공하면 200 OK 응답 반환
-	    return new ResponseEntity<>("YES", HttpStatus.OK);
+	    return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
 	}
 	
 	 @GetMapping("mypage/favorite")
@@ -80,13 +90,19 @@ public class FavoriteController {
 	     }
 	 }
 	 @GetMapping("favorite")
-	 public ResponseEntity<Integer> roomGet(@RequestParam int accomNumber, HttpServletRequest httpRequest) {
+	 public ResponseEntity<String> roomGet(@RequestParam (required = false) Integer accomNumber, HttpServletRequest httpRequest) {
 	     String token = getTokenFromRequest(httpRequest);
 	     String userId = getUserIdFromToken(token);
-
+	     
+	     if(accomNumber==null || accomNumber==0) {
+	    	 return new ResponseEntity<>("객실 번호x", HttpStatus.BAD_REQUEST); 
+	     }
 	     int count = service.roomGet(accomNumber, userId);
-	     return ResponseEntity.ok(count);
-	    }
+	     if (count == 0) {
+	         return new ResponseEntity<>("찜이 x", HttpStatus.BAD_REQUEST);
+	     }
+	     return ResponseEntity.ok(String.valueOf(count));
+	 }
 	 
 	    private String getTokenFromRequest(HttpServletRequest request) {
 			String token = request.getHeader("Authorization");
