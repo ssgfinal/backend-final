@@ -50,6 +50,8 @@ jobs:
                 -e NCS_ACCESSKEY=${{ secrets.NCS_ACCESSKEY }} \
                 -e NCS_SECRETKEY=${{ secrets.NCS_SECRETKEY }} \
                 -e NAVER_OCR_SECRET=${{ secrets.NAVER_OCR_SECRET }} \
+                -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
+                -e KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }} \
                 -e CLOUD_NAME=${{ secrets.CLOUD_NAME }} \
                 -e CLOUD_API_KEY=${{ secrets.CLOUD_API_KEY }} \
                 -e CLOUD_API_SECRET=${{ secrets.CLOUD_API_SECRET }} \
