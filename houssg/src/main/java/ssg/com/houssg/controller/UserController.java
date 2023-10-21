@@ -382,9 +382,7 @@ public class UserController {
 
 	    	try {
 	        RestTemplate restTemplate = new RestTemplate();
-	        String requestURI = RequestContextHolder.currentRequestAttributes().getAttribute(
-	                RequestDispatcher.FORWARD_REQUEST_URI, RequestAttributes.SCOPE_REQUEST).toString();
-	        System.out.println(requestURI);
+	        
 	        // 요청 헤더 설정
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 	        String baseUrl = http.getRequestURL().toString();
