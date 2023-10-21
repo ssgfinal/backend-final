@@ -372,7 +372,7 @@ public class UserController {
 	@PostMapping("/kakao/log-in")
 	public ResponseEntity<?> kakao(@RequestParam("code") String authorizationCode) {
 	    String apiUrl = "https://kauth.kakao.com/oauth/token";
-	    
+	    System.out.println("카카오톡 로그인");
 	    try {
 	    	ResponseEntity<String> responseEntity ;
 		    HttpHeaders headers = new HttpHeaders();
@@ -382,19 +382,21 @@ public class UserController {
 	        
 	        // 요청 헤더 설정
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-	        
+	        System.out.println("카카오톡 로그인11");
 	        // 요청 파라미터 설정
 	        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 	        parameters.add("grant_type", "authorization_code");
 	        parameters.add("client_id", clientId);
 	        parameters.add("client_secret", clientSecret);
-	        parameters.add("redirect_uri", "http://localhost:3200/oauth/kakao"); 
+	        parameters.add("redirect_uri", "http://localhost:8080"); 
 	        parameters.add("code", authorizationCode); // 실제 Authorization Code 사용
-	        
+	        System.out.println("카카오톡 로그인22");
 	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
 	        // 토큰 요청을 보냅니다.
 	          responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, String.class);
+	          
 	    	} catch (Exception e){
+	    		System.out.println(e);
 	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 코드가 감지되었습니다.");
 	    	}
 	    	
