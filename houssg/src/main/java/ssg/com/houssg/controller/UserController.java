@@ -383,6 +383,7 @@ public class UserController {
 	        // 요청 헤더 설정
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 	        String baseUrl = http.getRequestURL().toString();
+	        System.out.println(baseUrl);
 	        if (baseUrl.startsWith("http://localhost")) {
 	        	baseUrl = "http://localhost:8080";
 	        } else {
