@@ -56,4 +56,8 @@ public class ReviewService {
 	public List<ReviewDto> reservationReview(String id, int reservationNumber){
 		return dao.reservationReview(id, reservationNumber);
 	}
+	
+	public int reviewCheck(ReviewDto dto) {
+		return dao.reviewCheck(dto);
+	}
 }
