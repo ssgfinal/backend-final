@@ -56,21 +56,49 @@ public class ReviewController {
 	                                        HttpServletRequest httpRequest) {
 	    System.out.println("리뷰 추가");
 
-	    
 	    String token = getTokenFromRequest(httpRequest);
 	    String userId = getUserIdFromToken(token);
 
+	   
+	    if (service.reviewCheck(reviewDto)==1) {
+	    	System.out.println(service.reviewCheck(reviewDto));
+	        return ResponseEntity.badRequest().body("이미 해당 예약 번호에 대한 리뷰가 작성되었습니다.");
+	    }
+	    
 	    ReviewDto dto = new ReviewDto();
 	    try {
 	        // 파일 업로드 여부 확인
 	        if (file != null && !file.isEmpty()) {
-	        	// Cloudinary를 사용하여 파일 업로드
-                String cloudinaryImageUrl = uploadImage(file);
-                // AccommodationDto 객체를 생성하여 숙소 정보 저장
-                dto.setImg(cloudinaryImageUrl);   
+	            // Cloudinary를 사용하여 파일 업로드
+	            String cloudinaryImageUrl = uploadImage(file);
+	            // AccommodationDto 객체를 생성하여 숙소 정보 저장
+	            dto.setImg(cloudinaryImageUrl);   
 	        }
-	        // 리뷰 등록 로직 추가
+	        String reviewDtoContentType = httpRequest.getPart("reviewDto").getContentType();
+	        if (reviewDtoContentType == null || !reviewDtoContentType.equals("application/json")) {
+	        	System.out.println(reviewDtoContentType);
+	        	return ResponseEntity.badRequest().body("reviewDto의 타입이 잘못되었습니다.");
+	        }
 	        
+	        if (reviewDto.getReviewContent() == null ) {
+	            return ResponseEntity.badRequest().body("리뷰내용x");
+	        }
+
+	        if (reviewDto.getReviewRating() == 0) {
+	            return ResponseEntity.badRequest().body("평점x");
+	        }
+
+	        if (reviewDto.getReservationNumber() == 0) {
+	            return ResponseEntity.badRequest().body("예약 번호가 유효x");
+	        }
+	        
+	        if (reviewDto.getRoomNumber() == 0) {
+	        	return ResponseEntity.badRequest().body("룸번호x");
+	        }
+	        
+	        if (reviewDto.getAccomNumber() == 0) {
+	        	return ResponseEntity.badRequest().body("숙소번호x");
+	        }
 	        dto.setReviewContent(reviewDto.getReviewContent());
 	        dto.setReviewRating(reviewDto.getReviewRating());
 	        dto.setReservationNumber(reviewDto.getReservationNumber());
@@ -83,8 +111,8 @@ public class ReviewController {
 	        // 리뷰 등록 성공 시
 	        return ResponseEntity.ok("리뷰 등록 성공");
 	    } catch (Exception e) {
-	    	System.out.println(e);
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 등록 실패"); // 400 에러
+	        System.out.println(e);
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 등록 실패");
 	    }
 	}
 
