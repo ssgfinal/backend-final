@@ -7,6 +7,6 @@ public class HelloController {
 
 	@GetMapping("hello")
 	public String hello() {
-		return "Hello";
+		return "Hello test입니다.";
 	}
 }

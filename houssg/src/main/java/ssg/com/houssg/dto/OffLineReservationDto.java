@@ -7,7 +7,6 @@ public class OffLineReservationDto {
 	private int roomNumber; // 객실번호
 	private String roomCategory; // 객실종류 O
 	private String guestName; // 이용자 명 O
-	private String guestPhone; // 이용자 전화번호 O
 	private String startDate; // 숙박시작날짜 O
 	private String endDate; // 숙박시작날짜 O
 	public int getAccomNumber() {
@@ -39,12 +38,6 @@ public class OffLineReservationDto {
 	}
 	public void setGuestName(String guestName) {
 		this.guestName = guestName;
-	}
-	public String getGuestPhone() {
-		return guestPhone;
-	}
-	public void setGuestPhone(String guestPhone) {
-		this.guestPhone = guestPhone;
 	}
 	public String getStartDate() {
 		return startDate;

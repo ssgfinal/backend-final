@@ -72,7 +72,7 @@ public class CouponController {
 
 	// 유저 - 쿠폰번호로 쿠폰 정보 조회
 	@GetMapping("/find-couponinfo")
-	public CouponDto findCouponByNumber(@RequestParam String couponNumber) {
+	public CouponDto findCouponByNumber(@RequestParam String couponNumber,HttpServletRequest request) {
 		return service.findCouponByNumber(couponNumber);
 	}
 

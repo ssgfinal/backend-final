@@ -38,10 +38,11 @@ public class JwtTokenProvider {
 	}
 
 	// 클레임 설정 (내용물)
-	private Map<String, Object> createClaims(UserDto user) {
+	private Map<String, Object> createClaims(UserDto user, String tokenType) {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("id", user.getId());
 		claims.put("auth", user.getAuth());
+		claims.put("token_type", tokenType);// 타입지정
 		return claims;
 	}
 
@@ -55,7 +56,7 @@ public class JwtTokenProvider {
 		Date expiration = Date.from(now.plus(accessTokenValidityInMilliseconds, ChronoUnit.MILLIS));
 		System.out.println(expiration);
 		Map<String, Object> header = createHeader();
-		Map<String, Object> claims = createClaims(user);
+		Map<String, Object> claims = createClaims(user, "access");
 
 //		Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 //		System.out.println(key);
@@ -74,7 +75,7 @@ public class JwtTokenProvider {
 		Date expiration = Date.from(now.plus(refreshTokenValidityInMilliseconds, ChronoUnit.MILLIS));
 
 		Map<String, Object> header = createHeader();
-		Map<String, Object> claims = createClaims(user);
+		Map<String, Object> claims = createClaims(user, "refresh");
 
 		Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
@@ -109,7 +110,7 @@ public class JwtTokenProvider {
 
 			// 현재 시간과 비교하여 만료 여부 판단
 			Date now = new Date();
-			System.out.println("만료시간 여부 : " + expiration != null);
+			System.out.println("만료시간 여부 : " + (expiration != null));
 			System.out.println("만료 여부 : " + !expiration.before(now));
 			return expiration != null && !expiration.before(now);
 		} catch (JwtException | IllegalArgumentException e) {

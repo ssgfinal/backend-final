@@ -16,14 +16,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -93,7 +95,7 @@ public class UserController {
 			System.out.println("생성된 토큰: " + token);
 			String refreshToken = jwtTokenProvider.createRefreshToken(dto);
 			System.out.println("생성된 리프레시 토큰: " + refreshToken);
-
+			String userId = dto.getId();
 			Map<String, Object> responseMap = new HashMap<>();
 			responseMap.put("message", "로그인 성공");
 			responseMap.put("nickname", dto.getNickname()); // 닉네임 추가
@@ -103,7 +105,7 @@ public class UserController {
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("Authorization", "Bearer " + token);
 			headers.add("RefreshToken", refreshToken);
-			tokenService.storeRefreshToken(refreshToken, user);
+			tokenService.storeRefreshToken(userId, refreshToken);
 
 			System.out.println("로그인 성공" + new Date());
 
@@ -115,11 +117,15 @@ public class UserController {
 
 	// 로그아웃
 	@PostMapping("log-out")
-	public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
-		String token = authorizationHeader.replace("Bearer ", "");
+	public ResponseEntity<String> logout(HttpServletRequest request) {
+		// HTTP 요청 헤더에서 토큰 추출
+		String token = getTokenFromRequest(request);
+
+		// 토큰에서 사용자 ID 추출
+		String userId = getUserIdFromToken(token);
 
 		// 리프레시 토큰을 Redis에서 삭제
-		tokenService.removeRefreshToken(token);
+		tokenService.removeRefreshToken(userId);
 		return ResponseEntity.ok("로그아웃되었습니다.");
 	}
 
@@ -340,36 +346,38 @@ public class UserController {
 			return ResponseEntity.badRequest().body("비밀번호 재설정에 실패했습니다.");
 		}
 	}
-	
+
 	// 마이페이지 닉네임 변경
 	@PostMapping("/mypage-nickname")
-	public ResponseEntity<String> updateMypageNickname(HttpServletRequest request, @RequestParam("nickname") String nickname) {
-	    // HTTP 요청 헤더에서 토큰 추출
-	    String token = getTokenFromRequest(request);
+	public ResponseEntity<String> updateMypageNickname(HttpServletRequest request,
+			@RequestParam("nickname") String nickname) {
+		// HTTP 요청 헤더에서 토큰 추출
+		String token = getTokenFromRequest(request);
 
-	    // 토큰에서 사용자 ID 추출
-	    String userId = getUserIdFromToken(token);
+		// 토큰에서 사용자 ID 추출
+		String userId = getUserIdFromToken(token);
 
-	    // 닉네임 변경 전에 새 닉네임 유효성 검사
-	    UserUtil userUtil = new UserUtil();
-	    if (!userUtil.isValidNickname(nickname)) {
-	        return ResponseEntity.badRequest().body("유효하지 않은 닉네임");
-	    }
+		// 닉네임 변경 전에 새 닉네임 유효성 검사
+		UserUtil userUtil = new UserUtil();
+		if (!userUtil.isValidNickname(nickname)) {
+			return ResponseEntity.badRequest().body("유효하지 않은 닉네임");
+		}
 
-	    // 닉네임 중복 체크
-	    int count = service.nicknameCheck(nickname);
-	    if (count > 0) {
-	        return ResponseEntity.badRequest().body("중복 닉네임");
-	    }
+		// 닉네임 중복 체크
+		int count = service.nicknameCheck(nickname);
+		if (count > 0) {
+			return ResponseEntity.badRequest().body("중복 닉네임");
+		}
 
-	    // 해당하는 아이디의 닉네임 변경
-	    try {
-	    	service.changeNickname(userId, nickname);
-	        return ResponseEntity.ok("닉네임 변경 성공");
-	    } catch (Exception e) {
-	        return ResponseEntity.badRequest().body("닉네임 변경 실패");
-	    }
+		// 해당하는 아이디의 닉네임 변경
+		try {
+			service.changeNickname(userId, nickname);
+			return ResponseEntity.ok("닉네임 변경 성공");
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("닉네임 변경 실패");
+		}
 	}
+
 
 	
 	@PostMapping("/kakao/log-in")
@@ -446,8 +454,8 @@ public class UserController {
 	             			
 	             			headers = new HttpHeaders();
 	            			headers.add("Authorization", "Bearer " + token);
-	            			headers.add("RefreshToken", refreshToken);
-	            			tokenService.storeRefreshToken(refreshToken, userDto);
+	            			headers.add("RefreshToken", "Bearer " + refreshToken);
+	            			tokenService.storeRefreshToken(memberId, refreshToken);
 	                        
 	                        int check = service.idCheck(memberId);
 
@@ -535,6 +543,7 @@ public class UserController {
         // 이미 존재하는 사용자인 경우에 대한 처리
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 가입된 사용자입니다.");
     }
+
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");

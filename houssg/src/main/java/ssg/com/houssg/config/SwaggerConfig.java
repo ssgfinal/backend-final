@@ -31,7 +31,7 @@ public class SwaggerConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER)
-                .name("Refresh-Token");
+                .name("RefreshToken");
 
         // "bearerAuth"와 "refreshTokenAuth" 보안 요구사항 정의
         SecurityRequirement bearerSecurityRequirement = new SecurityRequirement().addList("bearerAuth");
