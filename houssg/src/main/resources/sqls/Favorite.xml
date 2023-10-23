@@ -28,5 +28,11 @@
 		FROM favorite
 		WHERE accom_number = #{accomNumber} AND id = #{id}
 	</select>
+	
+	<select id="isIdDuplicate" parameterType="ssg.com.houssg.dto.FavoriteDto" resultType="int">
+		SELECT count(*)
+		FROM favorite
+		WHERE accom_number = #{accomNumber} AND id = #{id}
+	</select>
 
 </mapper>

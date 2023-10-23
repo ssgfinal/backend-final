@@ -24,4 +24,10 @@ public interface RoomDao {
 	int updateRoom(RoomDto roomDto);
 	
 	int deleteRequest(int roomNumber);
+
+	int isCategoryDuplicate(int accomNumber,String roomCategory);
+	
+	int delRequest(int roomNumber);
+	
+	int choiceRoom(int roomNumber);
 }

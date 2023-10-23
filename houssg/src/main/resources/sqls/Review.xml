@@ -81,4 +81,16 @@
 		FROM review
 		WHERE id=#{id} AND reservation_number = #{reservationNumber}
 	</select>
+	
+	<select id="reviewCheck" parameterType="ssg.com.houssg.dto.ReviewDto" resultType="int">
+		SELECT CASE
+	    WHEN EXISTS (
+	        SELECT 1
+	        FROM review
+	        WHERE reservation_number = #{reservationNumber} AND accom_number = #{accomNumber}
+	    )
+	    THEN 1
+	    ELSE 0
+		END AS result;
+	</select>
 </mapper>

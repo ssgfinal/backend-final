@@ -37,6 +37,7 @@ import ssg.com.houssg.dto.RoomRequest;
 import ssg.com.houssg.dto.RoomServiceDto;
 import ssg.com.houssg.service.InnerService;
 import ssg.com.houssg.service.RoomService;
+import ssg.com.houssg.util.RoomUtil;
 
 @RestController
 public class RoomController {
@@ -52,6 +53,9 @@ public class RoomController {
 	
 	@Autowired
 	private Cloudinary cloudinary;
+	
+	@Autowired
+	private RoomUtil roomUtil;
 
 	@PostMapping(value = "room/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addroom(@RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFile,
@@ -59,6 +63,8 @@ public class RoomController {
 	    System.out.println("객실 추가");
 	    RoomDto roomDto = new RoomDto();
 	    
+	    
+
 	    // 이미지 URL을 저장할 리스트 선언
 	    List<String> imageUrls = new ArrayList<>();
 
@@ -84,16 +90,20 @@ public class RoomController {
 	        return new ResponseEntity<>("파일 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 
-	    // 나머지 로직은 그대로 두겠습니다.
-
 	    // 'RoomDto' 객체 생성
+	    
 	    roomDto.setRoomCategory(request.getRoomCategory());
 	    roomDto.setRoomPrice(request.getRoomPrice());
 	    roomDto.setRoomAvailability(request.getRoomAvailability());
 	    roomDto.setAccomNumber(request.getAccomNumber());
-	    System.out.println(roomDto.toString());
 	    // 방 추가 로직
 
+	    ResponseEntity<String> validationResponse = roomUtil.isValidRoom(request,true);
+	    if (validationResponse.getStatusCode() != HttpStatus.OK) {
+	        // 유효성 검사 실패 시 오류 응답 반환
+	        return validationResponse;
+	    }
+	    
 	    RoomServiceDto roomServiceDto = new RoomServiceDto();
 	    int[] roomServiceDtoList = request.getRoomServiceDto();
 	    roomServiceDto.setOceanView(roomServiceDtoList[0]);
@@ -102,7 +112,6 @@ public class RoomController {
 	    roomServiceDto.setDoubleBed(roomServiceDtoList[3]);
 	    roomServiceDto.setQueenBed(roomServiceDtoList[4]);
 	    roomServiceDto.setKingBed(roomServiceDtoList[5]);
-	    System.out.println(roomServiceDto.toString());
 
 	    // 'rooms' 테이블에 방 정보 추가
 	    int roomCount = service.addRoom(roomDto, roomServiceDto);
@@ -156,9 +165,11 @@ public class RoomController {
 	    return new ResponseEntity<>("방 추가 성공", HttpStatus.OK);
 	}
 	@GetMapping("room/detail")
-	public ResponseEntity<List<RoomDto>> choiceAccom(@RequestParam int accomNumber) {
-	    System.out.println(accomNumber);
+	public ResponseEntity<?> choiceAccom(@RequestParam(required = false) Integer accomNumber) {
 	    System.out.println("숙소 상세로 들어갑니다");
+	    if (accomNumber == null || accomNumber <= 0) {
+	        return new ResponseEntity<>("객실 번호x", HttpStatus.BAD_REQUEST);
+	    }
 	    
 	    List<RoomDto> list = service.choiceAccom(accomNumber);
 	    
@@ -169,114 +180,125 @@ public class RoomController {
 	    }
 	}
 
-	 @PatchMapping(value = "room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	 public ResponseEntity<String> updateRoom(
-	     @RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFileList,
-	     @RequestPart RoomRequest request,
-	     HttpServletRequest httprequest
-	 ) {
-	     try {
-	         System.out.println("객실 업데이트 시작");
-	         List<String> changeFileList = new ArrayList();
-	      // 필수 필드인 roomNumber 검사
-	         Integer roomNumber = request.getRoomNumber();
-	         Integer accomNumber = request.getAccomNumber();
-	         if (roomNumber == null || roomNumber.intValue() == 0) {
-	             return new ResponseEntity<>("roomNumber 필드는 필수입니다.", HttpStatus.BAD_REQUEST);
-	         } else if (accomNumber == null || accomNumber.intValue() == 0) {
-	        	 return new ResponseEntity<>("accomNumber 필드는 필수입니다.",HttpStatus.BAD_REQUEST);
-	         }
-	         if (multiFileList != null && !multiFileList.isEmpty()) {
-	             for (int i = 0; i < multiFileList.size(); i++) {
-	                 MultipartFile file = multiFileList.get(i);
-	                 String originalFileName = file.getOriginalFilename();
-	                 // 파일 이름이 null 또는 빈 문자열인 경우 스킵
-	                 if (originalFileName == null || originalFileName.isEmpty()) {
-	                     continue;
-	                 }
-	                 // Cloudinary를 사용하여 파일 업로드
-	                 String cloudinaryImageUrl = uploadImage(file);
-	                 changeFileList.add(cloudinaryImageUrl);
-	                 System.out.println("업로드 성공: " + cloudinaryImageUrl);
-	             }
-	         }
-	         RoomDto roomDto = new RoomDto();
-	         roomDto.setRoomNumber(request.getRoomNumber());
-	         roomDto.setRoomCategory(request.getRoomCategory());
-	         roomDto.setRoomPrice(request.getRoomPrice());
-	         roomDto.setRoomAvailability(request.getRoomAvailability());
-	         roomDto.setAccomNumber(request.getAccomNumber());
-	         System.out.println(roomDto.toString());
-
-	         RoomServiceDto roomServiceDto = new RoomServiceDto();
-	         roomServiceDto.setRoomNumber(request.getRoomNumber());
-	         int[] roomServiceDtoList = request.getRoomServiceDto();
-	         roomServiceDto.setOceanView(roomServiceDtoList[0]);
-	         roomServiceDto.setPc(roomServiceDtoList[1]);
-	         roomServiceDto.setNoSmoking(roomServiceDtoList[2]);
-	         roomServiceDto.setDoubleBed(roomServiceDtoList[3]);
-	         roomServiceDto.setQueenBed(roomServiceDtoList[4]);
-	         roomServiceDto.setKingBed(roomServiceDtoList[5]);
-	         System.out.println(roomServiceDto.toString());
-	         service.updateRoom(roomDto, roomServiceDto);
-	         // 이미지를 수정할 때 기존 이미지를 유지하고 새 이미지를 추가
-	         InnerDto innerDto = new InnerDto();
-	         innerDto.setRoomNumber(request.getRoomNumber());
-	         List<String> resistFileList = new ArrayList<>(Arrays.asList(request.getResistImage()));
-
-	         if (resistFileList != null && !resistFileList.isEmpty()) {
-	             // 기존 이미지 유지
-	             for (int i = 0; i < 10; i++) {
-	                 if (i < resistFileList.size()) {
-	                     innerDto.setImg(i, resistFileList.get(i));                    
-	                 }
-	             }
-	             // 새 이미지 추가
-	             for (int i = resistFileList.size(); i < resistFileList.size() + changeFileList.size() && i < 10; i++) {
-	                 innerDto.setImg(i, changeFileList.get(i - resistFileList.size()));	                
-	             }
-	             // 나머지 이미지 초기화
-	             for (int i = resistFileList.size() + changeFileList.size(); i < 10; i++) {
-	                 innerDto.setImg(i, null);
-	             }	          
-	             innerService.updateInnerView(innerDto);
-	         } else {
-	             // 기존 이미지 유지하지 않고 모든 이미지를 새 이미지로 설정
-	             for (int i = 0; i < changeFileList.size() && i < 10; i++) {
-	                 innerDto.setImg(i, changeFileList.get(i));
-	             }
-	         }
-	         System.out.println(innerDto.toString());
-	         innerService.updateInnerView(innerDto);
-	         System.out.println("객실 업데이트 완료");
-	         return new ResponseEntity<>("방 업데이트 성공", HttpStatus.OK);
-	     } catch (Exception e) {
-	         System.out.println("객실 업데이트 실패");
-	         e.printStackTrace();
-	         return new ResponseEntity<>("객실 업데이트 실패", HttpStatus.INTERNAL_SERVER_ERROR);
-	     }
-	 }
-	 @PatchMapping("room/request")
-	 public ResponseEntity<String> deleteRoom(@RequestParam int roomNumber) {
-	     System.out.println("방 삭제 요청");
-
-	     // 방 삭제 요청
-	     int roomCount = service.deleteRequest(roomNumber);
-	     if (roomCount <= 0) {
-	         // 삭제 요청 실패
-	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(roomNumber + "방은 예약이 남아 있습니다");
-	     }
-
-	     return ResponseEntity.ok(roomNumber + "방은 삭제 요청이 되었습니다.");
-	 }
-
-	 private String uploadImage(MultipartFile imageFile) throws Exception {
-	        try {
-	            Map<?, ?> uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());
-	            return uploadResult.get("secure_url").toString();
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            throw e;
+	@PatchMapping(value = "room", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<String> updateRoom(@RequestPart(value = "multiFile", required = false) List<MultipartFile> multiFileList,
+											 @RequestPart RoomRequest request,
+											 HttpServletRequest httprequest) {
+	    try {
+	        System.out.println("객실 업데이트 시작");
+	        List<String> changeFileList = new ArrayList();
+	        // 필수 필드인 roomNumber 검사
+	        ResponseEntity<String> validationResponse = roomUtil.isValidRoom(request,false);
+		    if (validationResponse.getStatusCode() != HttpStatus.OK) {
+		        // 유효성 검사 실패 시 오류 응답 반환
+		        return validationResponse;
+		    }
+		    if (request.getRoomNumber()==0) {
+		    	return new ResponseEntity<>("룸 번호 입력x",HttpStatus.BAD_REQUEST);
+		    }
+	        if (multiFileList != null && !multiFileList.isEmpty()) {
+	            for (int i = 0; i < multiFileList.size(); i++) {
+	                MultipartFile file = multiFileList.get(i);
+	                String originalFileName = file.getOriginalFilename();
+	                // 파일 이름이 null 또는 빈 문자열인 경우 스킵
+	                if (originalFileName == null || originalFileName.isEmpty()) {
+	                    continue;
+	                }
+	                // Cloudinary를 사용하여 파일 업로드
+	                String cloudinaryImageUrl = uploadImage(file);
+	                changeFileList.add(cloudinaryImageUrl);
+	                System.out.println("업로드 성공: " + cloudinaryImageUrl);
+	            }
 	        }
+	        RoomDto roomDto = new RoomDto();
+	        roomDto.setRoomNumber(request.getRoomNumber());
+	        roomDto.setRoomCategory(request.getRoomCategory());
+	        roomDto.setRoomPrice(request.getRoomPrice());
+	        roomDto.setRoomAvailability(request.getRoomAvailability());
+	        roomDto.setAccomNumber(request.getAccomNumber());
+	        System.out.println(roomDto.toString());
+
+	        RoomServiceDto roomServiceDto = new RoomServiceDto();
+	        roomServiceDto.setRoomNumber(request.getRoomNumber());
+	        int[] roomServiceDtoList = request.getRoomServiceDto();
+	        roomServiceDto.setOceanView(roomServiceDtoList[0]);
+	        roomServiceDto.setPc(roomServiceDtoList[1]);
+	        roomServiceDto.setNoSmoking(roomServiceDtoList[2]);
+	        roomServiceDto.setDoubleBed(roomServiceDtoList[3]);
+	        roomServiceDto.setQueenBed(roomServiceDtoList[4]);
+	        roomServiceDto.setKingBed(roomServiceDtoList[5]);
+	        System.out.println(roomServiceDto.toString());
+	        service.updateRoom(roomDto, roomServiceDto);
+	        // 이미지를 수정할 때 기존 이미지를 유지하고 새 이미지를 추가
+	        InnerDto innerDto = new InnerDto();
+	        innerDto.setRoomNumber(request.getRoomNumber());
+	        List<String> resistFileList = new ArrayList<>(Arrays.asList(request.getResistImage()));
+
+	        if (resistFileList != null && !resistFileList.isEmpty()) {
+	            // 기존 이미지 유지
+	            for (int i = 0; i < 10; i++) {
+	                if (i < resistFileList.size()) {
+	                    innerDto.setImg(i, resistFileList.get(i));                    
+	                }
+	            }
+	            // 새 이미지 추가
+	            for (int i = resistFileList.size(); i < resistFileList.size() + changeFileList.size() && i < 10; i++) {
+	                innerDto.setImg(i, changeFileList.get(i - resistFileList.size()));	                
+	            }
+	            // 나머지 이미지 초기화
+	            for (int i = resistFileList.size() + changeFileList.size(); i < 10; i++) {
+	                innerDto.setImg(i, null);
+	            }	          
+	        innerService.updateInnerView(innerDto);
+	        } else {
+	            // 기존 이미지 유지하지 않고 모든 이미지를 새 이미지로 설정
+	            for (int i = 0; i < changeFileList.size() && i < 10; i++) {
+	                innerDto.setImg(i, changeFileList.get(i));
+	            }
+	        }
+	        System.out.println(innerDto.toString());
+	        innerService.updateInnerView(innerDto);
+	        System.out.println("객실 업데이트 완료");
+	        return new ResponseEntity<>("방 업데이트 성공", HttpStatus.OK);
+	    } catch (Exception e) {
+	        System.out.println("객실 업데이트 실패");
+	        e.printStackTrace();
+	        return new ResponseEntity<>("객실 업데이트 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
+	}
+	
+	@PatchMapping("room/request")
+	public ResponseEntity<String> deleteRoom(@RequestParam(required = false) Integer roomNumber) {
+	    System.out.println("방 삭제 요청");
+
+	    // 방 삭제 요청
+	    if (roomNumber == null || roomNumber == 0) {
+	        return new ResponseEntity<>("룸 번호 입력x", HttpStatus.BAD_REQUEST);
+	    }
+	    int count = service.delRequest(roomNumber);
+	    if (count == 1) {
+	    	return new ResponseEntity<>("예약 중입니다", HttpStatus.OK);
+	    } 
+	    int isRoom = service.choiceRoom(roomNumber);
+	    if(isRoom == 0) {
+	    	return new ResponseEntity<>("객실 존재x", HttpStatus.BAD_REQUEST);
+	    }
+	    int roomCount = service.deleteRequest(roomNumber);
+	    if (roomCount <= 0) {
+	        // 삭제 요청 실패
+	        return new ResponseEntity<>("예약된 방이 남아있습니다.",HttpStatus.BAD_REQUEST);
+	    }
+	    
+	    return ResponseEntity.ok(roomNumber + "방은 삭제 요청이 되었습니다.");
+	}
+
+	private String uploadImage(MultipartFile imageFile) throws Exception {
+	    try {
+	        Map<?, ?> uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());
+	        return uploadResult.get("secure_url").toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw e;
+	    }
+	}
 }
