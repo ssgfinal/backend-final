@@ -205,7 +205,7 @@ public class UserController {
 
 	// 아이디 찾기 및 전화번호 변경
 	@PostMapping("change-phone")
-	public ResponseEntity<SmsResponseDto> findㅇ(@RequestParam("phone_number") String phone_number,
+	public ResponseEntity<SmsResponseDto> findPhone(@RequestParam("phone_number") String phone_number,
 			HttpSession session) {
 
 		// 휴대폰 번호 중복 검사
