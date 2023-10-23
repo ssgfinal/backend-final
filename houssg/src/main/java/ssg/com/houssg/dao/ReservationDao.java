@@ -42,7 +42,7 @@ public interface ReservationDao {
 	void paymentCheck(int reservationNumber);
 
 	// 유저 - 예약 취소
-	void cancelReservationByUser();
+	void cancelReservationByUser(int reservationNumber);
 
 	// 이용 완료
 	void usedCheck();

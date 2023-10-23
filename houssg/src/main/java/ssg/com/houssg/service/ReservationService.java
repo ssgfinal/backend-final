@@ -119,7 +119,7 @@ public class ReservationService {
 
 	// 예약취소
 	public void cancelReservationByUser(int reservationNumber) {
-		dao.cancelReservationByOwner(reservationNumber);
+		dao.cancelReservationByUser(reservationNumber);
 	}
 
 	// 쿠폰사용 여부 체크
