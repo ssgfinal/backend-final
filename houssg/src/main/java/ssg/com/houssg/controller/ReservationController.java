@@ -428,6 +428,7 @@ public class ReservationController {
 				reservationDto.setId("offline");
 				reservationDto.setCouponNumber("offline");
 				reservationDto.setCouponName("offline");
+				reservationDto.setGuestPhone("offline");
 				reservationDto.setDiscount(0);
 				reservationDto.setUsePoint(0);
 				reservationDto.setTotalPrice(0);
@@ -438,7 +439,6 @@ public class ReservationController {
 				reservationDto.setStartDate(offLineReservationDto.getStartDate());
 				reservationDto.setEndDate(offLineReservationDto.getEndDate());
 				reservationDto.setGuestName(offLineReservationDto.getGuestName());
-				reservationDto.setGuestPhone(offLineReservationDto.getGuestPhone());
 				reservationDto.setAccomNumber(offLineReservationDto.getAccomNumber());
 				reservationDto.setAccomName(offLineReservationDto.getAccomName());
 				reservationDto.setRoomNumber(offLineReservationDto.getRoomNumber());
