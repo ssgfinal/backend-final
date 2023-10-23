@@ -20,6 +20,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.AccommodationDto;
 import ssg.com.houssg.dto.FavoriteDto;
+import ssg.com.houssg.dto.FavoriteParam;
 import ssg.com.houssg.service.FavoriteService;
 
 @RestController
@@ -76,17 +77,17 @@ public class FavoriteController {
 	}
 	
 	 @GetMapping("mypage/favorite")
-	 public ResponseEntity<List<FavoriteDto>> getMyFavorite(HttpServletRequest httpRequest) {
+	 public ResponseEntity<List<FavoriteParam>> getMyFavorite(HttpServletRequest httpRequest) {
 	     System.out.println("찜보기");
 	     String token = getTokenFromRequest(httpRequest);
 	     String userId = getUserIdFromToken(token);
-	     List<FavoriteDto> favoriteList = service.getMyFavorite(userId);
+	     List<FavoriteParam> favoriteList = service.getMyFavorite(userId);
 	     
 	     if (favoriteList != null && !favoriteList.isEmpty()) {
 	         // 찜 목록이 비어 있지 않으면 200 OK 응답과 함께 목록을 반환
 	         return ResponseEntity.ok(favoriteList);
 	     } else {
-	         return new ResponseEntity<>(new ArrayList<FavoriteDto>(),HttpStatus.OK);
+	         return new ResponseEntity<>(new ArrayList<FavoriteParam>(),HttpStatus.OK);
 	     }
 	 }
 	 @GetMapping("favorite")
@@ -99,7 +100,7 @@ public class FavoriteController {
 	     }
 	     int count = service.roomGet(accomNumber, userId);
 	     if (count == 0) {
-	         return new ResponseEntity<>("찜이 x", HttpStatus.BAD_REQUEST);
+	         return ResponseEntity.ok(String.valueOf(count));
 	     }
 	     return ResponseEntity.ok(String.valueOf(count));
 	 }

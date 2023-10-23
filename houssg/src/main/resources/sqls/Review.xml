@@ -15,6 +15,15 @@
 		JOIN rooms ro ON r.room_number = ro.room_number
 		JOIN accommodation a ON r.accom_number = a.accom_number
 		WHERE u.id = #{id} AND (r.report_status = 0 OR r.report_status = 1)
+	</select>
+	
+	<select id="getMyReviewPage" parameterType="ssg.com.houssg.dto.ReviewParam" resultType="ssg.com.houssg.dto.ReviewDto">
+		SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name, u.nickname
+		FROM review r
+		JOIN user u ON r.id = u.id
+		JOIN rooms ro ON r.room_number = ro.room_number
+		JOIN accommodation a ON r.accom_number = a.accom_number
+		WHERE u.id = #{id} AND (r.report_status = 0 OR r.report_status = 1)
 		LIMIT #{pageSize} OFFSET #{start}
 	</select>
 	<!-- 나의 리뷰 숫자 -->
@@ -35,6 +44,26 @@
 	    JOIN user u ON r.id = u.id
 	    WHERE r.accom_number = #{accomNumber} AND (r.report_status=0 OR r.report_status = 1)
 	    ORDER BY r.review_creation_time DESC
+	</select>
+	<!-- 숙소에 관한 리뷰보기 -->
+	<select id="getAllReviewPage" parameterType="ssg.com.houssg.dto.ReviewParam" resultType="ssg.com.houssg.dto.ReviewDto">
+	    SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name, u.nickname
+	    FROM review r 
+	    JOIN rooms ro ON r.room_number = ro.room_number
+	    JOIN accommodation a ON r.accom_number = a.accom_number
+	    JOIN user u ON r.id = u.id
+	    WHERE r.accom_number = #{accomNumber} AND (r.report_status=0 OR r.report_status = 1)
+	    ORDER BY r.review_creation_time DESC
+	    LIMIT #{pageSize} OFFSET #{start}
+	</select>
+	<!-- 숙소에 관한 리뷰보기 토탈값 -->
+	<select id="pageTotal" parameterType="ssg.com.houssg.dto.ReviewParam" resultType="int">
+	    SELECT COUNT(DISTINCT a.accom_number) AS total_count
+	    FROM review r 
+	    JOIN rooms ro ON r.room_number = ro.room_number
+	    JOIN accommodation a ON r.accom_number = a.accom_number
+	    JOIN user u ON r.id = u.id
+	    WHERE r.accom_number = #{accomNumber} AND (r.report_status=0 OR r.report_status = 1)
 	</select>
 	<!-- 리뷰 신고하기 -->
 	<update id="updateReview" parameterType="ssg.com.houssg.dto.ReviewDto">

@@ -21,8 +21,11 @@ public class ReviewService {
 		return dao.addReview(dto);
 	}
 	// 마이 리뷰 보기
-	public List<ReviewDto> getMyReview(ReviewParam param){
-		return dao.getMyReview(param);
+	public List<ReviewDto> getMyReview(String id){
+		return dao.getMyReview(id);
+	}
+	public List<ReviewDto> getMyReviewPage(ReviewParam param){
+		return dao.getMyReviewPage(param);
 	}
 	// 마이 리뷰 총합
 	public int reviewCount(ReviewParam param) {
@@ -31,6 +34,14 @@ public class ReviewService {
 	// 한 숙소 리뷰 보기
 	public List<ReviewDto> getAllReview(int accomNumber){
 		return dao.getAllReview(accomNumber);
+	}
+	// 한 숙소 리뷰 보기(페이지)
+	public List<ReviewParam> getAllReviewPage(ReviewParam param){
+		return dao.getAllReviewPage(param);
+	}
+	// 페이지 토탈
+	public int pageTotal(ReviewParam param) {
+		return dao.pageTotal(param);
 	}
 	// 리뷰 신고하기
 	public int updateReview(int reviewNumber, String reportMessage) {
