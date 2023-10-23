@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ssg.com.houssg.dao.FavoriteDao;
 import ssg.com.houssg.dto.FavoriteDto;
+import ssg.com.houssg.dto.FavoriteParam;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class FavoriteService {
 		return dao.deleteFavorite(id, accomNumber);
 	}
 	
-	public List<FavoriteDto> getMyFavorite(String id){
+	public List<FavoriteParam> getMyFavorite(String id){
 		return dao.getMyFavorite(id);
 	}
 	public int roomGet(int accomNumber, String id) {

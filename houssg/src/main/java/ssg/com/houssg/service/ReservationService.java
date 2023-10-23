@@ -237,5 +237,8 @@ public class ReservationService {
 			return -1; // 하루 전, 당일 (취소불가)
 		}
 	}
-
+	// 리뷰 작성 시 review_status = 1
+	public int statusUpdate(int reservationNumber) {
+		return dao.statusUpdate(reservationNumber);
+	}
 }

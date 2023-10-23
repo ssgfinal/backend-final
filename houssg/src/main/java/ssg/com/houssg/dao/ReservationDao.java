@@ -107,5 +107,7 @@ public interface ReservationDao {
     // 방문 하루 전 예약정보 조회
     ReservationForLmsDto getOndDayAgoReservation();
     
+    // 리뷰 작성 시 review_status = 1
+    int statusUpdate(int reservationNumber);
 }
 

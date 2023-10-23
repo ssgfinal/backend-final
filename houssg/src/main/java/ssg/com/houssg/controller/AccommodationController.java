@@ -130,7 +130,7 @@ public class AccommodationController {
 
 
     @PostMapping(value = "accom/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> addAccommodation(@RequestPart("file") MultipartFile file,
+    public ResponseEntity<?> addAccommodation(@RequestPart("file") MultipartFile file,
                                                                 @RequestPart AccommodationRequest request,
                                                                 HttpServletRequest httpRequest) {
         System.out.println("숙소 추가 신청");
@@ -139,13 +139,18 @@ public class AccommodationController {
         AccommodationDto dto = new AccommodationDto();
         String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
+        
         try {
             if (file != null && !file.isEmpty()) {
                 // Cloudinary를 사용하여 파일 업로드
                 String cloudinaryImageUrl = uploadImage(file);
                 // AccommodationDto 객체를 생성하여 숙소 정보 저장
                 dto.setImg(cloudinaryImageUrl);
-
+                
+                if (request.getAccomNumber() == 0 || request.getTeleNumber() == null || request.getAccomDetails() == null
+                        || request.getCheckIn() == null || request.getCheckOut() == null || request.getFacilityDto() == null) {
+                	return new ResponseEntity<>("정보가 빠졌음", HttpStatus.BAD_REQUEST);
+                }
                 // 나머지 Request에서 매핑한 값을 설정
                 dto.setId(userId);
                 dto.setAccomName(request.getAccomName());
@@ -220,7 +225,6 @@ public class AccommodationController {
                                                       @RequestPart AccommodationRequest request,
                                                       HttpServletRequest httpRequest) {
         System.out.println("숙소 업데이트");
-        System.out.println(request.toString());
     
         AccommodationDto dto = new AccommodationDto();
         try {
@@ -242,7 +246,10 @@ public class AccommodationController {
                 // 새 파일이 업로드되지 않은 경우, 이전 파일의 경로를 사용합니다.
                 dto.setImg(previousFilePath);
             }
-
+            if (request.getAccomNumber() == 0 || request.getTeleNumber() == null || request.getAccomDetails() == null
+                    || request.getCheckIn() == null || request.getCheckOut() == null || request.getFacilityDto() == null) {
+                return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+            }
             // AccommodationDto 객체를 생성하여 숙소 정보 업데이트
             dto.setAccomNumber(request.getAccomNumber());                 
             dto.setTeleNumber(request.getTeleNumber());   
@@ -281,8 +288,11 @@ public class AccommodationController {
     }
 
     @PatchMapping("accom/del/request")
-    public ResponseEntity<String> updateRequest(@RequestParam int accomNumber) {
+    public ResponseEntity<String> updateRequest(@RequestParam Integer accomNumber) {
         System.out.println("삭제요청합니다");
+        if (accomNumber==null||accomNumber==0) {
+        	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
+        }
         int count = service.updateRequest(accomNumber);
 
         if (count > 0) {
@@ -296,8 +306,11 @@ public class AccommodationController {
         }
     }
     @PatchMapping("auth/accom/del")
-    public ResponseEntity<String> deleteRequest(@RequestParam int accomNumber) {
+    public ResponseEntity<String> deleteRequest(@RequestParam Integer accomNumber) {
         System.out.println("삭제 요청 처리 완료");
+        if (accomNumber==null||accomNumber==0) {
+        	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
+        }
         int count = service.deleteRequest();
 
         if (count > 0) {
@@ -311,8 +324,11 @@ public class AccommodationController {
         }
     }
     @GetMapping("accom/detail")
-    public ResponseEntity<AccommodationDto> getAccom(@RequestParam int accomNumber) {
+    public ResponseEntity<?> getAccom(@RequestParam Integer accomNumber) {
         System.out.println("리스트에 접근합니다");
+        if (accomNumber==null||accomNumber==0) {
+        	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
+        }
         AccommodationDto accommodation;
         accommodation = service.getAccom(accomNumber);
 
@@ -338,8 +354,11 @@ public class AccommodationController {
     }
     
     @PatchMapping("accom/approval")
-    public ResponseEntity<String> accomApproval(@RequestParam int accomNumber) {
+    public ResponseEntity<String> accomApproval(@RequestParam Integer accomNumber) {
         System.out.println("숙소등록신청허가/재신청");
+        if (accomNumber==null||accomNumber==0) {
+        	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
+        }
         
         int result = service.accomApproval(accomNumber);
         
@@ -350,8 +369,11 @@ public class AccommodationController {
         }
     }
     @PatchMapping("accom/approvalX")	
-    public ResponseEntity<String> accomApprovalX(@RequestParam int accomNumber){
+    public ResponseEntity<String> accomApprovalX(@RequestParam Integer accomNumber){
     	System.out.println("숙소등록거절");
+    	if (accomNumber==null||accomNumber==0) {
+        	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
+        }
     	
     	int result = service.accomApprovalX(accomNumber);
     	
