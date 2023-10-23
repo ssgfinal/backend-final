@@ -228,10 +228,13 @@ public class ReservationService {
 		int daysUntilCheckIn = period.getDays();
 
 		if (daysUntilCheckIn >= 7) {
+			dao.cancelReservationByUser(reservationNumber);
 			return 0; // 일주일 전
 		} else if (daysUntilCheckIn >= 5) {
+			dao.cancelReservationByUser(reservationNumber);
 			return (int) (paymentAmount * 0.3); // 5, 6일 전
 		} else if (daysUntilCheckIn >= 2) {
+			dao.cancelReservationByUser(reservationNumber);
 			return (int) (paymentAmount * 0.5); // 2, 3, 4일 전
 		} else {
 			return -1; // 하루 전, 당일 (취소불가)
