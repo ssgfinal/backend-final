@@ -210,8 +210,8 @@ public class ReservationController {
 		String couponNumber = reservation.getCouponNumber();
 		int paymentAmount = reservation.getPaymentAmount();
 
-		// 2. 예약 취소
-		reservationService.cancelReservationByUser(reservationNumber);
+//		// 2. 예약 취소
+//		reservationService.cancelReservationByUser(reservationNumber);
 
 		// 3. 예약 취소 - 포인트 반환
 		reservationService.returnUsePoint(id, usePoint);
@@ -376,6 +376,9 @@ public class ReservationController {
 		String couponNumber = reservation.getCouponNumber();
 		int paymentAmount = reservation.getPaymentAmount();
 
+		// 2. 사업자 - 예약 취소
+		reservationService.cancelReservationByOwner(reservationNumber);
+		
 		// 3. 사업자 - 예약 취소 - 포인트 반환
 		reservationService.returnUsePoint(id, usePoint);
 
@@ -385,8 +388,6 @@ public class ReservationController {
 		// 5. 사업자 - 예약 취소 - 취소 리워드 계산
 		reservationService.pointRewardsForCancel(reservationNumber, paymentAmount);
 		
-		// 2. 사업자 - 예약 취소
-		reservationService.cancelReservationByOwner(reservationNumber);
 
 		// request의 예약번호를 통해 reservation 정보 조회
 		ReservationForLmsDto LmsInfo = reservationService.getReservationInfoForGuest(reservationNumber);
