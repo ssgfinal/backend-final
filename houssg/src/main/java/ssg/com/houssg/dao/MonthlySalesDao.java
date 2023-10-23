@@ -20,4 +20,6 @@ public interface MonthlySalesDao {
 	
 	// 숙소별 매출액 조회
 	List<MonthlySalesDto> checkMonthlySales(String id);
+	
+	List<String> havingAccom(String id);
 }

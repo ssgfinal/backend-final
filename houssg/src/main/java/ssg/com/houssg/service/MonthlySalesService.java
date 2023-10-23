@@ -43,6 +43,10 @@ public class MonthlySalesService {
 
 	    return MonthlySummaryList;
 	}
+	
+	 public List<String> havingAccom(String id) {
+	        return dao.havingAccom(id);
+	    }
 
 
 }

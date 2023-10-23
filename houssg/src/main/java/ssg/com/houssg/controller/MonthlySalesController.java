@@ -1,6 +1,8 @@
 package ssg.com.houssg.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,13 +31,19 @@ public class MonthlySalesController {
 	
 	
 	@GetMapping("/check")
-    public List<MonthlySalesSummaryDto> getMonthlySales(HttpServletRequest request) {
+    public Map<String, Object> getMonthlySales(HttpServletRequest request) {
 		
 		String token = getTokenFromRequest(request);
 		String ownerId = getUserIdFromToken(token); 
 		
+		List<String> accommodationName = monthlySalesService.havingAccom(ownerId);
+		
 		List<MonthlySalesSummaryDto> salesList = monthlySalesService.getMonthlySales(ownerId);
-        return salesList;
+		Map<String, Object> result = new HashMap<>();
+        result.put("accommodationName", accommodationName);
+        result.put("monthlySales", salesList);
+        
+        return result;
     }
 	
 	// AccessToken 획득 및 파싱 Part
