@@ -16,19 +16,36 @@
 	<update id="updateMonthlySales">
 		UPDATE
 		monthly_sales AS ms
-		JOIN reservation AS r ON ms.accom_number = r.accom_number
-		SET ms.sales = ms.sales + r.payment_amount
+		JOIN reservation AS r ON
+		ms.accom_number = r.accom_number
+		SET ms.sales = ms.sales +
+		r.payment_amount
 		WHERE r.status = 2
-		AND YEAR(r.start_date) = YEAR(ms.year_month)
+		AND YEAR(r.start_date) =
+		YEAR(ms.year_month)
 		AND MONTH(r.start_date) = MONTH(ms.year_month)
-		AND r.end_date = CURDATE();
+		AND
+		r.end_date = CURDATE();
 
 	</update>
-	
-	<select id="checkMonthlySales" resultType="ssg.com.houssg.dto.MonthlySalesDto">
+
+	<select id="checkMonthlySales"
+		resultType="ssg.com.houssg.dto.MonthlySalesDto">
 		select accom_number, accom_name, `year_month`, sales, id
 		from monthly_sales
 		where id = #{id}
 	</select>
+
+	<select id="havingAccom" resultMap="accommodationResultMap">
+		select accom_name
+		from accommodation
+		where id = #{id}
+	</select>
+
+	<resultMap id="accommodationResultMap"
+		type="java.lang.String">
+		<id property="accomName" column="accom_name" />
+	</resultMap>
+
 
 </mapper>
