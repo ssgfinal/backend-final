@@ -9,7 +9,7 @@
 	</insert>
 	<!-- 나의 리뷰 보기 -->
 	<select id="getMyReview" parameterType="ssg.com.houssg.dto.ReviewParam" resultType="ssg.com.houssg.dto.ReviewDto">
-		SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name, u.nickname
+		SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_number, a.accom_name, u.nickname
 		FROM review r
 		JOIN user u ON r.id = u.id
 		JOIN rooms ro ON r.room_number = ro.room_number
@@ -18,7 +18,7 @@
 	</select>
 	
 	<select id="getMyReviewPage" parameterType="ssg.com.houssg.dto.ReviewParam" resultType="ssg.com.houssg.dto.ReviewDto">
-		SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_name, u.nickname
+		SELECT r.review_number, r.review_content, r.review_rating, r.review_creation_time, r.review_comment, r.review_comment_time, r.img, r.manager_id, ro.room_category, ro.room_number, a.accom_number, a.accom_name, u.nickname
 		FROM review r
 		JOIN user u ON r.id = u.id
 		JOIN rooms ro ON r.room_number = ro.room_number
