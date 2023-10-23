@@ -104,7 +104,7 @@ public class UserController {
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("Authorization", "Bearer " + token);
-			headers.add("RefreshToken", refreshToken);
+			headers.add("RefreshToken", "Bearer " +refreshToken);
 			tokenService.storeRefreshToken(userId, refreshToken);
 
 			System.out.println("로그인 성공" + new Date());
