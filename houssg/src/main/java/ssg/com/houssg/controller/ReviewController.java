@@ -236,10 +236,10 @@ public class ReviewController {
 		    int count = service.deleteReview(reviewNumber);
 		    
 		    if (count == 0) {
-		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("NO");
+		        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰가 삭제되지 않았습니다");
 		    }
 		    
-		    return ResponseEntity.ok("YES");
+		    return ResponseEntity.ok("리뷰가 삭제되었습니다.");
 		}
 	@GetMapping("auth/review")
 	public ResponseEntity<List<ReviewDto>> getAuthReview() {

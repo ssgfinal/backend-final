@@ -106,9 +106,11 @@
 	</update>
 	<!-- 예약에서 나의리뷰보기 -->
 	<select id="reservationReview" parameterType="ssg.com.houssg.dto.ReviewDto" resultType="ssg.com.houssg.dto.ReviewDto">
-		SELECT *
-		FROM review
-		WHERE id=#{id} AND reservation_number = #{reservationNumber}
+		SELECT r.*, a.accom_name,ro.room_category
+		FROM review r
+		JOIN accommodation a ON a.accom_number = r.accom_number
+		JOIN rooms ro ON ro.room_number = r.room_number
+		WHERE r.id=#{id} AND r.reservation_number = #{reservationNumber}
 	</select>
 	
 	<select id="reviewCheck" parameterType="ssg.com.houssg.dto.ReviewDto" resultType="int">

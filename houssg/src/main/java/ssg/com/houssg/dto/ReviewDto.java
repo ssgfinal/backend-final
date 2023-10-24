@@ -19,6 +19,8 @@ public class ReviewDto {
 	private String accomName;
 	private String nickname;
 	private String reportMessage;
+	private String accom_name;
+	private String room_category;
 	
 	public int getReviewNumber() {
 		return reviewNumber;
@@ -119,6 +121,18 @@ public class ReviewDto {
 	}
 	public void setReportMessage(String reportMessage) {
 		this.reportMessage = reportMessage;
+	}
+	public String getAccom_name() {
+		return accom_name;
+	}
+	public void setAccom_name(String accom_name) {
+		this.accom_name = accom_name;
+	}
+	public String getRoom_category() {
+		return room_category;
+	}
+	public void setRoom_category(String room_category) {
+		this.room_category = room_category;
 	}
 	public ReviewDto() {
 		super();
