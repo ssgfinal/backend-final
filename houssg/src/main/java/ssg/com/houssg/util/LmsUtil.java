@@ -94,7 +94,8 @@ public class LmsUtil {
         requestDto.setRecipientPhoneNumber(guestPhone);
         String content = "[HOUS-SG 예약취소]" 
         		+ "\n고객님의 취소 요청이 정상적으로 완료되었습니다." 
-        		+ "\n\n■ 은행명 : " + bankName
+        		+ "\n\n■ 예약번호 : " + reservationNumber
+        		+ "\n■ 은행명 : " + bankName
         		+ "\n■ 계좌번호 : " + account
         		+ "\n■ 환불금액 : " + refundAmount
         		+ "\n\n※ 취소 완료일로부터 영업일 기준 3일~5일 이내 입력하신 계좌로 자동 입금됩니다."
