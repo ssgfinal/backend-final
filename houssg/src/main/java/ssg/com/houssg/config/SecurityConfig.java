@@ -68,7 +68,7 @@ public class SecurityConfig {
 	    @Bean
 	    public AuthenticationEntryPoint customAuthenticationEntryPoint() {
 	        return (request, response, authException) -> {
-	            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+	            response.sendError(HttpServletResponse.SC_GONE, "Gone");
 	        };
 	    }
 	

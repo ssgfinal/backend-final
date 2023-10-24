@@ -52,7 +52,7 @@ public class TokenFilter extends OncePerRequestFilter {
 		if (accessToken != null) {
 			if(!(tokenProvider.isAccessTokenValid(accessToken))) {
 				// 어세스 토큰이 만료됐을 경우
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.setStatus(HttpServletResponse.SC_GONE);
 				return;
 			}
 			
@@ -99,7 +99,7 @@ public class TokenFilter extends OncePerRequestFilter {
 					// 리프레시 토큰도 만료되었거나 유효하지 않으면 인증 실패 응답을 반환
 					System.out.println("리프레시도 만료 or 유효x");
 					response.getWriter().write("Relogin");
-					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					response.setStatus(HttpServletResponse.SC_LENGTH_REQUIRED);
 				}
 			}
 
