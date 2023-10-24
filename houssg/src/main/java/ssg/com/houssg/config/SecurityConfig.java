@@ -53,7 +53,7 @@ public class SecurityConfig {
 	            .csrf().disable()
 	            .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 	            .authorizeHttpRequests()
-	                .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/sms/**").permitAll()
+	                .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/sms/**","/coupon/get-valid-coupons/**").permitAll()
 	                .requestMatchers("/room/detail/**","/review/all/accom/**","/search/**","/accom/all/**","/accom/detail/**","/accom/score/**","/accom/20/**","/healthcheck/**").permitAll()
 	                .anyRequest().authenticated()
 	                .and()
