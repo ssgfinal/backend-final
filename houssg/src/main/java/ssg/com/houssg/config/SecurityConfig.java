@@ -55,22 +55,22 @@ public class SecurityConfig {
 	            .authorizeHttpRequests()
 	                .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**","/user/**","/sms/**","/coupon/get-valid-coupons/**").permitAll()
 	                .requestMatchers("/room/detail/**","/review/all/accom/**","/search/**","/accom/all/**","/accom/detail/**","/accom/score/**","/accom/20/**","/healthcheck/**").permitAll()
-	                .anyRequest().authenticated()
-	                .and()
-	            .exceptionHandling() // 예외 처리 설정
-	                .authenticationEntryPoint(customAuthenticationEntryPoint()) // 커스텀 인증 진입점 설정
-	                .and()
-	            .cors(Customizer.withDefaults());
+	                .anyRequest().authenticated();
+//	                .and()
+//	            .exceptionHandling() // 예외 처리 설정
+//	                .authenticationEntryPoint(customAuthenticationEntryPoint()) // 커스텀 인증 진입점 설정
+//	                .and()
+	            http.cors(Customizer.withDefaults());
 
 	        return http.build();
 	    }
 
-	    @Bean
-	    public AuthenticationEntryPoint customAuthenticationEntryPoint() {
-	        return (request, response, authException) -> {
-	            response.sendError(HttpServletResponse.SC_GONE, "Gone");
-	        };
-	    }
+//	    @Bean
+//	    public AuthenticationEntryPoint customAuthenticationEntryPoint() {
+//	        return (request, response, authException) -> {
+//	            response.sendError(HttpServletResponse.SC_GONE, "Gone");
+//	        };
+//	    }
 	
 	
 	@Bean
