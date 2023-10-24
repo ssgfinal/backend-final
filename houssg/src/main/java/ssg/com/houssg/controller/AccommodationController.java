@@ -326,6 +326,7 @@ public class AccommodationController {
     @GetMapping("accom/detail")
     public ResponseEntity<?> getAccom(@RequestParam Integer accomNumber) {
         System.out.println("리스트에 접근합니다");
+    try {
         if (accomNumber==null||accomNumber==0) {
         	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
         }
@@ -338,6 +339,10 @@ public class AccommodationController {
         }
 
         return new ResponseEntity<>(accommodation, HttpStatus.OK);
+    	}catch(Exception e) {
+    		System.out.println(e);
+    		return new ResponseEntity<>("기타에러",HttpStatus.BAD_REQUEST);
+    	}
     }
 
     @GetMapping("accom/all")
