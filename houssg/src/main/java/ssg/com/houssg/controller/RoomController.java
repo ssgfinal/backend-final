@@ -165,9 +165,9 @@ public class RoomController {
 	    return new ResponseEntity<>("방 추가 성공", HttpStatus.OK);
 	}
 	@GetMapping("room/detail")
-	public ResponseEntity<?> choiceAccom(@RequestParam(required = false) Integer accomNumber) {
+	public ResponseEntity<?> choiceAccom(@RequestParam int accomNumber) {
 	    System.out.println("숙소 상세로 들어갑니다");
-	    if (accomNumber == null || accomNumber <= 0) {
+	    if (accomNumber <= 0) {
 	        return new ResponseEntity<>("객실 번호x", HttpStatus.BAD_REQUEST);
 	    }
 	    
@@ -268,11 +268,11 @@ public class RoomController {
 	}
 	
 	@PatchMapping("room/request")
-	public ResponseEntity<String> deleteRoom(@RequestParam(required = false) Integer roomNumber) {
+	public ResponseEntity<String> deleteRoom(@RequestParam int roomNumber) {
 	    System.out.println("방 삭제 요청");
 
 	    // 방 삭제 요청
-	    if (roomNumber == null || roomNumber == 0) {
+	    if (roomNumber == 0) {
 	        return new ResponseEntity<>("룸 번호 입력x", HttpStatus.BAD_REQUEST);
 	    }
 	    int count = service.delRequest(roomNumber);

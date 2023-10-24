@@ -166,7 +166,7 @@ public class ReviewController {
 	}
 	// 숙소에 관한 리뷰
 	@GetMapping("review/all/accom")
-	public ResponseEntity<?> getAllReview(@RequestParam Integer accomNumber) {
+	public ResponseEntity<?> getAllReview(@RequestParam int accomNumber) {
 	    System.out.println("숙소에 관한 리뷰 보기");
 	    if (accomNumber == 0) {
 	    	return new ResponseEntity<>("객실번호x",HttpStatus.BAD_REQUEST);
@@ -183,7 +183,7 @@ public class ReviewController {
 	    }
 	}
 	@GetMapping("review/all/accom/page")
-	public ResponseEntity<?> getAllReviewPage(@RequestParam Integer accomNumber,
+	public ResponseEntity<?> getAllReviewPage(@RequestParam int accomNumber,
 	                                          @RequestParam int pageSize,
 	                                          @RequestParam int page) {
 	    System.out.println("숙소에 관한 리뷰 보기");
@@ -210,7 +210,7 @@ public class ReviewController {
 	    }
 	}
 	@PatchMapping("review/report")
-	public ResponseEntity<String> updateReview(@RequestParam Integer reviewNumber,@RequestParam String reportMessage) {
+	public ResponseEntity<String> updateReview(@RequestParam int reviewNumber,@RequestParam String reportMessage) {
 		    System.out.println("리뷰 신고하기");
 		    if (reviewNumber == 0) {
 		    	return new ResponseEntity<>("리뷰번호x",HttpStatus.BAD_REQUEST);
