@@ -34,6 +34,7 @@
 		select accom_number, accom_name, `year_month`, sales, id
 		from monthly_sales
 		where id = #{id}
+		order by `year_month` asc
 	</select>
 
 	<select id="havingAccom" resultMap="accommodationResultMap">
