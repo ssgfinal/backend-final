@@ -147,7 +147,7 @@ public class AccommodationController {
                 // AccommodationDto 객체를 생성하여 숙소 정보 저장
                 dto.setImg(cloudinaryImageUrl);
                 
-                if (request.getAccomNumber() == 0 || request.getTeleNumber() == null || request.getAccomDetails() == null
+                if (request.getTeleNumber() == null || request.getAccomDetails() == null
                         || request.getCheckIn() == null || request.getCheckOut() == null || request.getFacilityDto() == null) {
                 	return new ResponseEntity<>("정보가 빠졌음", HttpStatus.BAD_REQUEST);
                 }

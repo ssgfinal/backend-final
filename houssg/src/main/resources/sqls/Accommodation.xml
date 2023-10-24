@@ -175,7 +175,18 @@
     </update>
 
 	<select id="getAccom" parameterType="int" resultType="ssg.com.houssg.dto.AccommodationDto">
-		SELECT a.accom_number, a.accom_name, a.accom_address, a.tele_number, a.accom_category, a.accom_details, a.check_in, a.check_out, a.business_number, a.id AS owner_id, a.img,
+		SELECT DISTINCT
+		    a.accom_number,
+		    a.accom_name,
+		    a.accom_address,
+		    a.tele_number,
+		    a.accom_category,
+		    a.accom_details,
+		    a.check_in,
+		    a.check_out,
+		    a.business_number,
+		    a.id AS owner_id,
+		    a.img,
 		    IFNULL(r.review_count, 0) AS review_count,
 		    IFNULL(r.avg_rating, 0.0) AS avg_rating
 		FROM accommodation a
@@ -185,7 +196,9 @@
 		    FROM review
 		    GROUP BY accom_number
 		) r ON a.accom_number = r.accom_number
-		WHERE a.accom_number = #{accomNumber} and (a.deletion_request = 0 OR a.deletion_request = 1) and add_request=0
+		WHERE a.accom_number = #{accomNumber}
+		    AND (a.deletion_request = 0 OR a.deletion_request = 1)
+		    AND add_request = 0;
 	</select>
 	
 	<update id="updateRequest" parameterType="int">
