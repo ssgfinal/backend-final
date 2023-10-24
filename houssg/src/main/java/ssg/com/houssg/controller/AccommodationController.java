@@ -288,9 +288,9 @@ public class AccommodationController {
     }
 
     @PatchMapping("accom/del/request")
-    public ResponseEntity<String> updateRequest(@RequestParam Integer accomNumber) {
+    public ResponseEntity<String> updateRequest(@RequestParam int accomNumber) {
         System.out.println("삭제요청합니다");
-        if (accomNumber==null||accomNumber==0) {
+        if (accomNumber==0) {
         	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
         }
         int count = service.updateRequest(accomNumber);
@@ -306,9 +306,9 @@ public class AccommodationController {
         }
     }
     @PatchMapping("auth/accom/del")
-    public ResponseEntity<String> deleteRequest(@RequestParam Integer accomNumber) {
+    public ResponseEntity<String> deleteRequest(@RequestParam int accomNumber) {
         System.out.println("삭제 요청 처리 완료");
-        if (accomNumber==null||accomNumber==0) {
+        if (accomNumber==0) {
         	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
         }
         int count = service.deleteRequest();
@@ -359,9 +359,9 @@ public class AccommodationController {
     }
     
     @PatchMapping("accom/approval")
-    public ResponseEntity<String> accomApproval(@RequestParam Integer accomNumber) {
+    public ResponseEntity<String> accomApproval(@RequestParam int accomNumber) {
         System.out.println("숙소등록신청허가/재신청");
-        if (accomNumber==null||accomNumber==0) {
+        if (accomNumber==0) {
         	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
         }
         
@@ -374,9 +374,9 @@ public class AccommodationController {
         }
     }
     @PatchMapping("accom/approvalX")	
-    public ResponseEntity<String> accomApprovalX(@RequestParam Integer accomNumber){
+    public ResponseEntity<String> accomApprovalX(@RequestParam int accomNumber){
     	System.out.println("숙소등록거절");
-    	if (accomNumber==null||accomNumber==0) {
+    	if (accomNumber==0) {
         	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
         }
     	

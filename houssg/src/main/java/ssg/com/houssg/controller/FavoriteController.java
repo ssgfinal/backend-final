@@ -33,13 +33,13 @@ public class FavoriteController {
 	FavoriteService service;
 	
 	@PostMapping("favorite")
-	public ResponseEntity<String> addFavorite(@RequestParam (required = false) Integer accomNumber,HttpServletRequest httpRequest) {
+	public ResponseEntity<String> addFavorite(@RequestParam int accomNumber,HttpServletRequest httpRequest) {
 		String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
 		// 찜하기 요청 처리
 	    
 
-	    if(accomNumber == null || accomNumber == 0) {
+	    if(accomNumber == 0) {
 	    	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
 	    }
 	    if(service.isIdDuplicate(accomNumber, userId)) {
@@ -57,11 +57,11 @@ public class FavoriteController {
 	}
 
 	@DeleteMapping("favorite")
-	public ResponseEntity<String> deleteFavorite(@RequestParam (required = false) Integer accomNumber,HttpServletRequest httpRequest) {
+	public ResponseEntity<String> deleteFavorite(@RequestParam int accomNumber,HttpServletRequest httpRequest) {
 		String token = getTokenFromRequest(httpRequest);
         String userId = getUserIdFromToken(token);
 		// 찜해제 요청 처리
-        if(accomNumber == null || accomNumber == 0) {
+        if(accomNumber == 0) {
 	    	return new ResponseEntity<>("숙소번호x",HttpStatus.BAD_REQUEST);
 	    }
 	    int count = service.deleteFavorite(userId, accomNumber);
@@ -91,11 +91,11 @@ public class FavoriteController {
 	     }
 	 }
 	 @GetMapping("favorite")
-	 public ResponseEntity<String> roomGet(@RequestParam (required = false) Integer accomNumber, HttpServletRequest httpRequest) {
+	 public ResponseEntity<String> roomGet(@RequestParam int accomNumber, HttpServletRequest httpRequest) {
 	     String token = getTokenFromRequest(httpRequest);
 	     String userId = getUserIdFromToken(token);
 	     
-	     if(accomNumber==null || accomNumber==0) {
+	     if(accomNumber==0) {
 	    	 return new ResponseEntity<>("객실 번호x", HttpStatus.BAD_REQUEST); 
 	     }
 	     int count = service.roomGet(accomNumber, userId);
