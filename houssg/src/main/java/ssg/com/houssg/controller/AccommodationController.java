@@ -455,15 +455,20 @@ public class AccommodationController {
         return new ResponseEntity<>(accommodationDtoList, HttpStatus.OK);
     }
     
-    private String getTokenFromRequest(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
+ // AccessToken 획득 및 파싱 Part
+ 	private String getTokenFromRequest(HttpServletRequest request) {
+ 	    String accessToken = request.getHeader("Authorization");
+ 	    if (accessToken != null && accessToken.startsWith("Bearer ")) {
+ 	        return accessToken.substring(7); // "Bearer " 부분을 제외한 엑세스 토큰 부분 추출
+ 	    }
 
-		if (token != null && token.startsWith("Bearer ")) {
-			return token.substring(7);
-		}
+ 	    String refreshToken = request.getHeader("RefreshToken");
+ 	    if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+ 	        return refreshToken.substring(7);
+ 	    }
 
-		return null;
-	}
+ 	    return null;
+ 	}
     
     private String getUserIdFromToken(String token) {
 		try {

@@ -18,40 +18,42 @@ import jakarta.servlet.http.HttpServletRequest;
 import ssg.com.houssg.dto.MonthlySalesSummaryDto;
 import ssg.com.houssg.service.MonthlySalesService;
 
-
 @RestController
 @RequestMapping("monthly-sales")
 public class MonthlySalesController {
-	
+
 	@Value("${jwt.secret}")
 	private String secretKey;
-	
+
 	@Autowired
 	private MonthlySalesService monthlySalesService;
-	
-	
+
 	@GetMapping("/check")
-    public Map<String, Object> getMonthlySales(HttpServletRequest request) {
-		
+	public Map<String, Object> getMonthlySales(HttpServletRequest request) {
+
 		String token = getTokenFromRequest(request);
-		String ownerId = getUserIdFromToken(token); 
-		
+		String ownerId = getUserIdFromToken(token);
+
 		List<String> accommodationName = monthlySalesService.havingAccom(ownerId);
-		
+
 		List<MonthlySalesSummaryDto> salesList = monthlySalesService.getMonthlySales(ownerId);
 		Map<String, Object> result = new HashMap<>();
-        result.put("accommodationName", accommodationName);
-        result.put("monthlySales", salesList);
-        
-        return result;
-    }
-	
+		result.put("accommodationName", accommodationName);
+		result.put("monthlySales", salesList);
+
+		return result;
+	}
+
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
+		String accessToken = request.getHeader("Authorization");
+		if (accessToken != null && accessToken.startsWith("Bearer ")) {
+			return accessToken.substring(7); // "Bearer " 부분을 제외한 엑세스 토큰 부분 추출
+		}
 
-		if (token != null && token.startsWith("Bearer ")) {
-			return token.substring(7);
+		String refreshToken = request.getHeader("RefreshToken");
+		if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+			return refreshToken.substring(7);
 		}
 
 		return null;
@@ -69,5 +71,3 @@ public class MonthlySalesController {
 		}
 	}
 }
-
-

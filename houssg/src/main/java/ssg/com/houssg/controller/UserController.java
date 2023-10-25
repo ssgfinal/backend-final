@@ -56,10 +56,10 @@ public class UserController {
 
 	@Value("${jwt.secret}")
 	private String secretKey;
-	
+
 	@Value("${kakao.client_id}")
 	private String clientId;
-	
+
 	@Value("${kakao.client_secret}")
 	private String clientSecret;
 
@@ -104,7 +104,7 @@ public class UserController {
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("Authorization", "Bearer " + token);
-			headers.add("RefreshToken", "Bearer " +refreshToken);
+			headers.add("RefreshToken", "Bearer " + refreshToken);
 			tokenService.storeRefreshToken(userId, refreshToken);
 
 			System.out.println("로그인 성공" + new Date());
@@ -378,178 +378,179 @@ public class UserController {
 		}
 	}
 
-
-	
 	@PostMapping("/kakao/log-in")
 	public ResponseEntity<?> kakao(@RequestParam("code") String authorizationCode, HttpServletRequest http) {
-	    String apiUrl = "https://kauth.kakao.com/oauth/token";
-	    System.out.println("카카오톡 로그인");
-	    try {
-	    	ResponseEntity<String> responseEntity ;
-		    HttpHeaders headers = new HttpHeaders();
+		String apiUrl = "https://kauth.kakao.com/oauth/token";
+		System.out.println("카카오톡 로그인");
+		try {
+			ResponseEntity<String> responseEntity;
+			HttpHeaders headers = new HttpHeaders();
 
-	    	try {
-	        RestTemplate restTemplate = new RestTemplate();
-	        
-	        // 요청 헤더 설정
-	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-	        String baseUrl = http.getRequestURL().toString();
-	        
-	        if (baseUrl.startsWith("http://localhost")) {
-	        	baseUrl = "http://localhost:8080";
-	        } else {
-	        	baseUrl = "http://52.79.147.124";
-	        }
-	        // base URL 출력 또는 사용
-	        System.out.println("Base URL: " + baseUrl);
-	        // 요청 파라미터 설정
-	        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-	        parameters.add("grant_type", "authorization_code");
-	        parameters.add("client_id", clientId);
-	        parameters.add("client_secret", clientSecret);
-	        parameters.add("redirect_uri", "http://localhost:8080"); 
-	        parameters.add("code", authorizationCode); // 실제 Authorization Code 사용
-	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
-	        // 토큰 요청을 보냅니다.
-	          responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, String.class);
-	          
-	    	} catch (Exception e){
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 코드가 감지되었습니다.");
-	    	}
-	    	
-	        // 성공적인 경우, 액세스 토큰을 클라이언트에게 반환합니다.
-	        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-	            String responseBody = responseEntity.getBody();
-	            ObjectMapper objectMapper = new ObjectMapper();
-	            JsonNode jsonNode = objectMapper.readTree(responseBody);
-	            if (jsonNode.has("access_token")) {
-	                String accessToken = jsonNode.get("access_token").asText();
-	                System.out.println("'access_token' : '" + accessToken+"'");
-	                String kakaoAccessToken = accessToken;
+			try {
+				RestTemplate restTemplate = new RestTemplate();
 
-	                apiUrl = "https://kapi.kakao.com/v2/user/me";
+				// 요청 헤더 설정
+				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+				String baseUrl = http.getRequestURL().toString();
 
-	                    URL url = new URL(apiUrl);
-	                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	                    conn.setRequestMethod("GET");
-	                    conn.setRequestProperty("Authorization", "Bearer " + kakaoAccessToken);
+				if (baseUrl.startsWith("http://localhost")) {
+					baseUrl = "http://localhost:8080";
+				} else {
+					baseUrl = "http://52.79.147.124";
+				}
+				// base URL 출력 또는 사용
+				System.out.println("Base URL: " + baseUrl);
+				// 요청 파라미터 설정
+				MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+				parameters.add("grant_type", "authorization_code");
+				parameters.add("client_id", clientId);
+				parameters.add("client_secret", clientSecret);
+				parameters.add("redirect_uri", "http://localhost:8080");
+				parameters.add("code", authorizationCode); // 실제 Authorization Code 사용
+				HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
+				// 토큰 요청을 보냅니다.
+				responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, String.class);
 
-	                    int responseCode = conn.getResponseCode();
-	                    System.out.println("카카오 응답 : " + responseCode);
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복 코드가 감지되었습니다.");
+			}
 
-	                    if (responseCode == 200) {
-	                        ObjectMapper mapper = new ObjectMapper();
-	                        jsonNode = mapper.readTree(conn.getInputStream());
-	                        String memberId = jsonNode.get("id").asText();
-	                        
+			// 성공적인 경우, 액세스 토큰을 클라이언트에게 반환합니다.
+			if (responseEntity.getStatusCode().is2xxSuccessful()) {
+				String responseBody = responseEntity.getBody();
+				ObjectMapper objectMapper = new ObjectMapper();
+				JsonNode jsonNode = objectMapper.readTree(responseBody);
+				if (jsonNode.has("access_token")) {
+					String accessToken = jsonNode.get("access_token").asText();
+					System.out.println("'access_token' : '" + accessToken + "'");
+					String kakaoAccessToken = accessToken;
 
-	                        // 이 부분에서 UserDto에 값을 설정합니다.
-	                        UserDto userDto = new UserDto();
-	                        userDto.setId(memberId);
-	                        
-	                        String token = jwtTokenProvider.createAccessToken(userDto); // UserDto 객체를 createToken 메서드에 전달
-	             			System.out.println("생성된 토큰: " + token);
-	             			String refreshToken = jwtTokenProvider.createRefreshToken(userDto);
-	             			System.out.println("생성된 리프레시 토큰: " + refreshToken);
-	             			
-	             			headers = new HttpHeaders();
-	            			headers.add("Authorization", "Bearer " + token);
-	            			headers.add("RefreshToken", "Bearer " + refreshToken);
-	            			tokenService.storeRefreshToken(memberId, refreshToken);
-	                        
-	                        int check = service.idCheck(memberId);
+					apiUrl = "https://kapi.kakao.com/v2/user/me";
 
-	                        if(check != 0) {
-	                        	
-	                        	
-	                        	UserDto login = service.kakaoLogin(memberId);
-	                			
-	                            if(login==null||login.equals("")) {
-	                            	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인 실패");
-	                            } else {     			
-	                     			Map<String, Object> responseMap = new HashMap<>();
-	                    			responseMap.put("message", "로그인 성공");
-	                    			responseMap.put("phonenumber", login.getPhonenumber());
-	                    			responseMap.put("nickname", login.getNickname()); 
-	                    			responseMap.put("point", login.getPoint());
-	                    			
-	                    			System.out.println("로그인 성공" + new Date());
-	                    			return ResponseEntity.ok().headers(headers).body(responseMap); // 토큰 반환
-	                            }
-	                        } else {
-	                        	userDto.setNickname(null);
-	                        	return ResponseEntity.ok().headers(headers).body("nickname : "+userDto.getNickname());
-	                        }
-	                    } else {
-	                        System.out.println("카카오 응답 : " + responseCode);
-	                        System.out.println("카카오 로그인 실패");
-	                        
-	                        // 실패할 경우 적절한 응답 반환
-	                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("카카오 로그인 실패");
-	                    }
-	            } else {
-	            	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("액세스 토큰이 없습니다.");
-	            }
-	        } else {
-	            // 실패한 응답 처리
-	            return ResponseEntity.status(responseEntity.getStatusCode()).body("Failed");
-	        }
-	    } catch (Exception e) {
-	        // 예외 처리
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
-	    }
+					URL url = new URL(apiUrl);
+					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+					conn.setRequestMethod("GET");
+					conn.setRequestProperty("Authorization", "Bearer " + kakaoAccessToken);
+
+					int responseCode = conn.getResponseCode();
+					System.out.println("카카오 응답 : " + responseCode);
+
+					if (responseCode == 200) {
+						ObjectMapper mapper = new ObjectMapper();
+						jsonNode = mapper.readTree(conn.getInputStream());
+						String memberId = jsonNode.get("id").asText();
+
+						// 이 부분에서 UserDto에 값을 설정합니다.
+						UserDto userDto = new UserDto();
+						userDto.setId(memberId);
+
+						String token = jwtTokenProvider.createAccessToken(userDto); // UserDto 객체를 createToken 메서드에 전달
+						System.out.println("생성된 토큰: " + token);
+						String refreshToken = jwtTokenProvider.createRefreshToken(userDto);
+						System.out.println("생성된 리프레시 토큰: " + refreshToken);
+
+						headers = new HttpHeaders();
+						headers.add("Authorization", "Bearer " + token);
+						headers.add("RefreshToken", "Bearer " + refreshToken);
+						tokenService.storeRefreshToken(memberId, refreshToken);
+
+						int check = service.idCheck(memberId);
+
+						if (check != 0) {
+
+							UserDto login = service.kakaoLogin(memberId);
+
+							if (login == null || login.equals("")) {
+								return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인 실패");
+							} else {
+								Map<String, Object> responseMap = new HashMap<>();
+								responseMap.put("message", "로그인 성공");
+								responseMap.put("phonenumber", login.getPhonenumber());
+								responseMap.put("nickname", login.getNickname());
+								responseMap.put("point", login.getPoint());
+
+								System.out.println("로그인 성공" + new Date());
+								return ResponseEntity.ok().headers(headers).body(responseMap); // 토큰 반환
+							}
+						} else {
+							userDto.setNickname(null);
+							return ResponseEntity.ok().headers(headers).body("nickname : " + userDto.getNickname());
+						}
+					} else {
+						System.out.println("카카오 응답 : " + responseCode);
+						System.out.println("카카오 로그인 실패");
+
+						// 실패할 경우 적절한 응답 반환
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("카카오 로그인 실패");
+					}
+				} else {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("액세스 토큰이 없습니다.");
+				}
+			} else {
+				// 실패한 응답 처리
+				return ResponseEntity.status(responseEntity.getStatusCode()).body("Failed");
+			}
+		} catch (Exception e) {
+			// 예외 처리
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
+		}
 	}
 
-    @PostMapping("/kakao/sign-up")
-    public ResponseEntity<?> kakaoSignUp(HttpServletRequest httpRequest, @RequestParam String phonenumber, @RequestParam String nickname) {
-        // 클라이언트가 회원가입 요청을 보냈을 때, 새로운 사용자로 간주
-    	String token = getTokenFromRequest(httpRequest);
-        String userId = getUserIdFromToken(token);
-    	
-        UserDto userDto = new UserDto();
-        userDto.setId(userId); // 아이디 설정
+	@PostMapping("/kakao/sign-up")
+	public ResponseEntity<?> kakaoSignUp(HttpServletRequest httpRequest, @RequestParam String phonenumber,
+			@RequestParam String nickname) {
+		// 클라이언트가 회원가입 요청을 보냈을 때, 새로운 사용자로 간주
+		String token = getTokenFromRequest(httpRequest);
+		String userId = getUserIdFromToken(token);
 
-        int check = service.idCheck(userId);
+		UserDto userDto = new UserDto();
+		userDto.setId(userId); // 아이디 설정
 
-        if (check == 0) {
-            System.out.println("회원가입합니다");
-            userDto.setPassword("Abcd123@");
-            userDto.setPhonenumber(phonenumber);
-            userDto.setNickname(nickname);
-            UserUtil userUtil = new UserUtil();
-            
-            if (!userUtil.isValidUser(userDto)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패, 전화번호를 입력해 주세요");
-            }
-            
-            int count = service.signUp(userDto);
-            
-            if (count > 0) {
+		int check = service.idCheck(userId);
 
-                // 클라이언트에게 토큰을 반환하고, 회원가입 성공 메시지를 함께 반환
-                Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("message", "회원가입 및 로그인 성공");
-                responseMap.put("phonenumber", userDto.getPhonenumber());
-                responseMap.put("nickname", userDto.getNickname());
-                responseMap.put("point", userDto.getPoint());
+		if (check == 0) {
+			System.out.println("회원가입합니다");
+			userDto.setPassword("Abcd123@");
+			userDto.setPhonenumber(phonenumber);
+			userDto.setNickname(nickname);
+			UserUtil userUtil = new UserUtil();
 
-                return ResponseEntity.ok().body(responseMap);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패2");
-            }
-        }
+			if (!userUtil.isValidUser(userDto)) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패, 전화번호를 입력해 주세요");
+			}
 
-        // 이미 존재하는 사용자인 경우에 대한 처리
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 가입된 사용자입니다.");
-    }
+			int count = service.signUp(userDto);
+
+			if (count > 0) {
+
+				// 클라이언트에게 토큰을 반환하고, 회원가입 성공 메시지를 함께 반환
+				Map<String, Object> responseMap = new HashMap<>();
+				responseMap.put("message", "회원가입 및 로그인 성공");
+				responseMap.put("phonenumber", userDto.getPhonenumber());
+				responseMap.put("nickname", userDto.getNickname());
+				responseMap.put("point", userDto.getPoint());
+
+				return ResponseEntity.ok().body(responseMap);
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패2");
+			}
+		}
+
+		// 이미 존재하는 사용자인 경우에 대한 처리
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 가입된 사용자입니다.");
+	}
 
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
+		String accessToken = request.getHeader("Authorization");
+		if (accessToken != null && accessToken.startsWith("Bearer ")) {
+			return accessToken.substring(7); // "Bearer " 부분을 제외한 엑세스 토큰 부분 추출
+		}
 
-		if (token != null && token.startsWith("Bearer ")) {
-			return token.substring(7);
+		String refreshToken = request.getHeader("RefreshToken");
+		if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+			return refreshToken.substring(7);
 		}
 
 		return null;
