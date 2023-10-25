@@ -167,8 +167,7 @@ public class ReservationController {
 
 	// 결제완료 >> 예약완료 체크
 	@PatchMapping("/check-complete")
-	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request
-			) {
+	public ResponseEntity<String> completeReservation(@RequestBody CompleteReservationRequestDto request) {
 		int reservationNumber = request.getReservationNumber();
 		String sign = request.getSign();
 
@@ -224,10 +223,10 @@ public class ReservationController {
 		LocalDate startDate = LocalDate.parse(startDateStr);
 		int cancellationFee = reservationService.calculateCancellationFee(reservationNumber, startDate, paymentAmount);
 		System.out.println("수수료" + cancellationFee);
-		
+
 		if (cancellationFee == -1) {
-		    // 현재 날짜와 start_date가 같은 경우
-		    return ResponseEntity.badRequest().body("예약 취소 불가");
+			// 현재 날짜와 start_date가 같은 경우
+			return ResponseEntity.badRequest().body("예약 취소 불가");
 		}
 		int refundAmount = paymentAmount - cancellationFee;
 		System.out.println("환불금" + refundAmount);
@@ -240,8 +239,7 @@ public class ReservationController {
 		}
 
 		// LmsUtil를 사용하여 SMS 전송
-		lsmUtil.sendLmsForUserCancel(LmsInfo, String.valueOf(reservationNumber), refundAmount, bankName, account
-				);
+		lsmUtil.sendLmsForUserCancel(LmsInfo, String.valueOf(reservationNumber), refundAmount, bankName, account);
 
 		return ResponseEntity.ok("취소완료");
 	}
@@ -378,7 +376,7 @@ public class ReservationController {
 
 		// 2. 사업자 - 예약 취소
 		reservationService.cancelReservationByOwner(reservationNumber);
-		
+
 		// 3. 사업자 - 예약 취소 - 포인트 반환
 		reservationService.returnUsePoint(id, usePoint);
 
@@ -387,7 +385,6 @@ public class ReservationController {
 
 		// 5. 사업자 - 예약 취소 - 취소 리워드 계산
 		reservationService.pointRewardsForCancel(reservationNumber, paymentAmount);
-		
 
 		// request의 예약번호를 통해 reservation 정보 조회
 		ReservationForLmsDto LmsInfo = reservationService.getReservationInfoForGuest(reservationNumber);
@@ -463,17 +460,21 @@ public class ReservationController {
 	}
 
 	@GetMapping("/owner-modal")
-	public List<String> ownerModalCheck(@RequestParam("roomNumber") int roomNumber, @RequestParam("startDate") String startDate) {
-	    return reservationService.getOwnerModalCheck(roomNumber, startDate);
+	public List<String> ownerModalCheck(@RequestParam("roomNumber") int roomNumber,
+			@RequestParam("startDate") String startDate) {
+		return reservationService.getOwnerModalCheck(roomNumber, startDate);
 	}
-
 
 	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
+		String accessToken = request.getHeader("Authorization");
+		if (accessToken != null && accessToken.startsWith("Bearer ")) {
+			return accessToken.substring(7); // "Bearer " 부분을 제외한 엑세스 토큰 부분 추출
+		}
 
-		if (token != null && token.startsWith("Bearer ")) {
-			return token.substring(7);
+		String refreshToken = request.getHeader("RefreshToken");
+		if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+			return refreshToken.substring(7);
 		}
 
 		return null;

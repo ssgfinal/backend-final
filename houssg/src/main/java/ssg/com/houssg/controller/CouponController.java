@@ -72,7 +72,7 @@ public class CouponController {
 
 	// 유저 - 쿠폰번호로 쿠폰 정보 조회
 	@GetMapping("/find-couponinfo")
-	public CouponDto findCouponByNumber(@RequestParam String couponNumber,HttpServletRequest request) {
+	public CouponDto findCouponByNumber(@RequestParam String couponNumber, HttpServletRequest request) {
 		return service.findCouponByNumber(couponNumber);
 	}
 
@@ -110,26 +110,32 @@ public class CouponController {
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
 	}
+
 	// 유저 - 나의 쿠폰 조회
 	@GetMapping("/mypage")
 	public ResponseEntity<List<CouponDto>> myCoupon(HttpServletRequest request) {
 		String token = getTokenFromRequest(request);
 		String userId = getUserIdFromToken(token);
-		    
+
 		List<CouponDto> coupons = service.myCoupon(userId);
 
 		if (coupons != null && !coupons.isEmpty()) {
-		    return new ResponseEntity<>(coupons, HttpStatus.OK);
+			return new ResponseEntity<>(coupons, HttpStatus.OK);
 		} else {
-		    return new ResponseEntity<>(new ArrayList<CouponDto>(),HttpStatus.OK);
+			return new ResponseEntity<>(new ArrayList<CouponDto>(), HttpStatus.OK);
 		}
-	}	
+	}
 
+	// AccessToken 획득 및 파싱 Part
 	private String getTokenFromRequest(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
+		String accessToken = request.getHeader("Authorization");
+		if (accessToken != null && accessToken.startsWith("Bearer ")) {
+			return accessToken.substring(7); // "Bearer " 부분을 제외한 엑세스 토큰 부분 추출
+		}
 
-		if (token != null && token.startsWith("Bearer ")) {
-			return token.substring(7);
+		String refreshToken = request.getHeader("RefreshToken");
+		if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+			return refreshToken.substring(7);
 		}
 
 		return null;
