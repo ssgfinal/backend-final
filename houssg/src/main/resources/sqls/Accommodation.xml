@@ -159,7 +159,7 @@
 		FROM accommodation a
 		JOIN facility f ON a.accom_number = f.accom_number
 		JOIN user u ON a.id = u.id
-		WHERE a.id=#{id}
+		WHERE a.id=#{id} AND (a.deletion_request = 0 OR a.deletion_request = 1)
 	</select>
 	
 	<update id="updateAccommodation" parameterType="ssg.com.houssg.dto.AccommodationDto">

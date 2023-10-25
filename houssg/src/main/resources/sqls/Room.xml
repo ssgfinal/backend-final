@@ -36,14 +36,14 @@
 	<select id="isCategoryDuplicate" parameterType="ssg.com.houssg.dto.RoomDto" resultType="int">
 		SELECT count(*)
 		FROM rooms
-		WHERE accom_number = #{accomNumber} AND room_category = #{roomCategory}
+		WHERE accom_number = #{accomNumber} AND room_category = #{roomCategory} AND del_request = 0
 	</select>
 	
 	<select id="delRequest" parameterType="int" resultType="int">
-		SELECT CASE WHEN EXISTS (SELECT 1 FROM rooms WHERE room_number = #{roomNumber} AND del_request = 1) THEN 1 ELSE 0 END;
+		SELECT CASE WHEN EXISTS (SELECT 1 FROM rooms WHERE room_number = #{roomNumber} AND del_request = 1) THEN 1 ELSE 0 END
 	</select>
 	
 	<select id="choiceRoom" parameterType="int" resultType="int">
-		SELECT CASE WHEN EXISTS (SELECT 1  FROM rooms WHERE room_number = #{roomNumber}) THEN 1 ELSE 0 END;
+		SELECT CASE WHEN EXISTS (SELECT 1  FROM rooms WHERE room_number = #{roomNumber}) THEN 1 ELSE 0 END
 	</select>
 </mapper>
