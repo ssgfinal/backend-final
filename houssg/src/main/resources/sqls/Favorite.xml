@@ -14,11 +14,11 @@
 	<!-- 숙소명, 평균별점, 숙소번호, 주소 -->
 	<select id="getMyFavorite" parameterType="java.lang.String" resultType="ssg.com.houssg.dto.FavoriteParam">
 	    SELECT f.*, a.accom_name, a.accom_address, avg(r.review_rating) as avgRating
-	    FROM favorite f
-	    JOIN review r ON r.id = f.id
-	    JOIN accommodation a ON a.accom_number = f.accom_number
-	    WHERE f.id = #{id}
-	    GROUP BY a.accom_number;
+		FROM favorite f
+		LEFT JOIN review r ON r.id = f.id
+		JOIN accommodation a ON a.accom_number = f.accom_number
+		WHERE f.id = #{id}
+		GROUP BY a.accom_number
 	</select>
 	
 	<select id="roomGet" resultType="java.lang.Integer">
