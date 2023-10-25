@@ -5,8 +5,8 @@ public class FavoriteParam {
 	private String id;
 	private int accomNumber;
 	private String accomAddress;
-	private double avgRating;
 	private String accomName;
+	private double avgRating;
 	public String getId() {
 		return id;
 	}
@@ -25,28 +25,27 @@ public class FavoriteParam {
 	public void setAccomAddress(String accomAddress) {
 		this.accomAddress = accomAddress;
 	}
-	public double getAvgRating() {
-		return avgRating;
-	}
-	public void setAvgRating(double avgRating) {
-		this.avgRating = avgRating;
-	}
 	public String getAccomName() {
 		return accomName;
 	}
 	public void setAccomName(String accomName) {
 		this.accomName = accomName;
 	}
-	public FavoriteParam() {
-		super();
+	public double getAvgRating() {
+		return avgRating;
 	}
-	public FavoriteParam(String id, int accomNumber, String accomAddress, double avgRating, String accomName) {
+	public void setAvgRating(double avgRating) {
+		this.avgRating = avgRating;
+	}
+	public FavoriteParam(String id, int accomNumber, String accomAddress, String accomName, double avgRating) {
 		super();
 		this.id = id;
 		this.accomNumber = accomNumber;
 		this.accomAddress = accomAddress;
-		this.avgRating = avgRating;
 		this.accomName = accomName;
+		this.avgRating = avgRating;
 	}
-	
+	public FavoriteParam() {
+		super();
+	}
 }

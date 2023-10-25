@@ -82,7 +82,7 @@ public class FavoriteController {
 	     String token = getTokenFromRequest(httpRequest);
 	     String userId = getUserIdFromToken(token);
 	     List<FavoriteParam> favoriteList = service.getMyFavorite(userId);
-	     
+	     System.out.println(favoriteList);
 	     if (favoriteList != null && !favoriteList.isEmpty()) {
 	         // 찜 목록이 비어 있지 않으면 200 OK 응답과 함께 목록을 반환
 	         return ResponseEntity.ok(favoriteList);
