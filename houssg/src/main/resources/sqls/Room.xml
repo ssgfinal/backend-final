@@ -28,7 +28,8 @@
 	    AND NOT EXISTS (
 	        SELECT 1
 	        FROM reservation
-	        WHERE start_date >= NOW()
+	        WHERE room_number = #{roomNumber}
+	        AND start_date >= NOW()
 	    )
 	</update>
 	
