@@ -33,6 +33,11 @@
 
 ## 노션링크
 https://www.notion.so/HOUS-SG-Project-68a8b031b7ee4be5aad70516b1214c74
+<br><br>
+
+## 스웨거
+![screencapture-localhost-3200-swagger-ui-index-html-2023-10-26-17_17_56](https://github.com/ssgfinal/backend-final/assets/112762794/06296596-9bbd-4fd2-b9a1-078f4971c21e)
+
 
 ## 개발 환경 실행 방법
 
