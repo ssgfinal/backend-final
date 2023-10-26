@@ -92,7 +92,6 @@
 	    	r.manager_id = a.id
 	    WHERE r.review_number = #{reviewNumber}
 	      AND r.accom_number = a.accom_number
-	      AND r.manager_id = a.id
 	</update>
 	<!-- 리뷰 수정하기 -->
 	<update id="updateComment" parameterType="ssg.com.houssg.dto.ReviewDto">
