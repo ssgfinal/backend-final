@@ -405,7 +405,7 @@ public class UserController {
 				parameters.add("grant_type", "authorization_code");
 				parameters.add("client_id", clientId);
 				parameters.add("client_secret", clientSecret);
-				parameters.add("redirect_uri", "http://localhost:8080");
+				parameters.add("redirect_uri", "http://52.79.147.124");
 				parameters.add("code", authorizationCode); // 실제 Authorization Code 사용
 				HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, headers);
 				// 토큰 요청을 보냅니다.
