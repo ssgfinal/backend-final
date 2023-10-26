@@ -31,6 +31,9 @@
 | 🔰최영석(B) | https://github.com/0-ssg       |
 | 김보근(B)   | https://github.com/SanBu599    |
 
+## 노션링크
+https://www.notion.so/HOUS-SG-Project-68a8b031b7ee4be5aad70516b1214c74
+
 ## 개발 환경 실행 방법
 
 ### db띄우는 방법
